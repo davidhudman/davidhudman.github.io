@@ -43,11 +43,12 @@ export default function App() {
 
   return (
     <div className="App">
+      {/* Title */}
       <h1>Pay Me BCH</h1>
       <br />
 
+      {/* Amount owed input */}
       <div className="form-group input-group-lg">
-        {/* <label>Enter amount owed (USD):&nbsp;</label> */}
         <input
           type="number"
           onChange={(e) => changeInvoiceAmount(e)}
@@ -56,49 +57,28 @@ export default function App() {
         />
       </div>
 
+      {/* Tip Button Section */}
       <label className="lb-lg">Tip:</label>
       <br />
       <div class="btn-group btn-group-justified" role="group">
-        <div class="btn-group" role="group">
-          <button
-            className="btn btn-default btn-lg"
-            onClick={(e) => changeTipAmount(e)}
-            value={0}
-          >
-            none
-          </button>
-        </div>
-        <div class="btn-group" role="group">
-          <button
-            className="btn btn-default btn-lg"
-            onClick={(e) => changeTipAmount(e)}
-            value={parseFloat(invoiceAmount) * 0.18}
-          >
-            18%
-          </button>
-        </div>
-        <div class="btn-group" role="group">
-          <button
-            className="btn btn-default btn-lg"
-            onClick={(e) => changeTipAmount(e)}
-            value={parseFloat(invoiceAmount) * 0.2}
-          >
-            20%
-          </button>
-        </div>
-        <div class="btn-group" role="group">
-          <button
-            className="btn btn-default btn-lg"
-            onClick={(e) => changeTipAmount(e)}
-            value={parseFloat(invoiceAmount) * 0.22}
-          >
-            22%
-          </button>
-        </div>
+        {[0, 0.15, 0.18, 0.2, 0.25].map((num) => {
+          return (
+            <div class="btn-group" role="group">
+              <button
+                className="btn btn-default btn-lg"
+                onClick={(e) => changeTipAmount(e)}
+                value={parseFloat(invoiceAmount) * num}
+              >
+                {num * 100}%
+              </button>
+            </div>
+          );
+        })}
       </div>
       <br />
       <br />
 
+      {/* Tip Input Section */}
       <div className="form-group input-group-lg">
         <input
           id="tipAmount"
@@ -109,6 +89,7 @@ export default function App() {
         />
       </div>
 
+      {/* Description Input Section */}
       <div className="form-group input-group-lg">
         <label className="lb-lg" htmlFor="whatForInput">
           Description: &nbsp;
@@ -123,11 +104,12 @@ export default function App() {
         />
       </div>
 
+      {/* Total Amuont Section */}
       <br />
       <h3>Total amount: ${getTotalAmount()}</h3>
       <br />
 
-      <p>&nbsp;</p>
+      {/* Pay Button Section */}
       <form
         name="prompt-cash-form"
         action="https://prompt.cash/pay"
