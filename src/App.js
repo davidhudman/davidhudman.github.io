@@ -103,11 +103,12 @@ export default function App() {
           className="form-control text-center"
         />
       </div>
+      <br />
 
       {/* Total Amuont Section */}
-      <br />
-      <h3>Total amount: ${getTotalAmount()}</h3>
-      <br />
+      {/* <br />
+      <h4>Total amount: ${getTotalAmount()}</h4>
+      <br /> */}
 
       {/* Pay Button Section */}
       <form
@@ -135,7 +136,7 @@ export default function App() {
           }
           disabled={!showPayButton}
         >
-          Pay ${getTotalAmount()} with BitcoinCash (BCH)
+          Pay ${getTotalAmount()}
         </button>
       </form>
     </div>
