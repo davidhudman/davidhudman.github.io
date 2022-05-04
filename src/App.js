@@ -96,6 +96,7 @@ export default function App() {
           onChange={(e) => changeInvoiceAmount(e)}
           placeholder="Enter amount owed"
           className="form-control text-center"
+          style={{ fontSize: "24px" }}
         />
       </div>
 
@@ -148,6 +149,7 @@ export default function App() {
           onChange={(e) => setForWhat(e.target.value)}
           placeholder="order number, pizza, etc"
           className="form-control text-center"
+          style={{ fontSize: "24px" }}
         />
       </div>
       <br />
