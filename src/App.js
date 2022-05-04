@@ -42,16 +42,45 @@ export default function App() {
   };
 
   const showHideTipSection = (e) => {
-    // e.target.checked = !e.target.checked;
-    if (e.target.checked) {
-      console.log("checked");
-      document.getElementById("tipSection").style.display = "block";
-      console.log("checked");
-    } else {
-      console.log("not checked");
+    if (document.getElementById("tipSection").style.display == "block") {
       document.getElementById("tipSection").style.display = "none";
-      console.log("not checked");
+    } else {
+      document.getElementById("tipSection").style.display = "block";
     }
+  };
+
+  const getShowHideTipButton = () => {
+    return (
+      <button className="btn btn-block" onClick={showHideTipSection}>
+        <div className="btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            class="bi bi-caret-down"
+            viewBox="0 0 16 16"
+          >
+            <path d="M3.204 5h9.592L8 10.481 3.204 5zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z" />
+          </svg>
+        </div>
+        <div className="btn">
+          <label className="lb-lg">Tip</label>
+        </div>
+        <div className="btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            class="bi bi-caret-down"
+            viewBox="0 0 16 16"
+          >
+            <path d="M3.204 5h9.592L8 10.481 3.204 5zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z" />
+          </svg>
+        </div>
+      </button>
+    );
   };
 
   return (
@@ -70,16 +99,10 @@ export default function App() {
         />
       </div>
 
+      {/* Show / Hide Tip Button */}
+      {getShowHideTipButton()}
+
       {/* Tip Button Section */}
-      <div class="custom-control custom-switch">
-        <label className="lb-lg">Tip?&nbsp;&nbsp;</label>
-        <input
-          type="checkbox"
-          class="custom-control-input"
-          id="isTipShown"
-          onChange={showHideTipSection}
-        />
-      </div>
       <br />
       <div id="tipSection" style={{ display: "none" }}>
         <div class="btn-group btn-group-justified" role="group">
@@ -98,7 +121,6 @@ export default function App() {
           })}
         </div>
         <br />
-        <br />
 
         {/* Tip Input Section */}
         <div className="form-group input-group-lg">
@@ -110,6 +132,8 @@ export default function App() {
             placeholder="Or enter custom tip (USD)"
           />
         </div>
+        <br />
+        <br />
       </div>
 
       {/* Description Input Section */}
