@@ -41,6 +41,19 @@ export default function App() {
     }
   };
 
+  const showHideTipSection = (e) => {
+    // e.target.checked = !e.target.checked;
+    if (e.target.checked) {
+      console.log("checked");
+      document.getElementById("tipSection").style.display = "block";
+      console.log("checked");
+    } else {
+      console.log("not checked");
+      document.getElementById("tipSection").style.display = "none";
+      console.log("not checked");
+    }
+  };
+
   return (
     <div className="App">
       {/* Title */}
@@ -58,35 +71,45 @@ export default function App() {
       </div>
 
       {/* Tip Button Section */}
-      <label className="lb-lg">Tip:</label>
-      <br />
-      <div class="btn-group btn-group-justified" role="group">
-        {[0, 0.15, 0.18, 0.2, 0.25].map((num) => {
-          return (
-            <div class="btn-group" role="group">
-              <button
-                className="btn btn-default btn-lg"
-                onClick={(e) => changeTipAmount(e)}
-                value={parseFloat(invoiceAmount) * num}
-              >
-                {num * 100}%
-              </button>
-            </div>
-          );
-        })}
+      <div class="custom-control custom-switch">
+        <label className="lb-lg">Tip?&nbsp;&nbsp;</label>
+        <input
+          type="checkbox"
+          class="custom-control-input"
+          id="isTipShown"
+          onChange={showHideTipSection}
+        />
       </div>
       <br />
-      <br />
+      <div id="tipSection" style={{ display: "none" }}>
+        <div class="btn-group btn-group-justified" role="group">
+          {[0, 0.15, 0.18, 0.2, 0.25].map((num) => {
+            return (
+              <div class="btn-group" role="group">
+                <button
+                  className="btn btn-default btn-lg"
+                  onClick={(e) => changeTipAmount(e)}
+                  value={parseFloat(invoiceAmount) * num}
+                >
+                  {num * 100}%
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <br />
+        <br />
 
-      {/* Tip Input Section */}
-      <div className="form-group input-group-lg">
-        <input
-          id="tipAmount"
-          type="number"
-          onChange={(e) => changeTipAmount(e)}
-          className="form-control text-center"
-          placeholder="Or enter custom tip (USD)"
-        />
+        {/* Tip Input Section */}
+        <div className="form-group input-group-lg">
+          <input
+            id="tipAmount"
+            type="number"
+            onChange={(e) => changeTipAmount(e)}
+            className="form-control text-center"
+            placeholder="Or enter custom tip (USD)"
+          />
+        </div>
       </div>
 
       {/* Description Input Section */}
@@ -131,8 +154,8 @@ export default function App() {
           type="submit"
           className={
             showPayButton
-              ? "btn btn-block btn-lg btn-success"
-              : "btn btn-block btn-lg btn-warning"
+              ? "btn btn-block btn-lg btn-success payBtn"
+              : "btn btn-block btn-lg btn-warning payBtn"
           }
           disabled={!showPayButton}
         >

@@ -13,3 +13,12 @@
 .lb-lg {
   font-size: 20px;
 }
+
+/* .custom-control-input {
+  width: 25px; height: 25px;
+} */
+
+.payBtn {
+  height: 80px;
+  font-size: 36px;
+}
