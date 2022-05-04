@@ -65,7 +65,9 @@ export default function App() {
           </svg>
         </div>
         <div className="btn">
-          <label className="lb-lg">Tip</label>
+          <label className="lb-lg" style={{ fontSize: "24px" }}>
+            Tip
+          </label>
         </div>
         <div className="btn">
           <svg
@@ -139,7 +141,11 @@ export default function App() {
 
       {/* Description Input Section */}
       <div className="form-group input-group-lg">
-        <label className="lb-lg" htmlFor="whatForInput">
+        <label
+          className="lb-lg"
+          htmlFor="whatForInput"
+          style={{ fontSize: "24px" }}
+        >
           Description: &nbsp;
         </label>
         <br />
