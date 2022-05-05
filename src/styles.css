@@ -2,6 +2,9 @@
   font-family: sans-serif;
   text-align: center;
 }
+.btn, #tipAmount {
+  font-size: 24px;
+}
 .lb-sm {
   font-size: 12px;
 }

@@ -58,7 +58,7 @@ export default function App() {
             width="24"
             height="24"
             fill="currentColor"
-            class="bi bi-caret-down"
+            className="bi bi-caret-down"
             viewBox="0 0 16 16"
           >
             <path d="M3.204 5h9.592L8 10.481 3.204 5zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z" />
@@ -75,7 +75,7 @@ export default function App() {
             width="24"
             height="24"
             fill="currentColor"
-            class="bi bi-caret-down"
+            className="bi bi-caret-down"
             viewBox="0 0 16 16"
           >
             <path d="M3.204 5h9.592L8 10.481 3.204 5zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z" />
@@ -108,10 +108,10 @@ export default function App() {
       {/* Tip Button Section */}
       <br />
       <div id="tipSection" style={{ display: "none" }}>
-        <div class="btn-group btn-group-justified" role="group">
-          {[0, 0.15, 0.18, 0.2, 0.25].map((num) => {
+        <div className="btn-group btn-group-justified" role="group">
+          {[0, 0.15, 0.18, 0.2, 0.25].map((num, i) => {
             return (
-              <div class="btn-group" role="group">
+              <div className="btn-group" role="group" key={i}>
                 <button
                   className="btn btn-default btn-lg"
                   onClick={(e) => changeTipAmount(e)}
@@ -176,7 +176,7 @@ export default function App() {
         <input type="hidden" name="amount" value={getTotalAmount()} />
         <input type="hidden" name="currency" value="USD" />
         <input type="hidden" name="desc" value={forWhat} />
-        <input type="hidden" name="return" value="http://pay.flylert.com" />
+        {/* <input type="hidden" name="return" value="http://pay.flylert.com" /> */}
         {/* <input
             type="hidden"
             name="callback"
