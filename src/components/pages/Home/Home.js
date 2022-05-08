@@ -15,6 +15,19 @@ const Home = () => {
         <br />
 
         <div className="home-links">
+          <button className="btn btn-lg btn-block btn-default">
+            <Link to="/pay">Pay Me Crypto</Link>
+          </button>
+          <br />
+          <a
+            href="https://www.github.com/davidhudman/personal-resume-site"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-primary"
+          >
+            View Code for This Site
+          </a>
+          <br />
           <a
             href="https://www.github.com/davidhudman/"
             target="_blank"
@@ -32,19 +45,6 @@ const Home = () => {
           >
             LinkedIn
             <i className="fab fa-linkedin"></i>
-          </a>
-          <br />
-          <button className="btn btn-lg btn-block btn-default">
-            <Link to="/pay">Pay Me Crypto</Link>
-          </button>
-          <br />
-          <a
-            href="https://www.github.com/davidhudman/personal-resume-site"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-primary"
-          >
-            View Code for This Site
           </a>
 
           {/* Buffer */}
