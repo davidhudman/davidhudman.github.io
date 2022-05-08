@@ -3,12 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { Fragment } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import Navbar from "./components/layout/Navbar";
-import NavbarCustom from "./NavbarCustom";
+import NavbarCustom from "./components/NavbarCustom/NavbarCustom";
 // import Home from "./components/pages/Home";
-import Home from "./Home";
-import App1 from "./App1";
-import App2 from "./App2";
-import App3 from "./App3";
+import Home from "./components/pages/Home/Home";
+import App1 from "./components/pages/App1/App1";
+import App2 from "./components/pages/App2/App2";
+import App3 from "./components/pages/App3/App3";
 
 const App = () => {
   return (

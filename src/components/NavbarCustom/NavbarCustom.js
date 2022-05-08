@@ -1,4 +1,3 @@
-import "./styles.css";
 import React, { Fragment, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import Navbar from "./components/layout/Navbar";
@@ -15,19 +14,22 @@ import {
 // import Container from "react-bootstrap/Container";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles.css";
+import "./navbar.css";
 
 const NavbarCustom = () => {
   return (
     <Navbar>
       <Navbar.Header>
         <Navbar.Brand>
-          <a href="/">DH</a>
+          <Link to="/">DH</Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
       </Navbar.Header>
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
+          <NavItem>
+            <Link to="/">Home</Link>
+          </NavItem>
           <NavItem>
             <Link to="/pay">Pay Me Crypto</Link>
           </NavItem>
