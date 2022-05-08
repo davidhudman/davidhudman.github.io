@@ -17,11 +17,40 @@
   font-size: 20px;
 }
 
-/* .custom-control-input {
-  width: 25px; height: 25px;
-} */
-
 .payBtn {
   height: 80px;
   font-size: 36px;
+}
+
+.navbar{
+  
+  z-index: 99999;
+  background-color: #333333;  /*whichever you want*/
+    opacity: 0.7;           /*0.5 determines transparency value*/ 
+    filter:(opacity=50); 
+}
+.nav-item{
+  margin:0px 10px;
+}
+
+.home {
+  font-family: sans-serif;
+  max-width: 450px;
+  width: 90%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.outer-home-container {
+  /* display: flex; */
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
+  /* height: 100vh; */
+  width: 100%;
+  /* background-color: #333333;
+  opacity: 0.7;
+  filter:(opacity=50); */
+
+  
 }

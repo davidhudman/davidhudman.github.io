@@ -6,10 +6,14 @@
   "main": "src/index.js",
   "dependencies": {
     "bootstrap": "3.4.1",
+    "formik": "^2.2.9",
     "react": "16.12.0",
     "react-bootstrap": "0.33.1",
     "react-dom": "16.12.0",
-    "react-scripts": "3.0.1"
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "3.0.1",
+    "reactstrap": "^9.0.2",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "typescript": "3.3.3"
@@ -19,14 +23,14 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-		"deploy": "react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
-		"deploy:prod": "export REACT_APP_STAGE=prod && react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
-		"demo": "export REACT_APP_STAGE=demo",
-		"prod": "export REACT_APP_STAGE=prod",
-		"lint": "eslint --max-warnings 0 \"**/*.{js,js}\"",
-		"lint:fix": "yarn lint --fix",
-		"format": "prettier --list-different \"**/*.{css,html,js,json,jsx,less,md,scss,ts,tsx,vue,yaml,yml}\"",
-		"format:fix": "yarn format --write"
+    "deploy": "react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
+    "deploy:prod": "export REACT_APP_STAGE=prod && react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
+    "demo": "export REACT_APP_STAGE=demo",
+    "prod": "export REACT_APP_STAGE=prod",
+    "lint": "eslint --max-warnings 0 \"**/*.{js,js}\"",
+    "lint:fix": "yarn lint --fix",
+    "format": "prettier --list-different \"**/*.{css,html,js,json,jsx,less,md,scss,ts,tsx,vue,yaml,yml}\"",
+    "format:fix": "yarn format --write"
   },
   "browserslist": [
     ">0.2%",
