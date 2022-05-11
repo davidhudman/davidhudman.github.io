@@ -24,7 +24,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "deploy": "react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
-    "deploy:prod": "export REACT_APP_STAGE=prod && react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
+    "deploy:prod": "export REACT_APP_STAGE=prod && react-scripts build && aws s3 sync build/ s3://davidhudman.com",
     "demo": "export REACT_APP_STAGE=demo",
     "prod": "export REACT_APP_STAGE=prod",
     "lint": "eslint --max-warnings 0 \"**/*.{js,js}\"",
