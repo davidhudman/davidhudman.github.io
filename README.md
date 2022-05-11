@@ -1,15 +1,12 @@
 # Personal Resume Site
 
-## Author
-
-- David Hudman
-
 ## Goals
 
-- Make a tool where people can easily pay me crypto without requiring me to send them a new address each time
-- Provide a decent payment interface so many businesses could copy it
-- Accept payments in Bitcoin Cash (BCH) since fees are less than a cent and confirm instantly
-- This would be a good place for a personal resume site, so do that too.
+- Accept Crypto Payments
+  - Allow users to easily pay me crypto without requiring me to manually send a new address each time
+  - Provide clean payment interface so many businesses could copy it
+  - Accept payments in Bitcoin Cash (BCH) since fees are less than a cent and confirm instantly
+- Link to LinkedIn, Github, Personal Projects, etc
 
 ## Tools / Frameworks used
 
