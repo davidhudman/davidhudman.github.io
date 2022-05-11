@@ -32,6 +32,11 @@ const App3 = () => {
             // return: "DavidHudman.com/3"
             // callback: "your-store.com/api/v1/update-payment"
           },
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            Referer: "origin",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+          },
         })
         .then((res) => {
           console.log(res);
@@ -149,7 +154,7 @@ const App3 = () => {
 
   return (
     <div className="App3">
-      <h1>Pay Me Crypto</h1>
+      <h1>Test Pay App 3</h1>
       <br />
       <br />
       <div className="form-group input-group-lg">

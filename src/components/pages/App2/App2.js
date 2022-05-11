@@ -37,47 +37,53 @@ export default function App2() {
   // https://v4.mui.com/
   // https://ant.design/
   return (
-    <Card className="xs-4">
-      <Formik
-        initialValues={{
-          invoiceAmount: null,
-          tipAmount: null,
-          description: "",
-        }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ values }) => (
-          <>
-            <>{console.log(values)}</>
-            <Form>
-              <CardBody>
-                <Row>
-                  <Input
-                    type="input"
-                    name="invoiceAmount"
-                    id="amntowed"
-                    aria-describedby="Amount Owed"
-                    placeholder="Amount Owed"
-                  />
-                </Row>
-                <Row>
-                  Tip: <input name="tipAmount"></input>
-                </Row>
-                <Row>
-                  Description: <input name="description"></input>
-                </Row>
-                <Button
-                  disabled={values?.invoiceAmount?.length !== null}
-                  type="submit"
-                >
-                  Pay $
-                </Button>
-              </CardBody>
-            </Form>
-          </>
-        )}
-      </Formik>
-    </Card>
+    <div className="App2">
+      <h1>Test Pay App 2</h1>
+      <Card className="xs-4">
+        <Formik
+          initialValues={{
+            invoiceAmount: null,
+            tipAmount: null,
+            description: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values }) => (
+            <>
+              <>{console.log(values)}</>
+              <Form>
+                <CardBody>
+                  <Row>
+                    <Input
+                      type="input"
+                      name="invoiceAmount"
+                      id="invoiceAmount"
+                      aria-describedby="Amount Owed"
+                      placeholder="Amount Owed"
+                    />
+                  </Row>
+                  <Row>
+                    Tip: <input id="tipAmount" name="tipAmount"></input>
+                  </Row>
+                  <Row>
+                    Description:{" "}
+                    <input id="description" name="description"></input>
+                  </Row>
+                  <br />
+                  <Button
+                    disabled={values?.invoiceAmount?.length !== null}
+                    type="submit"
+                    className="btn btn-primary btn-block"
+                  >
+                    Pay $
+                  </Button>
+                </CardBody>
+              </Form>
+            </>
+          )}
+        </Formik>
+      </Card>
+    </div>
   );
 }

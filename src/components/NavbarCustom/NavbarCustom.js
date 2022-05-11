@@ -33,12 +33,6 @@ const NavbarCustom = () => {
           <NavItem>
             <Link to="/pay">Pay Me Crypto</Link>
           </NavItem>
-          <NavItem>
-            <Link to="/2">Alt Pay App 1</Link>
-          </NavItem>
-          <NavItem>
-            <Link to="/3">Alt Pay App 2</Link>
-          </NavItem>
           {/* <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
             <MenuItem eventKey={3.1}>Action</MenuItem>
             <MenuItem eventKey={3.2}>Another action</MenuItem>
