@@ -1,4 +1,4 @@
-.App {
+.App3 {
   font-family: sans-serif;
   text-align: center;
 }
@@ -21,3 +21,5 @@
   height: 80px;
   font-size: 36px;
 }
+
+.App3 > div > form > input:nth-child(n), #tipAmount { font-size: 30px; }
