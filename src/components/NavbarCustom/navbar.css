@@ -1,9 +1,12 @@
 .navbar{
     z-index: 99999;
-    background-color: #333333;  /*whichever you want*/
+    background-color: #DDDDDD;  /*whichever you want*/
       opacity: 0.7;           /*0.5 determines transparency value*/ 
       filter:(opacity=50); 
   }
   .nav-item{
     margin:0px 10px;
+  }
+  .nav-header{
+    background-color: #000;
   }
