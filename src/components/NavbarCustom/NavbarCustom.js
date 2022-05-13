@@ -6,12 +6,19 @@ import {
   // Link,
   NavLink,
 } from "react-router-dom";
+import // Button,
+// Navbar,
+// Nav,
+// NavDropdown,
+// NavItem,
+// MenuItem,
+"reactstrap";
 import {
   // Button,
   Navbar,
-  // Nav,
+  Nav,
   // NavDropdown,
-  // NavItem,
+  NavItem,
   // MenuItem,
 } from "react-bootstrap";
 // import Container from "react-bootstrap/Container";
@@ -29,16 +36,13 @@ const NavbarCustom = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
       </Navbar.Header>
       <Navbar.Collapse id="basic-navbar-nav">
-        <div>
-          <br />
-          <div>
+        <Nav>
+          <NavItem>
             <NavLink to="/">Home</NavLink>
-          </div>
-          <br />
-          <div>
+          </NavItem>
+          <NavItem>
             <NavLink to="/pay">Pay Me Crypto</NavLink>
-          </div>
-          <br />
+          </NavItem>
           {/* <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
             <MenuItem eventKey={3.1}>Action</MenuItem>
             <MenuItem eventKey={3.2}>Another action</MenuItem>
@@ -46,7 +50,7 @@ const NavbarCustom = () => {
             <MenuItem divider />
             <MenuItem eventKey={3.3}>Separated link</MenuItem>
           </NavDropdown> */}
-        </div>
+        </Nav>
       </Navbar.Collapse>
     </Navbar>
   );
