@@ -83,7 +83,7 @@ export default function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App1">
       {/* Title */}
       <h1>Pay Me BCH</h1>
       <br />

@@ -28,7 +28,7 @@ import "./navbar.css";
 
 const NavbarCustom = () => {
   return (
-    <Navbar>
+    <Navbar className="navbar-inverse">
       <Navbar.Header>
         <Navbar.Brand>
           <NavLink to="/">DH</NavLink>
@@ -42,6 +42,9 @@ const NavbarCustom = () => {
           </NavItem>
           <NavItem>
             <NavLink to="/pay">Pay Me Crypto</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink to="/map">Map</NavLink>
           </NavItem>
           {/* <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
             <MenuItem eventKey={3.1}>Action</MenuItem>
