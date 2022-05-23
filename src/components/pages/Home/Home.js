@@ -1,5 +1,4 @@
-import React from // Fragment
-"react";
+import React from "react"; // Fragment
 import {
   // BrowserRouter as Router,
   // Route,
@@ -52,7 +51,7 @@ const Home = () => {
             LinkedIn
             <i className="fab fa-linkedin"></i>
           </a>
-          <br />
+          {/* <br />
           <a
             href="https://drive.google.com/file/d/1dhGdj3g_sQmNseERYUomTybUYuD3hS_6/view?usp=sharing"
             target="_blank"
@@ -60,7 +59,7 @@ const Home = () => {
             className="btn btn-lg btn-block btn-default"
           >
             Download Resume PDF
-          </a>
+          </a> */}
 
           {/* Buffer */}
           <br />

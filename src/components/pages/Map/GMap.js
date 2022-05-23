@@ -93,9 +93,11 @@ const GMap = () => {
 
     const redMarker = Object.create(greenMarker);
     redMarker.fillColor = "red";
+    // redMarker.path = "";
 
     const blueMarker = Object.create(greenMarker);
     blueMarker.fillColor = "blue";
+    // blueMarker.path = "";
 
     const chooseIcon = (partnerLevel) => {
       switch (partnerLevel) {
