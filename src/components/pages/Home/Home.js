@@ -51,15 +51,15 @@ const Home = () => {
             LinkedIn
             <i className="fab fa-linkedin"></i>
           </a>
-          {/* <br />
+          <br />
           <a
-            href="https://drive.google.com/file/d/1dhGdj3g_sQmNseERYUomTybUYuD3hS_6/view?usp=sharing"
+            href="https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-default"
           >
             Download Resume PDF
-          </a> */}
+          </a>
 
           {/* Buffer */}
           <br />
