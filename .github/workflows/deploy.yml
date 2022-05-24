@@ -20,6 +20,8 @@ jobs:
         run: yarn
       - name: change to prod vars
         run: export REACT_APP_STAGE=prod
+      - name: set CI to false to fix random error
+        run: CI=false
       - name: Build page
         run: yarn run build
       - name: Deploy to S3
