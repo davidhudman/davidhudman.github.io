@@ -17,53 +17,53 @@ const Home = () => {
         <h4>Full Stack Web Developer</h4>
 
         <br />
-        <br />
 
         <div className="home-links">
-          <button className="btn btn-lg btn-block btn-default">
-            <Link to="/pay">Pay Me Crypto</Link>
+        <button className="btn btn-lg btn-block btn-default">
+            <Link to="/pay">Pay or Tip Me</Link>
           </button>
           <br />
+          
           <a
-            href="https://www.github.com/davidhudman/personal-resume-site"
+            href="https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-primary"
           >
-            View Code for This Site
-          </a>
-          <br />
-          <a
-            href="https://www.github.com/davidhudman/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-default"
-          >
-            Github
+            Download Resume PDF
           </a>
           <br />
           <a
             href="https://www.linkedin.com/in/davidhudman/"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-primary"
+            className="btn btn-lg btn-block btn-default"
           >
             LinkedIn
             <i className="fab fa-linkedin"></i>
           </a>
           <br />
           <a
-            href="https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing"
+            href="https://www.github.com/davidhudman/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-primary"
+          >
+            Github
+          </a>
+          <br />
+          <a
+            href="https://www.github.com/davidhudman/personal-resume-site"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-default"
           >
-            Download Resume PDF
+            View Code for This Site
           </a>
+          <br />
+          
 
           {/* Buffer */}
-          <br />
-          <br />
 
           <h2>Projects</h2>
           <br />
@@ -85,6 +85,13 @@ const Home = () => {
             Light Speed Pacing: track lights
           </a>
           <br />
+        </div>
+
+        {/* footer */}
+        <div className="footer">
+          <p>
+            &copy; {new Date().getFullYear()} David Hudman
+          </p>
         </div>
       </div>
     </div>

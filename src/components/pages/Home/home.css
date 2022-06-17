@@ -19,3 +19,18 @@
   
     
   }
+
+  .btn-default a {
+    color: #333;
+  }
+
+  .btn-primary a {
+    color: #FFF;
+  }
+
+  .btn-default a:hover{
+    text-decoration: none;
+  }
+  .btn-primary a:hover{
+    text-decoration: none;
+  }
