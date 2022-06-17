@@ -19,6 +19,9 @@ const GMap = () => {
         category: "Restaurant",
         partnerLevel: 4,
         coordinates: { lat: 26.64435, lng: -80.08751 },
+        address: "2180 S Congress Ave Unit A, Palm Springs, FL 33406",
+        phone: "(888) 219-8045",
+        website: "commercialkitchenstop.com",
       },
       {
         name: "Oli's Fashion Cuisine",
@@ -27,6 +30,9 @@ const GMap = () => {
         category: "Restaurant",
         partnerLevel: 1,
         coordinates: { lat: 26.65018, lng: -80.21585 },
+        address: "10610 Forest Hill Blvd #20, Wellington, FL 33414",
+        phone: "(561) 792-2220",
+        website: "olisfashioncuisine.com",
       },
       {
         name: "Dibartolo's Wholesale Food Warehouse",
@@ -35,6 +41,9 @@ const GMap = () => {
         category: "Restaurant",
         partnerLevel: 3,
         coordinates: { lat: 26.69091, lng: -80.17668 },
+        address: "8140 Belvedere Rd, West Palm Beach, FL 33411",
+        phone: "(561) 814-2988",
+        website: "",
       },
       {
         name: "Marbar Grille",
@@ -43,6 +52,9 @@ const GMap = () => {
         category: "Restaurant",
         partnerLevel: 2,
         coordinates: { lat: 26.69448, lng: -80.24433 },
+        address: "2001 Crestwood Blvd N, Royal Palm Beach, FL 33411",
+        phone: "(561) 784-5225",
+        website: "",
       },
       {
         name: "Hobo's Gourmet Kitchen",
@@ -51,6 +63,9 @@ const GMap = () => {
         category: "Restaurant",
         partnerLevel: 4,
         coordinates: { lat: 26.80773, lng: -80.05936 },
+        address: "421 Northlake Blvd, North Palm Beach, FL 33408",
+        phone: "(561) 841-8305",
+        website: "hobosgourmetkitchen.net",
       },
       {
         name: "Cucina Palm Beach Gardens",
@@ -59,6 +74,9 @@ const GMap = () => {
         category: "Restaurant",
         partnerLevel: 1,
         coordinates: { lat: 26.8359586, lng: -80.131431 },
+        address: "7100 Fairway Dr, FL-786 #61A, Palm Beach Gardens, FL 33418",
+        phone: "(561) 557-9510",
+        website: "cucinapbg.com",
       },
       // { lat: 26, lng: -80 },
     ];
@@ -119,7 +137,7 @@ const GMap = () => {
     });
 
     marker.addListener("click", () => {
-      const infoWindowDescription = `<div>
+      let infoWindowDescription = `<div>
         <h3>${biz.name}</h3>
         <p>
           <strong>Category: ${biz.category}</strong>
@@ -134,7 +152,35 @@ const GMap = () => {
           <strong>Category: ${biz.category}</strong>
         </p>
       </div>`;
+
+      infoWindowDescription = `<div class="info-window">
+        ${true ? '' : '<a class="report-button" href="mailto:support@davidhudman.com?subject=Report about VendorId 1234" tabindex="0">Report</a>'}
+        <h3>${biz.name}</h3>
+        <span>${biz.address}</span>
+        <br /><br />
+        <span>${biz.phone}</span>
+        <br /><br />
+        <div class="currencies-header">Accepted currencies</div>
+        <div class="currency-list-wrapper">
+          <div class="currency">
+            <!-- <img src="https://s3.amazonaws.com/map.bitcoin.com/img/icon-bch.png" width="24" height="24" alt="Bitcoin Cash is supported"> -->
+            <span>Bitcoin Cash</span>
+          </div>
+        </div>
+        <br /><br />
+        <div class="cta">
+          <a href="tel:+1 ${biz.phone}" class="info-phone">Call</a>
+          &nbsp;&nbsp;
+          <a target="_blank" rel="noopenner noreferrer" class="web-btn" href="${biz.website}">Visit Website</a>
+          <br /><br />
+          <a class="directions-button-green" target="_blank" rel="noopenner noreferrer" href="https://maps.google.com/maps/dir//${biz.address}">
+            <h4 class="button">Directions</h4>
+          </a>          
+        </div>
+      </div>`;
       // address, phone, website, etc.
+      // may need to split the address in the link with %20
+
 
       infoWindow.setContent(infoWindowDescription);
 
