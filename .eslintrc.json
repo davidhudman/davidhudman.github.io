@@ -3,7 +3,12 @@
         "browser": true,
         "es6": true
     },
-    "extends": "airbnb",
+    "extends": [
+        "eslint:recommended",
+        "prettier",
+        "plugin:react/recommended",
+        "prettier/react"
+      ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"

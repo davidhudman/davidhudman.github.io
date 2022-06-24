@@ -5,11 +5,12 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "aws-amplify": "^4.3.26",
     "axios": "^0.27.2",
     "bootstrap": "3.4.1",
     "formik": "^2.2.9",
-    "react": "16.12.0",
-    "react-bootstrap": "0.33.1",
+    "react": "18.2.0",
+    "react-bootstrap": "2.4.0",
     "react-dom": "16.12.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "3.0.1",
@@ -17,13 +18,13 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "eslint": "^8.17.0",
     "eslint-config-airbnb": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "prettier": "2.7.1",
     "typescript": "3.3.3"
   },
   "eslintConfigOld": {
@@ -81,7 +82,9 @@
     "globalSetup": "./test/setup.js",
     "globalTeardown": "./test/teardown.js"
   },
-  "prettier": "@samuelmeuli/prettier-config",
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

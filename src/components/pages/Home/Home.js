@@ -20,17 +20,18 @@ const Home = () => {
 
         <div className="home-links">
         <button className="btn btn-lg btn-block btn-default">
-            <Link to="/pay">Pay or Tip Me</Link>
+            <Link to="/pay">Pay Me</Link>
           </button>
           <br />
-          
+          <h2>Professional</h2>
+          <br />
           <a
             href="https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-primary"
           >
-            Download Resume PDF
+            View Resume
           </a>
           <br />
           <a
@@ -52,20 +53,18 @@ const Home = () => {
             Github
           </a>
           <br />
+
+          {/* Buffer */}
+          <h2>Projects</h2>
+          <br />
           <a
             href="https://www.github.com/davidhudman/personal-resume-site"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-default"
           >
-            View Code for This Site
+            View Site Code
           </a>
-          <br />
-          
-
-          {/* Buffer */}
-
-          <h2>Projects</h2>
           <br />
           <a
             href="https://www.flylert.com"
@@ -89,9 +88,7 @@ const Home = () => {
 
         {/* footer */}
         <div className="footer">
-          <p>
-            &copy; {new Date().getFullYear()} David Hudman
-          </p>
+          <p>&copy; {new Date().getFullYear()} David Hudman</p>
         </div>
       </div>
     </div>
