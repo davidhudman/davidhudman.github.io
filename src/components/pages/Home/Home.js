@@ -19,7 +19,7 @@ const Home = () => {
         <br />
 
         <div className="home-links">
-        <button className="btn btn-lg btn-block btn-default">
+          <button className="btn btn-lg btn-block btn-default">
             <Link to="/pay">Pay Me</Link>
           </button>
           <br />
@@ -76,7 +76,7 @@ const Home = () => {
           </a>
           <br />
           <a
-            href="https:www.lightspeedpacing.com"
+            href="https://www.lightspeedpacing.com"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-info"
