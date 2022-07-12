@@ -1,12 +1,19 @@
-# Personal Resume Site
+# David Hudman - Full Stack Developer
+
+- [Resume PDF](https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing)
+- [LinkedIn](https://www.linkedin.com/in/david-hudman-b9a8b9a4/)
+- [Github](https://www.github.com/davidhudman)
+- [View Site Code](https://www.github.com/davidhudman/davidhudman.github.io)
+
+## Projects
+
+- [Flylert](https://www.flylert.com) - cheap flight emails
+- [Light Speed Pacing](https://www.lightspeedpacing.com) - track pacing lights for runners
 
 ## Goals
 
-- Accept Crypto Payments
-  - Allow users to easily pay me crypto without requiring me to manually send a new address each time
-  - Provide clean payment interface so many businesses could copy it
-  - Accept payments in Bitcoin Cash (BCH) since fees are less than a cent and confirm instantly
-- Link to LinkedIn, Github, Personal Projects, etc
+- Link to LinkedIn, Github, projects, Venmo, CashApp, etc
+- Generate unique addresses for crypto payments
 
 ## Tools / Frameworks used
 
@@ -23,7 +30,7 @@
 
 Download the repo
 
-`git clone https://github.com/davidhudman/personal-resume-site.git personal-resume-site`
+`git clone https://github.com/davidhudman/davidhudman.github.io.git davidhudman.github.io`
 
 Install the packages with yarn
 
