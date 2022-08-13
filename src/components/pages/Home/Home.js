@@ -23,15 +23,14 @@ const Home = () => {
             <Link to="/pay">Pay Me</Link>
           </button>
           <br />
-          <h2>Professional</h2>
-          <br />
+
           <a
             href="https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-primary"
           >
-            View Resume
+            Download Resume PDF
           </a>
           <br />
           <a
@@ -53,10 +52,6 @@ const Home = () => {
             Github
           </a>
           <br />
-
-          {/* Buffer */}
-          <h2>Projects</h2>
-          <br />
           <a
             href="https://www.github.com/davidhudman/personal-resume-site"
             target="_blank"
@@ -65,6 +60,11 @@ const Home = () => {
           >
             View Site Code
           </a>
+          <br />
+
+          {/* Buffer */}
+
+          <h2>Projects</h2>
           <br />
           <a
             href="https://www.flylert.com"

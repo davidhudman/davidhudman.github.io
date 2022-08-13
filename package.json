@@ -5,12 +5,11 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "aws-amplify": "^4.3.26",
     "axios": "^0.27.2",
     "bootstrap": "3.4.1",
     "formik": "^2.2.9",
-    "react": "18.2.0",
-    "react-bootstrap": "2.4.0",
+    "react": "16.12.0",
+    "react-bootstrap": "0.33.1",
     "react-dom": "16.12.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "3.0.1",
@@ -18,78 +17,14 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "eslint-config-airbnb": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0",
-    "prettier": "2.7.1",
     "typescript": "3.3.3"
-  },
-  "eslintConfigOld": {
-    "extendsOld": "react-app"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@samuelmeuli/eslint-config",
-      "plugin:jsdoc/recommended"
-    ],
-    "env": {
-      "node": true,
-      "jest": true
-    },
-    "settings": {
-      "jsdoc": {
-        "mode": "typescript"
-      }
-    },
-    "rules": {
-      "no-await-in-loop": "off",
-      "padded-blocks": "off",
-      "no-useless-catch": "off",
-      "no-unused-vars": [
-        "error",
-        {
-          "args": "none",
-          "varsIgnorePattern": "^_"
-        }
-      ],
-      "jsdoc/check-indentation": "error",
-      "jsdoc/check-syntax": "error",
-      "jsdoc/newline-after-description": [
-        "error",
-        "never"
-      ],
-      "jsdoc/require-description": "error",
-      "jsdoc/require-hyphen-before-param-description": "error",
-      "jsdoc/require-jsdoc": "off"
-    }
-  },
-  "eslintIgnore": [
-    "node_modules/",
-    "cypress/",
-    "public/",
-    "build/",
-    "src/libs/",
-    "src/hooks/",
-    "src/serviceWorker.js",
-    "src/containers/",
-    "src/components/"
-  ],
-  "jest": {
-    "globalSetup": "./test/setup.js",
-    "globalTeardown": "./test/teardown.js"
-  },
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "dont-use-this": "first use yarn run deploy and make sure that it deploys correctly to http://paydhudmanbch.s3-website-us-east-1.amazonaws.com/",
     "deploy": "react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
     "deploy:prod": "export REACT_APP_STAGE=prod && react-scripts build && aws s3 sync build/ s3://davidhudman.com",
     "demo": "export REACT_APP_STAGE=demo",

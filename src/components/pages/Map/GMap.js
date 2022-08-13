@@ -9,7 +9,7 @@ const GMap = () => {
   });
 
   useEffect(() => {
-    googleMap = initGoogleMap({ lat: 26.1975452, lng: -80.1156059 });
+    googleMap = initGoogleMap({ lat: 26.7975452, lng: -80.1156059 });
 
     const markers = [
       {
@@ -50,7 +50,7 @@ const GMap = () => {
         lastTransaction: "2022-05-20",
         transactionslast30days: "248",
         category: "Restaurant",
-        partnerLevel: 1,
+        partnerLevel: 2,
         coordinates: { lat: 26.69448, lng: -80.24433 },
         address: "2001 Crestwood Blvd N, Royal Palm Beach, FL 33411",
         phone: "(561) 784-5225",
@@ -61,7 +61,7 @@ const GMap = () => {
         lastTransaction: "2022-05-20",
         transactionslast30days: "511",
         category: "Restaurant",
-        partnerLevel: 1,
+        partnerLevel: 4,
         coordinates: { lat: 26.80773, lng: -80.05936 },
         address: "421 Northlake Blvd, North Palm Beach, FL 33408",
         phone: "(561) 841-8305",
@@ -78,51 +78,6 @@ const GMap = () => {
         phone: "(561) 557-9510",
         website: "cucinapbg.com",
       },
-      {
-        name: "Chevron Gas",
-        lastTransaction: "2022-05-20",
-        transactionslast30days: "317",
-        category: "Gasoline",
-        partnerLevel: 2,
-        coordinates: { lat: 26.028767, lng: -80.3436003 },
-        address: "14602 Sheridan St, Fort Lauderdale, FL 33330",
-        phone: "954-447-8829",
-        website: "",
-      },
-      //
-      {
-        name: "Chevron Gas",
-        lastTransaction: "2022-05-20",
-        transactionslast30days: "317",
-        category: "Gasoline",
-        partnerLevel: 2,
-        coordinates: { lat: 26.6182247, lng: -80.1140036 },
-        address: "4025 S Military Trail, Greenacres, FL 33463",
-        phone: "(678) 557-3843",
-        website: "",
-      },
-      {
-        name: "Sunoco Gas",
-        lastTransaction: "2022-05-20",
-        transactionslast30days: "513",
-        category: "Gasoline",
-        partnerLevel: 2,
-        coordinates: { lat: 25.9945114, lng: -80.234409 },
-        address: "7520 Pembroke Rd Miramar, FL 33023",
-        phone: "(954) 966-2678",
-        website: "",
-      },
-      {
-        name: "Mobil Gas",
-        lastTransaction: "2022-05-20",
-        transactionslast30days: "621",
-        category: "Gasoline",
-        partnerLevel: 2,
-        coordinates: { lat: 26.3307056, lng: -80.2037491 },
-        address: "23223 FL-7, Boca Raton, FL 33428",
-        phone: "(561) 487-2271",
-        website: "",
-      },
       // { lat: 26, lng: -80 },
     ];
 
@@ -135,7 +90,7 @@ const GMap = () => {
   const initGoogleMap = (coordinates) => {
     return new window.google.maps.Map(googleMapRef.current, {
       center: coordinates,
-      zoom: 9,
+      zoom: 10,
       gestureHandling: "auto",
       zoomControl: false,
       disableDefaultUI: true,
@@ -162,9 +117,6 @@ const GMap = () => {
     blueMarker.fillColor = "blue";
     // blueMarker.path = "";
 
-    const purpleMarker = Object.create(greenMarker);
-    purpleMarker.fillColor = "purple";
-
     const chooseIcon = (partnerLevel) => {
       switch (partnerLevel) {
         case 1:
@@ -173,8 +125,6 @@ const GMap = () => {
           return redMarker;
         case 3:
           return blueMarker;
-        case 4:
-          return purpleMarker;
         default:
           return greenMarker;
       }
@@ -204,11 +154,7 @@ const GMap = () => {
       </div>`;
 
       infoWindowDescription = `<div class="info-window">
-        ${
-          true
-            ? ""
-            : '<a class="report-button" href="mailto:support@davidhudman.com?subject=Report about VendorId 1234" tabindex="0">Report</a>'
-        }
+        ${true ? '' : '<a class="report-button" href="mailto:support@davidhudman.com?subject=Report about VendorId 1234" tabindex="0">Report</a>'}
         <h3>${biz.name}</h3>
         <span>${biz.address}</span>
         <br /><br />
@@ -225,19 +171,16 @@ const GMap = () => {
         <div class="cta">
           <a href="tel:+1 ${biz.phone}" class="info-phone">Call</a>
           &nbsp;&nbsp;
-          <a target="_blank" rel="noopenner noreferrer" class="web-btn" href="${
-            biz.website
-          }">Visit Website</a>
+          <a target="_blank" rel="noopenner noreferrer" class="web-btn" href="${biz.website}">Visit Website</a>
           <br /><br />
-          <a class="directions-button-green" target="_blank" rel="noopenner noreferrer" href="https://maps.google.com/maps/dir//${
-            biz.address
-          }">
+          <a class="directions-button-green" target="_blank" rel="noopenner noreferrer" href="https://maps.google.com/maps/dir//${biz.address}">
             <h4 class="button">Directions</h4>
           </a>          
         </div>
       </div>`;
       // address, phone, website, etc.
       // may need to split the address in the link with %20
+
 
       infoWindow.setContent(infoWindowDescription);
 
@@ -250,38 +193,6 @@ const GMap = () => {
 
   return (
     <div className="mapContainer">
-      {/* create a label key for the map to explain the colors */}
-      <div className="mapLabel">
-        <div className="mapLabel-item">
-          <div className="mapLabel-item-color green"></div>
-          <div className="mapLabel-item-text">
-            <span>Green - </span>
-            <span>Restaurants</span>
-          </div>
-        </div>
-        <div className="mapLabel-item">
-          <div className="mapLabel-item-color red"></div>
-          <div className="mapLabel-item-text">
-            <span>Red - </span>
-            <span>Gas Stations</span>
-          </div>
-        </div>
-        <div className="mapLabel-item">
-          <div className="mapLabel-item-color blue"></div>
-          <div className="mapLabel-item-text">
-            <span>Blue - </span>
-            <span>Grocery Stores</span>
-          </div>
-        </div>
-        <div className="mapLabel-item">
-          <div className="mapLabel-item-color purple"></div>
-          <div className="mapLabel-item-text">
-            <span>Purple - </span>
-            <span>Other</span>
-          </div>
-        </div>
-      </div>
-
       <div
         className="map"
         ref={googleMapRef}

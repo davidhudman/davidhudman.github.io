@@ -3,12 +3,7 @@
         "browser": true,
         "es6": true
     },
-    "extends": [
-        "eslint:recommended",
-        "prettier",
-        "plugin:react/recommended",
-        "prettier/react"
-      ],
+    "extends": "airbnb",
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -24,6 +19,5 @@
         "react"
     ],
     "rules": {
-        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
     }
 }
