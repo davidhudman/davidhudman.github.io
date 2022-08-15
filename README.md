@@ -15,22 +15,15 @@
 - Link to LinkedIn, Github, projects, Venmo, CashApp, etc
 - Generate unique addresses for crypto payments
 
-## Tools / Frameworks used
-
-- [formik](https://formik.org/docs/overview)
-- [bootstrap](https://getbootstrap.com/docs/3.4/)
-- [react-bootstrap](https://react-bootstrap.github.io/getting-started/introduction)
-- [react-dom](https://reactjs.org/docs/react-dom.html)
-- [react-router-dom](https://v5.reactrouter.com/web/guides/quick-start)
-- [yup](https://github.com/jquense/yup)
-- [Serverless Framework v1.0+](https://serverless.com/)
-- [Setup your AWS credentials](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
-
 ## Getting Started
 
 Download the repo
 
-`git clone https://github.com/davidhudman/davidhudman.github.io.git davidhudman.github.io`
+`git clone https://github.com/davidhudman/davidhudman.github.io.git davidhudman-site`
+
+Change to that directory
+
+`cd davidhudman-site`
 
 Install the packages with yarn
 
