@@ -1,5 +1,7 @@
 # David Hudman - Full Stack Developer
 
+[davidhudman.com](https://davidhudman.com)
+
 - [Resume PDF](https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing)
 - [LinkedIn](https://www.linkedin.com/in/david-hudman-b9a8b9a4/)
 - [Github](https://www.github.com/davidhudman)
@@ -10,7 +12,7 @@
 - [Flylert](https://www.flylert.com) - cheap flight emails
 - [Light Speed Pacing](https://www.lightspeedpacing.com) - track pacing lights for runners
 
-## Goals
+## Site Features
 
 - Link to LinkedIn, Github, projects, Venmo, CashApp, etc
 - Generate unique addresses for crypto payments
