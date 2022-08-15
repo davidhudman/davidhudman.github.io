@@ -13,82 +13,58 @@ const Home = () => {
   return (
     <div className="outer-home-container">
       <div className="home">
-        <h1>David Hudman</h1>
-        <h4>Full Stack Web Developer</h4>
+        <h1>Jax Social Group</h1>
+        <h4>come hang with us</h4>
 
         <br />
 
         <div className="home-links">
-          <button className="btn btn-lg btn-block btn-default">
-            <Link to="/pay">Pay Me</Link>
+          <a
+            href="https://www.meetup.com/jax-social-group-20s-30s/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-primary"
+          >
+            Upcoming Events
+          </a>
+          <br />
+          <a
+            href="https://www.facebook.com/Jax-Social-Group-102412898875152/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-default"
+          >
+            Facebook
+            <i className="fab fa-facebook"></i>
+          </a>
+          <br />
+          <a
+            href="https://www.instagram.com/jaxsocialgroup/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-primary"
+          >
+            Instagram
+          </a>
+          <br />
+          {/* <button className="btn btn-lg btn-block btn-default">
+            <Link to="/pay">Buy Merch</Link>
           </button>
-          <br />
-
-          <a
-            href="https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-primary"
-          >
-            Download Resume PDF
-          </a>
-          <br />
-          <a
-            href="https://www.linkedin.com/in/davidhudman/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-default"
-          >
-            LinkedIn
-            <i className="fab fa-linkedin"></i>
-          </a>
-          <br />
-          <a
-            href="https://www.github.com/davidhudman/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-primary"
-          >
-            Github
-          </a>
-          <br />
-          <a
-            href="https://www.github.com/davidhudman/personal-resume-site"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-default"
-          >
-            View Site Code
-          </a>
-          <br />
-
-          {/* Buffer */}
-
-          <h2>Projects</h2>
-          <br />
-          <a
-            href="https://www.flylert.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-warning"
-          >
-            Flylert: cheap flight emails
-          </a>
-          <br />
-          <a
-            href="https://www.lightspeedpacing.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-info"
-          >
-            Light Speed Pacing: track lights
-          </a>
-          <br />
+          <br /> */}
         </div>
 
         {/* footer */}
         <div className="footer">
-          <p>&copy; {new Date().getFullYear()} David Hudman</p>
+          <p>&copy; {new Date().getFullYear()} Jax Social Group</p>
+          <p>
+            <a
+              href="http://davidhudman.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Designed by David Hudman
+            </a>
+          </p>
         </div>
       </div>
     </div>
