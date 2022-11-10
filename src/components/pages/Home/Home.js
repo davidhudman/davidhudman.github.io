@@ -20,7 +20,7 @@ const Home = () => {
 
         <div className="home-links">
           <button className="btn btn-lg btn-block btn-default">
-            <Link to="/pay">Pay Me</Link>
+            <Link to="/payment">Payments</Link>
           </button>
           <br />
 
@@ -82,6 +82,15 @@ const Home = () => {
             className="btn btn-lg btn-block btn-info"
           >
             Light Speed Pacing: track lights
+          </a>
+          <br />
+          <a
+            href="http://jaxsocialgroup.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-success"
+          >
+            Jax Social Group
           </a>
           <br />
         </div>
