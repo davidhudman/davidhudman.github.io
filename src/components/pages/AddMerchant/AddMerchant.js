@@ -16,8 +16,11 @@ const AddMerchant = () => {
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    setShowQrCode(true);
-    console.log("form submitted");
+
+    console.log("form pretend submitted");
+
+    // redirect user to merchant page
+    window.location.href = "/merchant/" + merchantName;
   };
 
   return (
@@ -35,7 +38,7 @@ const AddMerchant = () => {
               type="text"
               placeholder="merchant name"
               className="form-control text-center"
-              style={{ fontSize: "24px" }}
+              style={{ fontSize: "18px" }}
               onChange={(e) => setMerchantName(e.target.value)}
             />
             <br />
@@ -48,7 +51,28 @@ const AddMerchant = () => {
               type="text"
               placeholder="merchant xpub"
               className="form-control text-center"
-              style={{ fontSize: "24px" }}
+              style={{ fontSize: "18px" }}
+            />
+            <br />
+            <br />
+
+            {/* merchant prompt.cash public token */}
+            <label className="merchantSignupLabels">
+              (Optional) to speed up this process, sign up for a free{" "}
+              <a href="prompt.cash">prompt.cash</a>, and go to their prompt.cash
+              settings page for your account, and copy your prompt.cash public
+              token. Once copied, you can paste your prompt.cash public token in
+              the box below for immmediate access to payments. Otherwise, we can
+              do it for you and it may take up to 3 days.
+              <br />
+              <br />
+              (Optional) PROMPT.CASH Public Token
+            </label>
+            <input
+              type="text"
+              placeholder="Prompt.Cash public token"
+              className="form-control text-center"
+              style={{ fontSize: "18px" }}
             />
             <br />
             <br />
@@ -62,7 +86,7 @@ const AddMerchant = () => {
               type="text"
               placeholder="merchant location"
               className="form-control text-center"
-              style={{ fontSize: "24px" }}
+              style={{ fontSize: "18px" }}
             />
             <br />
 
@@ -74,7 +98,7 @@ const AddMerchant = () => {
               type="text"
               placeholder="merchant email"
               className="form-control text-center"
-              style={{ fontSize: "24px" }}
+              style={{ fontSize: "18px" }}
             />
           </div>
           <br />

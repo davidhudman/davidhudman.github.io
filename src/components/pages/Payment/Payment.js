@@ -17,7 +17,7 @@ const Payment = () => {
 
         <div className="payment-links">
           <button className="btn btn-lg btn-block btn-default">
-            <Link to="/pay">Pay Me</Link>
+            <Link to="/pay">Donate / Pay Me</Link>
           </button>
           <br />
 
