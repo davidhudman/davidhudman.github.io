@@ -1,9 +1,10 @@
 import React, { useState } from "react"; // Fragment
 import {
-  // BrowserRouter as Router,
-  // Route,
-  // Routes,
+  BrowserRouter as Router,
+  Route,
+  Routes,
   Link,
+  useNavigate,
 } from "react-router-dom";
 import QRCode from "react-qr-code";
 
@@ -13,21 +14,25 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const AddMerchant = () => {
   const [showQrCode, setShowQrCode] = useState(false);
   const [merchantName, setMerchantName] = useState("");
+  const navigate = useNavigate();
 
   const onFormSubmit = (e) => {
     e.preventDefault();
 
+    // TODO: save form data
     console.log("form pretend submitted");
 
-    // redirect user to merchant page
-    window.location.href = "/merchant/" + merchantName;
+    // don't show QR code
+
+    // link user to merchant page
+    navigate("/merchant/" + merchantName);
   };
 
   return (
     <div className="outer-addmerchant-container">
       <div className="addmerchant">
         <div className="header">
-          <h1>Add Merchant</h1>
+          <h1>Add Bitcoin Cash Merchant</h1>
         </div>
 
         <div className="addmerchant-form">
@@ -45,7 +50,7 @@ const AddMerchant = () => {
 
             {/* merchant xpub */}
             <label className="merchantSignupLabels">
-              Enter wallet identifying public key (xpub) for this merchant:
+              Enter BCH wallet identifying public key (xpub) for this merchant:
             </label>
             <input
               type="text"

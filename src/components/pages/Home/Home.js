@@ -20,7 +20,7 @@ const Home = () => {
 
         <div className="home-links">
           <button className="btn btn-lg btn-block btn-default">
-            <Link to="/payment">Payments</Link>
+            <Link to="/payment">Crypto Payments</Link>
           </button>
           <br />
 
