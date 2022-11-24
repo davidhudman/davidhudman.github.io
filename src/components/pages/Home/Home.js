@@ -19,8 +19,11 @@ const Home = () => {
         <br />
 
         <div className="home-links">
-          <button className="btn btn-lg btn-block btn-default">
-            <Link to="/payment">Crypto Payments</Link>
+          <button
+            className="btn btn-lg btn-block btn-default"
+            style={{ fontSize: "18px" }}
+          >
+            <Link to="/payment">Free Bitcoin Cash Register v0.0.1</Link>
           </button>
           <br />
 
@@ -29,6 +32,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-primary"
+            style={{ fontSize: "18px" }}
           >
             Download Resume PDF
           </a>
@@ -38,6 +42,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-default"
+            style={{ fontSize: "18px" }}
           >
             LinkedIn
             <i className="fab fa-linkedin"></i>
@@ -48,6 +53,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-primary"
+            style={{ fontSize: "18px" }}
           >
             Github
           </a>
@@ -57,6 +63,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-default"
+            style={{ fontSize: "18px" }}
           >
             View Site Code
           </a>
@@ -71,6 +78,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-warning"
+            style={{ fontSize: "18px" }}
           >
             Flylert: cheap flight emails
           </a>
@@ -80,6 +88,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-info"
+            style={{ fontSize: "18px" }}
           >
             Light Speed Pacing: track lights
           </a>
@@ -89,6 +98,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-success"
+            style={{ fontSize: "18px" }}
           >
             Jax Social Group
           </a>

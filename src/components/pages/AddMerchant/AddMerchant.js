@@ -14,18 +14,62 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const AddMerchant = () => {
   const [showQrCode, setShowQrCode] = useState(false);
   const [merchantName, setMerchantName] = useState("");
+  const [xPub, setXPub] = useState("");
+  const [location, setLocation] = useState("");
+  const [email, setEmail] = useState("");
+  const [promptCashPublicToken, setPromptCashPublicToken] = useState("");
   const navigate = useNavigate();
 
   const onFormSubmit = (e) => {
     e.preventDefault();
 
-    // TODO: save form data
-    console.log("form pretend submitted");
+    console.log("form submit start");
 
-    // don't show QR code
+    // get current date and time in milliseconds
+    const now = new Date().getTime();
+
+    // remove spaces and special characters from merchant name
+    const merchantNameNoSpaces = merchantName.replace(/[^a-zA-Z0-9]/g, "");
+
+    // generate a unique unique merchant id
+    const merchantId =
+      merchantNameNoSpaces + now + Math.floor(Math.random() * 1000000000);
+
+    // log form data
+    console.log("merchantName: ", merchantName);
+    console.log("xPub: ", xPub);
+    console.log("location: ", location);
+    console.log("email: ", email);
+    console.log("promptCashPublicToken: ", promptCashPublicToken);
+
+    // submit form data to JSONbin.io
+    fetch(
+      "https://j8tmnngcj5.execute-api.us-east-1.amazonaws.com/default/bchMerchant01",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          merchantName,
+          xPub,
+          location,
+          email,
+          promptCashPublicToken,
+          merchantId,
+          merchantNameNoSpaces,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("data: ", data);
+        console.log("data.id: ", data.id);
+        console.log("data.version: ", data.version);
+      });
 
     // link user to merchant page
-    navigate("/merchant/" + merchantName);
+    navigate("/merchant/" + merchantNameNoSpaces);
   };
 
   return (
@@ -57,6 +101,7 @@ const AddMerchant = () => {
               placeholder="merchant xpub"
               className="form-control text-center"
               style={{ fontSize: "18px" }}
+              onChange={(e) => setXPub(e.target.value)}
             />
             <br />
             <br />
@@ -65,10 +110,12 @@ const AddMerchant = () => {
             <label className="merchantSignupLabels">
               (Optional) to speed up this process, sign up for a free{" "}
               <a href="prompt.cash">prompt.cash</a>, and go to their prompt.cash
-              settings page for your account, and copy your prompt.cash public
-              token. Once copied, you can paste your prompt.cash public token in
-              the box below for immmediate access to payments. Otherwise, we can
-              do it for you and it may take up to 3 days.
+              Dashboard Page for your account, go to the Account Page, and copy
+              your prompt.cash "public token" found near the bottom of the page.
+              It's roughly 10-15 characters long and looks similar to this
+              "608-eiDIZuKh". Once copied, you can paste your prompt.cash public
+              token in the box below for immmediate access to payments.
+              Otherwise, we can do it for you and it may take up to 3 days.
               <br />
               <br />
               (Optional) PROMPT.CASH Public Token
@@ -78,6 +125,7 @@ const AddMerchant = () => {
               placeholder="Prompt.Cash public token"
               className="form-control text-center"
               style={{ fontSize: "18px" }}
+              onChange={(e) => setPromptCashPublicToken(e.target.value)}
             />
             <br />
             <br />
@@ -92,6 +140,7 @@ const AddMerchant = () => {
               placeholder="merchant location"
               className="form-control text-center"
               style={{ fontSize: "18px" }}
+              onChange={(e) => setLocation(e.target.value)}
             />
             <br />
 
@@ -104,6 +153,7 @@ const AddMerchant = () => {
               placeholder="merchant email"
               className="form-control text-center"
               style={{ fontSize: "18px" }}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <br />

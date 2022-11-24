@@ -125,10 +125,13 @@ export default function Merchant() {
             <p>
               To speed up this process, sign up for a free{" "}
               <a href="prompt.cash">prompt.cash</a>, and go to their prompt.cash
-              settings page for your account, and copy your prompt.cash public
-              token. Once copied, you can sign up here again and provide us with
-              your prompt.cash public token for immmediate access to payments.
-              Otherwise, we can do it for you and it may take up to 3 days.
+              Dashboard Page for your account, go to the Account Page, and copy
+              your prompt.cash "public token" found near the bottom of the page.
+              It's roughly 10-15 characters long and looks similar to this
+              "608-eiDIZuKh". Once copied, you can sign up here again and
+              provide us with your prompt.cash public token for immmediate
+              access to payments. Otherwise, we can do it for you and it may
+              take up to 3 days.
             </p>
             <br />
             <br />

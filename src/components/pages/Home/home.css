@@ -5,7 +5,13 @@
     margin: 0 auto;
     text-align: center;
   }
-  
+
+  /* set font size for all button elements on page */
+  .btn {
+    font-size: '18px';
+  }
+
+
   .outer-home-container {
     /* display: flex; */
     /* flex-direction: column; */
