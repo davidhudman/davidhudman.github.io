@@ -120,7 +120,7 @@ export default function Merchant() {
     return (
       <div className="Merchant">
         {/* Title */}
-        <h1>BCH Merchant: {merchantId}</h1>
+        <h1>Crypto Merchant: {merchantId}</h1>
         <br />
 
         {/* link to payment page */}

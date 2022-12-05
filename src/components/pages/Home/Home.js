@@ -20,18 +20,10 @@ const Home = () => {
 
         <div className="home-links">
           <button
-            className="btn btn-lg btn-block btn-primary"
-            style={{ fontSize: "18px" }}
-          >
-            <Link to="/pay">Donate / Pay Me</Link>
-          </button>
-          <br />
-
-          <button
             className="btn btn-lg btn-block btn-default"
             style={{ fontSize: "18px" }}
           >
-            <Link to="/payment">Free Bitcoin Cash Register v0.0.1</Link>
+            <Link to="/pay">Donate / Pay Me</Link>
           </button>
           <br />
 
@@ -82,6 +74,15 @@ const Home = () => {
           <h2>Projects</h2>
           <br />
           <a
+            href="/payment"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-success"
+            style={{ fontSize: "18px" }}
+          >
+            Free Bitcoin Cash Register v0.0.5
+          </a>
+          <br />
+          <a
             href="https://www.flylert.com"
             target="_blank"
             rel="noopener noreferrer"
@@ -105,7 +106,7 @@ const Home = () => {
             href="http://jaxsocialgroup.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-success"
+            className="btn btn-lg btn-block btn-danger"
             style={{ fontSize: "18px" }}
           >
             Jax Social Group

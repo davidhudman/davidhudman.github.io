@@ -17,7 +17,7 @@ export default function PrintMerchantQr() {
   return (
     <div className="Merchant">
       {/* Title */}
-      <h1>BCH Merchant: {merchantName}</h1>
+      <h1>Crypto Merchant: {merchantName}</h1>
       <br />
 
       {/* QR Code */}

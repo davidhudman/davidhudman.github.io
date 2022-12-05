@@ -22,16 +22,19 @@ import PrintMerchantQr from "./components/pages/PrintMerchantQr/PrintMerchantQr"
 import Map from "./components/pages/Map/Map";
 import Terms from "./components/pages/Terms/Terms";
 import Privacy from "./components/pages/Privacy/Privacy";
+import StrawPurchase from "./components/pages/StrawPurchase/StrawPurchase";
 
 const App = () => (
   <Router>
     <Fragment>
       <NavbarCustom />
       <Routes>
+        {/* fix react router for when user navigates to a specific link */}
         <Route exact path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/pay" element={<Pay />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/strawpurchase" element={<StrawPurchase />} />
         <Route path="/add-merchant" element={<AddMerchant />} />
         <Route path="/paybch" element={<App1 />} />
         <Route path="/merchant/:merchantId" element={<Merchant />} />

@@ -31,6 +31,11 @@ const Payment = () => {
           </button>
           <br />
 
+          <button className="btn btn-lg btn-block btn-primary">
+            <Link to="/strawpurchase">Straw Purchase Merchants</Link>
+          </button>
+          <br />
+
           <br />
         </div>
 

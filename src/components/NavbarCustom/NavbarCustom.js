@@ -44,10 +44,10 @@ const NavbarCustom = () => {
             <NavLink to="/pay">Pay Me</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink to="/map">BCH Merchant Map</NavLink>
+            <NavLink to="/map">Crypto Merchant Map</NavLink>
           </NavItem>
           {/* Login or Logout depending on status */}
-          
+
           {/* <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
             <MenuItem eventKey={3.1}>Action</MenuItem>
             <MenuItem eventKey={3.2}>Another action</MenuItem>
