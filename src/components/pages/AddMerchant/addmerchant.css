@@ -6,6 +6,20 @@
 
   }
 
+  /* red text for merchantNameNotAvailable */
+  .merchantNameNotAvailable {
+    color: red;
+    /* add some space on the left side */
+    padding-left: 10px;
+  }
+
+  /* green text for merchantNameAvailable */
+  .merchantNameAvailable {
+    color: green;
+    /* add some space on the left side */
+    padding-left: 10px;
+  }
+
   /* center go-to-merchant-page class */
   .go-to-merchant-page, .print-qr {
     text-align: center;

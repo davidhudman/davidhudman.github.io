@@ -18,7 +18,75 @@ const AddMerchant = () => {
   const [location, setLocation] = useState("");
   const [email, setEmail] = useState("");
   const [promptCashPublicToken, setPromptCashPublicToken] = useState("");
+  const [merchantNameAvailable, setMerchantNameAvailable] = useState(null);
   const navigate = useNavigate();
+
+  const getMerchantNameAvailableLabel = () => {
+    return (
+      <>
+        {merchantNameAvailable === false && (
+          <>
+            {/* show red text if merchant name not available */}
+            <div className="merchantNameNotAvailable">
+              <p>Merchant name not available</p>
+            </div>
+          </>
+        )}
+
+        {merchantNameAvailable === true && (
+          <>
+            {/* show green text if merchant name is available */}
+            <div className="merchantNameAvailable">
+              <p>Merchant name available</p>
+            </div>
+          </>
+        )}
+
+        {merchantNameAvailable === null && (
+          <>
+            {/* placeholder */}
+            <div>
+              <p>&nbsp;</p>
+            </div>
+          </>
+        )}
+      </>
+    );
+  };
+
+  const handleBlur = (e) => {
+    // check if merchant name is available
+    // make a GET request to see if merchantId exists
+    const merchantNameNoSpaces = merchantName.replace(/[^a-zA-Z0-9]/g, "");
+    // if merchant name is not blank
+    if (merchantNameNoSpaces !== "") {
+      fetch(
+        `https://j8tmnngcj5.execute-api.us-east-1.amazonaws.com/default/bchMerchant01?merchantId=${merchantNameNoSpaces}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("finished GET request");
+          console.log("data: ", data);
+          console.log("data.id: ", data.id);
+          console.log("data.version: ", data.version);
+          if (data.merchantId === merchantNameNoSpaces) {
+            console.log("merchant exists");
+            setMerchantNameAvailable(false);
+          }
+
+          if (data.merchantId !== merchantNameNoSpaces) {
+            console.log("merchant does not exist");
+            setMerchantNameAvailable(true);
+          }
+        });
+    }
+  };
 
   const onFormSubmit = (e) => {
     e.preventDefault();
@@ -31,9 +99,11 @@ const AddMerchant = () => {
     // remove spaces and special characters from merchant name
     const merchantNameNoSpaces = merchantName.replace(/[^a-zA-Z0-9]/g, "");
 
-    // generate a unique unique merchant id
-    const merchantId =
-      merchantNameNoSpaces + now + Math.floor(Math.random() * 1000000000);
+    let merchantId = merchantNameNoSpaces;
+    if (merchantNameAvailable !== true) {
+      // generate a unique unique merchant id
+      merchantId = merchantNameNoSpaces + now + Math.floor(Math.random() * 100);
+    }
 
     // log form data
     console.log("merchantName: ", merchantName);
@@ -42,7 +112,6 @@ const AddMerchant = () => {
     console.log("email: ", email);
     console.log("promptCashPublicToken: ", promptCashPublicToken);
 
-    // submit form data to JSONbin.io
     fetch(
       "https://j8tmnngcj5.execute-api.us-east-1.amazonaws.com/default/bchMerchant01",
       {
@@ -69,7 +138,7 @@ const AddMerchant = () => {
       });
 
     // link user to merchant page
-    navigate("/merchant/" + merchantNameNoSpaces);
+    navigate("/merchant/" + merchantId);
   };
 
   return (
@@ -89,7 +158,9 @@ const AddMerchant = () => {
               className="form-control text-center"
               style={{ fontSize: "18px" }}
               onChange={(e) => setMerchantName(e.target.value)}
+              onBlur={(e) => handleBlur()}
             />
+            {/* {getMerchantNameAvailableLabel()} */}
             <br />
 
             {/* merchant xpub */}

@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Fragment
+import React, { useState, useEffect } from "react"; // Fragment
 import {
   // BrowserRouter as Router,
   // Route,
@@ -20,6 +20,28 @@ export default function Merchant() {
   const [showPrintQr, setShowPrintQr] = useState(false);
   const [hasPromptCashPublicToken, setHasPromptCashPublicToken] =
     useState(false);
+  const [promptCashPublicToken, setPromptCashPublicToken] = useState("");
+  const [merchantData, setMerchantData] = useState({});
+
+  // GET the merchant's data from the server
+  const getMerchantData = async () => {
+    const response = await fetch(
+      `https://j8tmnngcj5.execute-api.us-east-1.amazonaws.com/default/bchMerchant01?merchantId=${merchantId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    setMerchantData(data);
+  };
+
+  // GET the merchant's data from the server
+  useEffect(() => {
+    getMerchantData();
+  }, [merchantId]);
 
   const changeInvoiceAmount = (e) => {
     if (isNaN(e.target.value) || e.target.value <= 0) {
@@ -117,7 +139,8 @@ export default function Merchant() {
           <br />
         </div>
 
-        {!hasPromptCashPublicToken ? (
+        {merchantData.promptCashPublicToken &&
+        merchantData.promptCashPublicToken.length > 6 ? null : (
           <div>
             <h1 style={{ color: "red" }}>
               Payments will be available within 72 hours of processing
@@ -136,38 +159,44 @@ export default function Merchant() {
             <br />
             <br />
           </div>
-        ) : null}
+        )}
 
         {/* QR Code */}
         <div className="qr-code">
+          {/* full link text */}
+          <div className="qr-code-text">
+            <label className="lb-lg" style={{ fontSize: "24px" }}>
+              davidhudman.com/merchant/{merchantId}
+            </label>
+          </div>
           <QRCode value={"/merchant/" + merchantId} />
         </div>
 
         {/* Instructions */}
+        <h2>Instructions</h2>
         <div className="instructions">
-          <h2>Instructions</h2>
-          <p>1. Have staff members scan this QR code with their phone.</p>
-
           <p>
-            2. They will be taken to a page where they can enter the amount of
-            BCH owed by the customer. They can also enter a tip amount.
+            1. <b>STAFF</b>: scan this QR code with your phone.
           </p>
 
           <p>
-            3. A new barcode will be generated for payment. The employee should
-            leave their phone on this screen while the customer scans it with
-            their BCH wallet app and confirms payment.
+            2. <b>STAFF</b>: on the webpage, enter the amount of crypto owed by
+            the customer. They can also enter a tip amount.
           </p>
 
           <p>
-            4. The customer will be asked to confirm the amount of BCH to be
-            paid.
+            3. <b>STAFF</b>: A new barcode will be generated for payment to show
+            to the customer. Please leave your phone on this screen while the
+            customer scans it with their crypto wallet app and confirms payment.
           </p>
 
           <p>
-            5. After the customer confirms the payment, the merchant will see a
-            green checkmark if they left their phone on the screen they asked
-            the customer to scan.
+            4. <b>CUSTOMER</b>: confirm/send the amount of crypto requested
+          </p>
+
+          <p>
+            5. <b>STAFF</b>: look for the green checkmark on your screen after
+            the customer pays
           </p>
         </div>
       </div>
@@ -175,10 +204,16 @@ export default function Merchant() {
   };
 
   const getMerchantPage = () => {
+    // useEffect(() => {
+    //   const getMerchant = async () => {
+    //     const merchantFromServer = await fetchMerchant(merchantId);
+    //     setMerchant(merchantFromServer);
+    //   };
+    // }, []);
     return (
       <div className="Merchant">
         {/* Title */}
-        <h1>Pay Merchant: {merchantId}</h1>
+        <h1>Pay Merchant: {merchantData.merchantName}</h1>
         <br />
 
         {/* link to print merchant page */}
@@ -272,35 +307,55 @@ export default function Merchant() {
       <br /> */}
 
         {/* Pay Button Section */}
-        <form
-          name="prompt-cash-form"
-          action="https://prompt.cash/pay"
-          method="get"
-        >
-          <input type="hidden" name="token" value="608-eiDIZuKh" />
-          <input type="hidden" name="tx_id" value={Date.now()} />
-          <input type="hidden" name="amount" value={getTotalAmount()} />
-          <input type="hidden" name="currency" value="USD" />
-          <input type="hidden" name="desc" value={forWhat} />
-          {/* <input type="hidden" name="return" value="http://pay.flylert.com" /> */}
-          {/* <input
+        {merchantData.promptCashPublicToken &&
+        merchantData.promptCashPublicToken.length > 6 ? (
+          <form
+            name="prompt-cash-form"
+            action="https://prompt.cash/pay"
+            method="get"
+          >
+            <input
+              type="hidden"
+              name="token"
+              value={merchantData.promptCashPublicToken}
+            />
+            <input type="hidden" name="tx_id" value={Date.now()} />
+            <input type="hidden" name="amount" value={getTotalAmount()} />
+            <input type="hidden" name="currency" value="USD" />
+            <input type="hidden" name="desc" value={forWhat} />
+            {/* <input type="hidden" name="return" value="http://pay.flylert.com" /> */}
+            {/* <input
             type="hidden"
             name="callback"
             value="http://your-store.com/api/v1/update-payment"
           /> */}
-          <button
-            type="submit"
-            className={
-              showPayButton
-                ? "btn btn-block btn-lg btn-success payBtn"
-                : "btn btn-block btn-lg btn-warning payBtn"
-            }
-            disabled={!showPayButton}
-            style={{ fontSize: "36px" }}
-          >
-            Pay ${getTotalAmount()}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className={
+                showPayButton
+                  ? "btn btn-block btn-lg btn-success payBtn"
+                  : "btn btn-block btn-lg btn-warning payBtn"
+              }
+              disabled={!showPayButton}
+              style={{ fontSize: "36px" }}
+            >
+              Pay ${getTotalAmount()}
+            </button>
+          </form>
+        ) : (
+          <div>
+            <h3 style={{ color: "red", fontWeight: "bold" }}>
+              Missing Prompt Cash Public Token
+            </h3>
+            <p>
+              Payments will be disabled until the prompt cash token is added.
+            </p>
+            <p>
+              If you provided your xpub without a prompt cash public token, this
+              is normal. It will be added manually by our team within 72 hours.
+            </p>
+          </div>
+        )}
       </div>
     );
   };
