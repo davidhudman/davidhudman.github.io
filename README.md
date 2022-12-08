@@ -21,10 +21,6 @@
 
 Phase 2:
 
-- create api call that checks if merchant exists already before taking user to next page
-  - on merchant form submit (return that merchant already exists - but maybe allow them to create it anyway with a unique ID that I generate automatically)
-  - on merchant page if merchant exists, return the prompt cash public token
-
 issues:
 
 - still getting 502 errors but merchant is successfully submitted
@@ -41,6 +37,13 @@ Phase 1:
   - merchant page
 - (DONE) submit success screen should show message that it will be processed in 48 hours
 - (DONE) for additional privacy (and speedier signup), merchants can simply create a prompt cash account and provide their own public token
+
+Phase 2:
+
+- (DONE) create api call that checks if merchant exists already before taking user to next page
+  - (DONE) on merchant form submit (return that merchant already exists - but maybe allow them to create it anyway with a unique ID that I generate automatically)
+  - (DONE) on merchant page if merchant exists, return the prompt cash public token
+  - (DONE) fix issues with link routing when user navigates to a specific page
 
 ## Getting Started
 
