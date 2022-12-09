@@ -16,11 +16,13 @@ const StrawPurchase = () => {
   const [isShowTip, setIsShowTip] = useState(true);
   const [tipCustomAmount, setTipCustomAmount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [formEnabled, setFormEnabled] = useState(true);
+  const [formEnabled, setFormEnabled] = useState(false);
   const [showCustomTip, setShowCustomTip] = useState(false);
   const [email, setEmail] = useState("");
   const [qrCodeLink, setQrCodeLink] = useState("");
   const [refundAddress, setRefundAddress] = useState("");
+  const [password, setPassword] = useState("");
+  const [orderNumber, setOrderNumber] = useState("");
 
   const onFormSubmit = (e) => {
     e.preventDefault();
@@ -33,6 +35,8 @@ const StrawPurchase = () => {
       email,
       qrCodeLink,
       refundAddress,
+      password,
+      orderNumber,
     };
 
     // send the payment request to the server
@@ -168,6 +172,40 @@ const StrawPurchase = () => {
           {/* form with text box for QR code link */}
           <div className="strawpurchase-form">
             <form>
+              {/* password */}
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <br />
+                <small id="password-help" className="form-text text-muted">
+                  While the site is still in beta, you need the password to
+                  purchase. If you don't have it, don't try to guess it. Contact
+                  us instead and we will put you on a waiting list.
+                </small>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  placeholder="Enter Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              {/* order number */}
+              <div className="form-group">
+                <label htmlFor="order-number">Order Number</label>
+                <br />
+                <small id="order-number-help" className="form-text text-muted">
+                  Enter the order number on your check (bill).
+                </small>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="order-number"
+                  placeholder="Enter Order Number"
+                  onChange={(e) => setOrderNumber(e.target.value)}
+                />
+              </div>
+
               {/* email */}
               <div className="form-group">
                 <label htmlFor="email">Email</label>

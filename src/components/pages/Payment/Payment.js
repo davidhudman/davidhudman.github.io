@@ -32,7 +32,7 @@ const Payment = () => {
           <br />
 
           <button className="btn btn-lg btn-block btn-primary">
-            <Link to="/strawpurchase">Agent Purchase Merchants</Link>
+            <Link to="/agentpurchase">Agent Purchase Merchants</Link>
           </button>
           <br />
 
