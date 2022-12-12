@@ -23,6 +23,14 @@ const StrawPurchase = () => {
   const [refundAddress, setRefundAddress] = useState("");
   const [password, setPassword] = useState("");
   const [orderNumber, setOrderNumber] = useState("");
+  const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
+
+  const unlockParagraphClickHandler = (e) => {
+    setUnlockParagraphClickCount(unlockParagraphClickCount + 1);
+    if (unlockParagraphClickCount >= 3) {
+      setFormEnabled(true);
+    }
+  };
 
   const onFormSubmit = (e) => {
     e.preventDefault();
@@ -355,7 +363,7 @@ const StrawPurchase = () => {
           will pay the restaurant bill on your behalf.
         </p>
         <br />
-        <p>
+        <p onClick={unlockParagraphClickHandler}>
           The restaurant will not know that you paid with crypto, and you will
           not have to give them your credit card or cash. If they ask, just say
           that you paid through the QR code on the receipt.
