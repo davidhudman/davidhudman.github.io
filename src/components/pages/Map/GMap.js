@@ -119,12 +119,12 @@ const GMap = () => {
 
     const chooseIcon = (partnerLevel) => {
       switch (partnerLevel) {
-        case 1:
-          return greenMarker;
-        case 2:
-          return redMarker;
-        case 3:
-          return blueMarker;
+        // case 1:
+        //   return greenMarker;
+        // case 2:
+        //   return redMarker;
+        // case 3:
+        //   return blueMarker;
         default:
           return greenMarker;
       }
@@ -154,7 +154,11 @@ const GMap = () => {
       </div>`;
 
       infoWindowDescription = `<div class="info-window">
-        ${true ? '' : '<a class="report-button" href="mailto:support@davidhudman.com?subject=Report about VendorId 1234" tabindex="0">Report</a>'}
+        ${
+          true
+            ? ""
+            : '<a class="report-button" href="mailto:support@davidhudman.com?subject=Report about VendorId 1234" tabindex="0">Report</a>'
+        }
         <h3>${biz.name}</h3>
         <span>${biz.address}</span>
         <br /><br />
@@ -171,16 +175,19 @@ const GMap = () => {
         <div class="cta">
           <a href="tel:+1 ${biz.phone}" class="info-phone">Call</a>
           &nbsp;&nbsp;
-          <a target="_blank" rel="noopenner noreferrer" class="web-btn" href="${biz.website}">Visit Website</a>
+          <a target="_blank" rel="noopenner noreferrer" class="web-btn" href="${
+            biz.website
+          }">Visit Website</a>
           <br /><br />
-          <a class="directions-button-green" target="_blank" rel="noopenner noreferrer" href="https://maps.google.com/maps/dir//${biz.address}">
+          <a class="directions-button-green" target="_blank" rel="noopenner noreferrer" href="https://maps.google.com/maps/dir//${
+            biz.address
+          }">
             <h4 class="button">Directions</h4>
           </a>          
         </div>
       </div>`;
       // address, phone, website, etc.
       // may need to split the address in the link with %20
-
 
       infoWindow.setContent(infoWindowDescription);
 
