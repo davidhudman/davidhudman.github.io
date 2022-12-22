@@ -8,6 +8,7 @@ import {
 
 import "./strawpurchase.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect } from "react";
 
 const StrawPurchase = () => {
   const [whichTipPercentageChecked, setWhichTipPercentageChecked] =
@@ -17,13 +18,28 @@ const StrawPurchase = () => {
   const [tipCustomAmount, setTipCustomAmount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [formEnabled, setFormEnabled] = useState(false);
-  const [showCustomTip, setShowCustomTip] = useState(false);
+  const [showPromptCashPayButton, setShowPromptCashPayButton] = useState(false);
+  const [showCustomTip, setShowCustomTip] = useState(true);
+  const [showPercentageTip, setShowPercentageTip] = useState(false);
   const [email, setEmail] = useState("");
   const [qrCodeLink, setQrCodeLink] = useState("");
   const [refundAddress, setRefundAddress] = useState("");
   const [password, setPassword] = useState("");
   const [orderNumber, setOrderNumber] = useState("");
+  const [customOrderId, setCustomOrderId] = useState(null);
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
+
+  // useEffect for totalAmount
+  useEffect(() => {
+    console.log("totalAmount", totalAmount);
+    // show prompt.cash QR code
+    if (totalAmount > 0) {
+      setShowPromptCashPayButton(true);
+    }
+    if (customOrderId) {
+      setCustomOrderId(customOrderId);
+    }
+  }, [totalAmount, customOrderId]);
 
   const unlockParagraphClickHandler = (e) => {
     setUnlockParagraphClickCount(unlockParagraphClickCount + 1);
@@ -48,10 +64,18 @@ const StrawPurchase = () => {
     };
 
     // send the payment request to the server
-    fetch("/api/agentpurchase", {
+    // local endpoint
+    const invoiceApi = {
+      local: "http://localhost:3001/invoice",
+    };
+
+    fetch(invoiceApi.local, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // access-control-allow-origin: *
+
+        // "Access-Control-Allow-Origin": "*", // this is the important part
       },
       body: JSON.stringify(paymentRequest),
     })
@@ -60,6 +84,8 @@ const StrawPurchase = () => {
         (data) => {
           console.log("data", data);
           setFormEnabled(false);
+          setTotalAmount(data.body.totalAfterTip);
+          setCustomOrderId(data.body.customOrderId);
         } // end of .then()
       ); // end of fetch()
   };
@@ -83,73 +109,75 @@ const StrawPurchase = () => {
           />
         </div> */}
         {/* tip percentage buttons */}
-        <div className="form-group">
-          <label htmlFor="tip-percentage">Tip Percentage</label>
-          <br />
-          <div className="btn-group btn-group-toggle" data-toggle="buttons">
-            <label className="btn btn-secondary active">
-              <input
-                type="radio"
-                name="options"
-                id="option0"
-                autoComplete="off"
-                defaultChecked
-                value="0"
-                onClick={tipPercentageClickHandler}
-              />{" "}
-              0%
-            </label>
-            <label className="btn btn-secondary">
-              <input
-                type="radio"
-                name="options"
-                id="option15"
-                autoComplete="off"
-                value="15"
-                onClick={tipPercentageClickHandler}
-              />{" "}
-              15%
-            </label>
-            <label className="btn btn-secondary">
-              <input
-                type="radio"
-                name="options"
-                id="option18"
-                autoComplete="off"
-                value="18"
-                onClick={tipPercentageClickHandler}
-              />{" "}
-              18%
-            </label>
-            <label className="btn btn-secondary">
-              <input
-                type="radio"
-                name="options"
-                id="option20"
-                autoComplete="off"
-                value="20"
-                onClick={tipPercentageClickHandler}
-              />{" "}
-              20%
-            </label>
-            <label className="btn btn-secondary">
-              <input
-                type="radio"
-                name="options"
-                id="optionother"
-                autoComplete="off"
-                value=""
-                onClick={tipPercentageClickHandler}
-              />{" "}
-              other
-            </label>
+        {showPercentageTip ? (
+          <div className="form-group">
+            <label htmlFor="tip-percentage">Tip Percentage</label>
+            <br />
+            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+              <label className="btn btn-secondary active">
+                <input
+                  type="radio"
+                  name="options"
+                  id="option0"
+                  autoComplete="off"
+                  defaultChecked
+                  value="0"
+                  onClick={tipPercentageClickHandler}
+                />{" "}
+                0%
+              </label>
+              <label className="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="options"
+                  id="option15"
+                  autoComplete="off"
+                  value="15"
+                  onClick={tipPercentageClickHandler}
+                />{" "}
+                15%
+              </label>
+              <label className="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="options"
+                  id="option18"
+                  autoComplete="off"
+                  value="18"
+                  onClick={tipPercentageClickHandler}
+                />{" "}
+                18%
+              </label>
+              <label className="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="options"
+                  id="option20"
+                  autoComplete="off"
+                  value="20"
+                  onClick={tipPercentageClickHandler}
+                />{" "}
+                20%
+              </label>
+              <label className="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="options"
+                  id="optionother"
+                  autoComplete="off"
+                  value=""
+                  onClick={tipPercentageClickHandler}
+                />{" "}
+                other
+              </label>
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {/* tip amount */}
         {showCustomTip ? (
           <div className="form-group">
-            <label htmlFor="tip-amount">Custom Tip Amount (in dollars)</label>
+            <label htmlFor="tip-amount">Tip Amount (in USD dollars)</label>
             <br />
 
             <input
@@ -350,6 +378,38 @@ const StrawPurchase = () => {
         </div>
 
         {getAgentPurchaseForm()}
+        {showPromptCashPayButton ? (
+          <div>
+            <p>
+              If you would like to pay with Bitcoin, please click the button
+              below.
+            </p>
+            <form
+              name="prompt-cash-form"
+              action="https://prompt.cash/pay"
+              method="get"
+            >
+              <input type="hidden" name="token" value="608-eiDIZuKh" />
+              <input type="hidden" name="tx_id" value={customOrderId} />
+              <input type="hidden" name="amount" value={totalAmount} />
+              <input type="hidden" name="currency" value="USD" />
+              <input type="hidden" name="desc" value="Your Product" />
+              <input
+                type="hidden"
+                name="return"
+                value="http://localhost:3000/agentpurchase"
+              />
+              {/* <input
+                type="hidden"
+                name="callback"
+                value="http://your-store.com/api/v1/update-payment"
+              /> */}
+              <button type="submit" class="btn btn-primary">
+                Pay ${totalAmount} with BitcoinCash (BCH)
+              </button>
+            </form>
+          </div>
+        ) : null}
 
         <br />
         <br />
