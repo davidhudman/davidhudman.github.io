@@ -26,6 +26,8 @@ issues:
 - still getting 502 errors but merchant is successfully submitted
 - still need to check if merchant exists before taking user to next page
 - if merchant exists, give them a similar ID or ask them to create a new one
+- Agent Purchase page: maybe change callback later to something that can process it
+- Order Received Screen: still needs confirmation of final credit card payment (should look the same-ish)
 
 Completed Tasks:
 

@@ -23,6 +23,8 @@ import Map from "./components/pages/Map/Map";
 import Terms from "./components/pages/Terms/Terms";
 import Privacy from "./components/pages/Privacy/Privacy";
 import StrawPurchase from "./components/pages/StrawPurchase/StrawPurchase";
+import Wallet from "./components/pages/Wallet/Wallet";
+import OrderReceived from "./components/pages/OrderReceived/OrderReceived";
 
 const App = () => (
   <Router>
@@ -34,11 +36,16 @@ const App = () => (
         <Route path="/home" element={<Home />} />
         <Route path="/pay" element={<Pay />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/bitcoin" element={<Payment />} />
+        <Route path="/cash" element={<Payment />} />
+        <Route path="/wallet" element={<Wallet />} />
         <Route path="/strawpurchase" element={<StrawPurchase />} />
         <Route path="/agentpurchase" element={<StrawPurchase />} />
+        <Route path="/agent" element={<StrawPurchase />} />
         <Route path="/add-merchant" element={<AddMerchant />} />
         <Route path="/paybch" element={<App1 />} />
         <Route path="/merchant/:merchantId" element={<Merchant />} />
+        <Route path="/order-received/:id" element={<OrderReceived />} />
         <Route path="/printqr/:merchantName" element={<PrintMerchantQr />} />
         <Route path="/map" element={<Map />} />
         {/* If you ever change /privacy or /tos - update google cloud app links for those */}

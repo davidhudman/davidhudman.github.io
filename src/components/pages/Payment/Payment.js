@@ -36,6 +36,15 @@ const Payment = () => {
           </button>
           <br />
 
+          {/* Create a bitcoin wallet */}
+          <button
+            className="btn btn-lg btn-block btn-default"
+            style={{ fontSize: "18px" }}
+          >
+            <Link to="/wallet">Get Started / Create a Bitcoin Wallet</Link>
+          </button>
+          <br />
+
           <br />
         </div>
 

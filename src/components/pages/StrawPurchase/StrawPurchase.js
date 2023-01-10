@@ -68,6 +68,8 @@ const StrawPurchase = () => {
     // local endpoint
     const invoiceApi = {
       local: "http://localhost:3001/invoice",
+      local2:
+        "https://jaa93rm7ah.execute-api.us-east-1.amazonaws.com/default/bchInvoice",
       production:
         "https://jaa93rm7ah.execute-api.us-east-1.amazonaws.com/default/bchInvoice",
     };
@@ -87,9 +89,9 @@ const StrawPurchase = () => {
         (data) => {
           console.log("data", data);
           setFormEnabled(false);
-          setTotalAmount(data.body.totalAfterTip);
-          setCustomOrderId(data.body.customOrderId);
-          if (data.body.totalAfterTip > 0) {
+          setTotalAmount(data.totalAfterTip);
+          setCustomOrderId(data.customOrderId);
+          if (data.totalAfterTip > 0) {
             setShowPromptCashPayButton(true);
           }
         } // end of .then()
@@ -396,16 +398,25 @@ const StrawPurchase = () => {
               method="get"
             >
               <input type="hidden" name="token" value="608-eiDIZuKh" />
-              <input type="hidden" name="tx_id" value={customOrderId} />
+              <input
+                type="hidden"
+                name="tx_id"
+                value={customOrderId + "-" + orderNumber}
+              />
               <input type="hidden" name="amount" value={totalAmount} />
               <input type="hidden" name="currency" value="USD" />
-              <input type="hidden" name="desc" value="Your Product" />
+              <input type="hidden" name="desc" value={orderNumber} />
               {env === "production" ? (
                 <>
                   <input
                     type="hidden"
                     name="return"
-                    value="https://davidhudman.com/agentpurchase"
+                    value={
+                      "https://davidhudman.com/order-received/" +
+                      customOrderId +
+                      "-" +
+                      orderNumber
+                    }
                   />
                 </>
               ) : (
@@ -413,20 +424,21 @@ const StrawPurchase = () => {
                   <input
                     type="hidden"
                     name="return"
-                    value="http://localhost:3000/agentpurchase"
+                    value={
+                      "http://localhost:3000/order-received/" +
+                      customOrderId +
+                      "-" +
+                      orderNumber
+                    }
                   />
                 </>
               )}
-              {/* TODO: */}
-              {/*  obviously local won't work because prompt.cash can't hit my localhost */}
-              {/* so just get a new POST service on lambda and point it to it */}
-              <input
+              {/* <input
                 type="hidden"
                 name="callback"
-                value="https://jaa93rm7ah.execute-api.us-east-1.amazonaws.com/default/bchInvoice"
-                method="PUT"
-              />
-              <button type="submit" class="btn btn-primary">
+                value="https://076riutd1i.execute-api.us-east-1.amazonaws.com/default/bchMerchant01"
+              /> */}
+              <button type="submit" className="btn btn-primary">
                 Pay ${totalAmount} with BitcoinCash (BCH)
               </button>
             </form>
