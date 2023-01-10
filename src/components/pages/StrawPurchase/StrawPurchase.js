@@ -28,6 +28,7 @@ const StrawPurchase = () => {
   const [orderNumber, setOrderNumber] = useState("");
   const [customOrderId, setCustomOrderId] = useState(null);
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
+  const [env, setEnv] = useState("production");
 
   // useEffect for totalAmount
   useEffect(() => {
@@ -67,9 +68,11 @@ const StrawPurchase = () => {
     // local endpoint
     const invoiceApi = {
       local: "http://localhost:3001/invoice",
+      production:
+        "https://jaa93rm7ah.execute-api.us-east-1.amazonaws.com/default/bchInvoice",
     };
 
-    fetch(invoiceApi.local, {
+    fetch(invoiceApi[env], {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -86,6 +89,9 @@ const StrawPurchase = () => {
           setFormEnabled(false);
           setTotalAmount(data.body.totalAfterTip);
           setCustomOrderId(data.body.customOrderId);
+          if (data.body.totalAfterTip > 0) {
+            setShowPromptCashPayButton(true);
+          }
         } // end of .then()
       ); // end of fetch()
   };
@@ -394,16 +400,32 @@ const StrawPurchase = () => {
               <input type="hidden" name="amount" value={totalAmount} />
               <input type="hidden" name="currency" value="USD" />
               <input type="hidden" name="desc" value="Your Product" />
+              {env === "production" ? (
+                <>
+                  <input
+                    type="hidden"
+                    name="return"
+                    value="https://davidhudman.com/agentpurchase"
+                  />
+                </>
+              ) : (
+                <>
+                  <input
+                    type="hidden"
+                    name="return"
+                    value="http://localhost:3000/agentpurchase"
+                  />
+                </>
+              )}
+              {/* TODO: */}
+              {/*  obviously local won't work because prompt.cash can't hit my localhost */}
+              {/* so just get a new POST service on lambda and point it to it */}
               <input
                 type="hidden"
-                name="return"
-                value="http://localhost:3000/agentpurchase"
-              />
-              {/* <input
-                type="hidden"
                 name="callback"
-                value="http://your-store.com/api/v1/update-payment"
-              /> */}
+                value="https://jaa93rm7ah.execute-api.us-east-1.amazonaws.com/default/bchInvoice"
+                method="PUT"
+              />
               <button type="submit" class="btn btn-primary">
                 Pay ${totalAmount} with BitcoinCash (BCH)
               </button>
