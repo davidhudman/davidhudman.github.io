@@ -41,6 +41,9 @@ const App = () => (
         <Route path="/wallet" element={<Wallet />} />
         <Route path="/strawpurchase" element={<StrawPurchase />} />
         <Route path="/agentpurchase" element={<StrawPurchase />} />
+        <Route path="/agent-purchase" element={<StrawPurchase />} />
+        <Route path="/proxy-purchase" element={<StrawPurchase />} />
+        <Route path="/proxy" element={<StrawPurchase />} />
         <Route path="/agent" element={<StrawPurchase />} />
         <Route path="/add-merchant" element={<AddMerchant />} />
         <Route path="/paybch" element={<App1 />} />
