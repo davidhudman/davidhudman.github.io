@@ -1,14 +1,14 @@
-import React, { useState } from "react"; // Fragment
+import React, { useState, useEffect } from "react"; // Fragment
 import {
   // BrowserRouter as Router,
   // Route,
   // Routes,
   Link,
 } from "react-router-dom";
+import { ProgressBar } from "react-bootstrap";
 
 import "./strawpurchase.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect } from "react";
 
 const StrawPurchase = () => {
   const [whichTipPercentageChecked, setWhichTipPercentageChecked] =
@@ -17,7 +17,7 @@ const StrawPurchase = () => {
   const [isShowTip, setIsShowTip] = useState(true);
   const [tipCustomAmount, setTipCustomAmount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [formEnabled, setFormEnabled] = useState(false);
+  const [formEnabled, setFormEnabled] = useState(true);
   const [showPromptCashPayButton, setShowPromptCashPayButton] = useState(false);
   const [showCustomTip, setShowCustomTip] = useState(true);
   const [showPercentageTip, setShowPercentageTip] = useState(false);
@@ -29,6 +29,8 @@ const StrawPurchase = () => {
   const [customOrderId, setCustomOrderId] = useState(null);
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
   const [env, setEnv] = useState("production");
+  const [invoiceError, setInvoiceError] = useState(null);
+  const [progressBarValue, setProgressBarValue] = useState(0);
 
   // useEffect for totalAmount
   useEffect(() => {
@@ -49,9 +51,20 @@ const StrawPurchase = () => {
     }
   };
 
+  // setTimeout to update the progressBarValue by 1 every 100ms
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (progressBarValue < 100) {
+        setProgressBarValue(progressBarValue + 1);
+      }
+    }, 300);
+    return () => clearInterval(interval);
+  }, [progressBarValue]);
+
   const onFormSubmit = (e) => {
     e.preventDefault();
     setFormEnabled(false);
+    setProgressBarValue(0);
 
     // build the payment request
     const paymentRequest = {
@@ -69,9 +82,9 @@ const StrawPurchase = () => {
     const invoiceApi = {
       local: "http://localhost:3001/invoice",
       local2:
-        "https://jaa93rm7ah.execute-api.us-east-1.amazonaws.com/default/bchInvoice",
+        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
       production:
-        "https://jaa93rm7ah.execute-api.us-east-1.amazonaws.com/default/bchInvoice",
+        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
     };
 
     fetch(invoiceApi[env], {
@@ -80,7 +93,7 @@ const StrawPurchase = () => {
         "Content-Type": "application/json",
         // access-control-allow-origin: *
 
-        // "Access-Control-Allow-Origin": "*", // this is the important part
+        "Access-Control-Allow-Origin": "*", // this is the important part
       },
       body: JSON.stringify(paymentRequest),
     })
@@ -93,6 +106,30 @@ const StrawPurchase = () => {
           setCustomOrderId(data.customOrderId);
           if (data.totalAfterTip > 0) {
             setShowPromptCashPayButton(true);
+          }
+
+          // if data.error is set, set the error message to invoiceError
+          if (data.error) {
+            switch (data.error) {
+              case "Order number not found":
+                setInvoiceError("Please enter an order number.");
+                break;
+              case "no_email":
+                setInvoiceError("Please enter an email.");
+                break;
+              case "no_refund_address":
+                setInvoiceError("Please enter a refund address.");
+                break;
+              case "no_tip_percentage":
+                setInvoiceError("Please enter a tip percentage.");
+                break;
+              case "no_tip_amount":
+                setInvoiceError("Please enter a tip amount.");
+                break;
+              default:
+                setInvoiceError(data.error);
+                break;
+            }
           }
         } // end of .then()
       ); // end of fetch()
@@ -221,9 +258,7 @@ const StrawPurchase = () => {
                 <label htmlFor="password">Password</label>
                 <br />
                 <small id="password-help" className="form-text text-muted">
-                  While the site is still in beta, you need the password to
-                  purchase. If you don't have it, don't try to guess it. Contact
-                  us instead and we will put you on a waiting list.
+                  <a href="">Click here</a> to be placed on a waiting list.
                 </small>
                 <input
                   type="password"
@@ -253,6 +288,14 @@ const StrawPurchase = () => {
               {/* email */}
               <div className="form-group">
                 <label htmlFor="email">Email</label>
+                <br />
+                <small id="email-help" className="form-text text-muted">
+                  To send you payment confirmation that we receive from the
+                  restaurant. View the confirmation email before leaving just in
+                  case payment fails for some reason. Or just put your order
+                  number into the restaurant{"'"}s website to see if it still
+                  exists.
+                </small>
                 <input
                   type="email"
                   className="form-control"
@@ -261,16 +304,18 @@ const StrawPurchase = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="qr-code-link">QR Code Link</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="qr-code-link"
-                  placeholder="Enter QR Code Link"
-                  onChange={(e) => setQrCodeLink(e.target.value)}
-                />
-              </div>
+              {unlockParagraphClickCount >= 3 ? (
+                <div className="form-group">
+                  <label htmlFor="qr-code-link">QR Code Link</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="qr-code-link"
+                    placeholder="Enter QR Code Link"
+                    onChange={(e) => setQrCodeLink(e.target.value)}
+                  />
+                </div>
+              ) : null}
               {/* refund address */}
               <div className="form-group">
                 <label htmlFor="refund-address">Refund Address</label>
@@ -365,32 +410,60 @@ const StrawPurchase = () => {
     <div className="outer-home-container">
       <div className="home">
         <h1>Agent Purchases</h1>
-        <h4>Send a QR-enabled receipt & crypto, and we pay the restaurant.</h4>
-
-        <br />
+        <strong>
+          Send a QR-enabled receipt & crypto. We pay the restaurant.
+        </strong>
 
         <div>
-          <p>
-            Be sure to provide us with your email so we can send you payment
-            confirmation that we receive from the restaurant. And view the
-            confirmation email before leaving just in case payment fails for
-            some reason.
-          </p>
           <hr />
           <h3>Accepted Restaurants</h3>
-          <p>Cracker Barrel coming soon</p>
+          <p>Cracker Barrel</p>
+          <p>...more coming soon</p>
+          <p>
+            suggest restaurants with QR code payment receipts by{" "}
+            <a href="">clicking here</a>.
+          </p>
 
           <hr />
 
-          <br />
+          {/* Error Message Display Div */}
+          {invoiceError ? (
+            <div id="error-message" className="alert alert-danger" role="alert">
+              <strong>Error!</strong> {invoiceError}
+            </div>
+          ) : null}
+
+          {!showPromptCashPayButton &&
+          !formEnabled &&
+          !invoiceError &&
+          !totalAmount ? (
+            <>
+              <div
+                id="loading-message"
+                className="alert alert-info"
+                role="alert"
+              >
+                <strong>
+                  If you are not shown the payment button within 30 seconds,
+                  please refresh the page and try again.
+                </strong>
+              </div>
+              {/* create a loading spinner with inline css */}
+              <ProgressBar
+                now={progressBarValue}
+                label={`${progressBarValue}%`}
+              />
+              ;
+            </>
+          ) : null}
         </div>
 
         {getAgentPurchaseForm()}
         {showPromptCashPayButton ? (
           <div>
             <p>
-              If you would like to pay with Bitcoin, please click the button
-              below.
+              If you would like to pay with BitcoinCash (BCH), please click the
+              button below.
             </p>
             <form
               name="prompt-cash-form"
@@ -439,22 +512,22 @@ const StrawPurchase = () => {
                 value="https://076riutd1i.execute-api.us-east-1.amazonaws.com/default/bchMerchant01"
               /> */}
               <button type="submit" className="btn btn-primary">
-                Pay ${totalAmount} with BitcoinCash (BCH)
+                Pay ${totalAmount.toFixed(2)} with BitcoinCash (BCH)
               </button>
             </form>
           </div>
         ) : null}
 
         <br />
-        <br />
+        <hr />
 
         <p>
-          Agent purchases are a way to pay for your meal at a restaurant that
-          has QR code payments on their bill. You can pay for your meal by
-          asking for your bill and scanning it with your phone. Then you can
-          send the link to us, and we will request the equivalent amount of
-          crypto from you. Once we receive right amount of crypto from you, we
-          will pay the restaurant bill on your behalf.
+          Agent purchases (or proxy purchases) are a way to pay for your meal at
+          a restaurant that has QR code payments on their bill. You can pay for
+          your meal by asking for your bill and scanning it with your phone.
+          Then you can send the order number to us, and we will request the
+          equivalent amount of crypto from you. Once we receive right amount of
+          crypto from you, we will pay the restaurant bill on your behalf.
         </p>
         <br />
         <p onClick={unlockParagraphClickHandler}>
@@ -464,8 +537,8 @@ const StrawPurchase = () => {
         </p>
         <p>
           If you have suggestions for restaurants that we should add to our list
-          who accept QR code payments, please let me know by reaching out to me
-          on <a href="https://www.linkedin.com/in/davidhudman/">My LinkedIn</a>.
+          who accept QR code payment receipts, let us know by{" "}
+          <a href="">clicking here</a>..
         </p>
         <br />
 
