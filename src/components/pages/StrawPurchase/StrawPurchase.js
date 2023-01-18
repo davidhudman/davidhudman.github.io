@@ -51,10 +51,10 @@ const StrawPurchase = () => {
     }
   };
 
-  // setTimeout to update the progressBarValue by 1 every 100ms
+  // setTimeout to update the progressBarValue by 1 every 300ms
   useEffect(() => {
     const interval = setInterval(() => {
-      if (progressBarValue < 100) {
+      if (progressBarValue !== 99) {
         setProgressBarValue(progressBarValue + 1);
       }
     }, 300);
@@ -112,7 +112,9 @@ const StrawPurchase = () => {
           if (data.error) {
             switch (data.error) {
               case "Order number not found":
-                setInvoiceError("Please enter an order number.");
+                setInvoiceError(
+                  "Your order number was not found. If it was paid already, this is normal. If it was not paid, please check with the staff at the merchant to see if it has been paid."
+                );
                 break;
               case "no_email":
                 setInvoiceError("Please enter an email.");
@@ -258,7 +260,8 @@ const StrawPurchase = () => {
                 <label htmlFor="password">Password</label>
                 <br />
                 <small id="password-help" className="form-text text-muted">
-                  <a href="">Click here</a> to be placed on a waiting list.
+                  <a href="/waiting-list-agent-purchase">Click here</a> to be
+                  placed on a waiting list.
                 </small>
                 <input
                   type="password"
@@ -417,11 +420,16 @@ const StrawPurchase = () => {
         <div>
           <hr />
           <h3>Accepted Restaurants</h3>
-          <p>Cracker Barrel</p>
-          <p>...more coming soon</p>
           <p>
-            suggest restaurants with QR code payment receipts by{" "}
-            <a href="">clicking here</a>.
+            Cracker Barrel
+            <br />
+            Another Broken Egg Cafe (coming soon)
+            <br />
+            ...more coming soon
+          </p>
+          <p>
+            Suggest restaurants who have QR code payment receipts by{" "}
+            <a href="/new-restaurant-agent">clicking here</a>.
           </p>
 
           <hr />
@@ -449,11 +457,7 @@ const StrawPurchase = () => {
                 </strong>
               </div>
               {/* create a loading spinner with inline css */}
-              <ProgressBar
-                now={progressBarValue}
-                label={`${progressBarValue}%`}
-              />
-              ;
+              <ProgressBar now={progressBarValue} animated />
             </>
           ) : null}
         </div>
@@ -538,7 +542,7 @@ const StrawPurchase = () => {
         <p>
           If you have suggestions for restaurants that we should add to our list
           who accept QR code payment receipts, let us know by{" "}
-          <a href="">clicking here</a>..
+          <a href="/new-restaurant-agent">clicking here</a>.
         </p>
         <br />
 
