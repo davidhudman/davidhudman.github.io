@@ -73,8 +73,35 @@ const OrderReceived = () => {
   return (
     <div className="outer-home-container">
       <div className="home">
-        <h1>Order ID:</h1>
-        <h2>{id}</h2>
+        {/* title */}
+        <h1 className="home-title">Order Status Page</h1>
+
+        {/* orderID */}
+        <h3>Order ID: {id.split("-")[1]}</h3>
+
+        {/* crypto payment status */}
+        <h3>
+          Crypto Payment Status:
+          {cryptoPaymentStatus === "PAID" && (
+            <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
+          )}
+          {cryptoPaymentStatus === "UNPAID" && (
+            <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
+          )}
+        </h3>
+
+        {/* credit card payment status */}
+        <h3>
+          Credit Card Payment Status:
+          {creditCardPaymentStatus === "PAID" && (
+            <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
+          )}
+          {creditCardPaymentStatus === "UNPAID" && (
+            <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
+          )}
+        </h3>
+
+        {/* progress bar */}
         {cryptoPaymentStatus === "loading" && (
           <div>
             <h3>Loading Payment Status</h3>
@@ -86,28 +113,6 @@ const OrderReceived = () => {
               />
             </div>
           </div>
-        )}
-        <h2>Crypto Payment Status:</h2>
-        {cryptoPaymentStatus === "PAID" && (
-          <h3 style={{ color: "green", fontSize: "48px", fontWeight: "bold" }}>
-            PAID
-          </h3>
-        )}
-        {cryptoPaymentStatus === "UNPAID" && (
-          <h3 style={{ color: "red", fontSize: "48px", fontWeight: "bold" }}>
-            UNPAID
-          </h3>
-        )}
-        <h2>Credit Card Payment Status:</h2>
-        {creditCardPaymentStatus === "PAID" && (
-          <h3 style={{ color: "green", fontSize: "48px", fontWeight: "bold" }}>
-            PAID
-          </h3>
-        )}
-        {creditCardPaymentStatus === "UNPAID" && (
-          <h3 style={{ color: "red", fontSize: "48px", fontWeight: "bold" }}>
-            UNPAID
-          </h3>
         )}
       </div>
     </div>
