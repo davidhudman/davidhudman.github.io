@@ -132,7 +132,8 @@ const StrawPurchase = () => {
       qrCodeLink,
       refundAddress,
       password,
-      orderNumber,
+      // remove the dash from orderNumber
+      orderNumber: orderNumber.replace(/-/g, ""),
     };
 
     // send the payment request to the server
@@ -643,11 +644,15 @@ const StrawPurchase = () => {
               <input
                 type="hidden"
                 name="tx_id"
-                value={customOrderId + "-" + orderNumber}
+                value={customOrderId + "-" + orderNumber.replace(/-/g, "")}
               />
               <input type="hidden" name="amount" value={totalAmount} />
               <input type="hidden" name="currency" value="USD" />
-              <input type="hidden" name="desc" value={orderNumber} />
+              <input
+                type="hidden"
+                name="desc"
+                value={orderNumber.replace(/-/g, "")}
+              />
               {env === "production" ? (
                 <>
                   <input
@@ -657,7 +662,7 @@ const StrawPurchase = () => {
                       "https://davidhudman.com/order-received/" +
                       customOrderId +
                       "-" +
-                      orderNumber
+                      orderNumber.replace(/-/g, "")
                     }
                   />
                 </>
@@ -670,7 +675,7 @@ const StrawPurchase = () => {
                       "http://localhost:3000/agent/" +
                       customOrderId +
                       "-" +
-                      orderNumber
+                      orderNumber.replace(/-/g, "")
                     }
                   />
                 </>
