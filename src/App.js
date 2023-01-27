@@ -47,6 +47,7 @@ const App = () => (
         <Route path="/proxy-purchase" element={<StrawPurchase />} />
         <Route path="/proxy" element={<StrawPurchase />} />
         <Route path="/agent" element={<StrawPurchase />} />
+        <Route path="/agent/:id" element={<StrawPurchase />} />
         <Route
           path="/waiting-list-agent-purchase"
           element={<FormWaitingList />}

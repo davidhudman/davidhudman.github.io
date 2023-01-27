@@ -4,6 +4,7 @@ import {
   // Route,
   // Routes,
   Link,
+  useParams,
 } from "react-router-dom";
 import { ProgressBar } from "react-bootstrap";
 
@@ -31,9 +32,61 @@ const StrawPurchase = () => {
   const [env, setEnv] = useState("production");
   const [invoiceError, setInvoiceError] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+  const [cryptoPaymentStatus, setCryptoPaymentStatus] = useState(null);
+  const [creditCardPaymentStatus, setCreditCardPaymentStatus] = useState(null);
+  const [merchant, setMerchant] = useState("cracker barrel");
+  const [viewStatusOfAnExistingOrder, setViewStatusOfAnExistingOrder] =
+    useState(false);
+
+  // useParams to get the id
+  const { id } = useParams();
+
+  // useEffect for id
+  useEffect(() => {
+    if (id && id.length > 0) {
+      setFormEnabled(false);
+      setPaymentStatus("loading");
+      setCryptoPaymentStatus("loading");
+      setCreditCardPaymentStatus("loading");
+      console.log("StrawPurchase.js useEffect() id: ", id);
+      // fetch the order from the prompt cash get-payment api
+      fetch(
+        `https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2?tx=${id}`,
+        {
+          method: "GET",
+          // fix cors error
+          // mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json",
+            //   fix cors error
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      )
+        .then((res) => {
+          console.log("StrawPurchase.js useEffect() res: ", res);
+          return res.json();
+        })
+        .then((data) => {
+          console.log("StrawPurchase.js useEffect() data: ", data);
+          // TODO: get the credit card and crypto payment status of the order - if pending, display the progress bar
+          if (data.cryptoPaymentReceived) {
+            setCryptoPaymentStatus(data.cryptoPaymentReceived);
+          }
+          if (data.creditCardPaymentStatus) {
+            setCreditCardPaymentStatus(data.creditCardPaymentStatus);
+          }
+        })
+        .catch((err) => {
+          console.log("StrawPurchase.js useEffect() err: ", err);
+        });
+    }
+  }, [id]);
 
   // useEffect for totalAmount
   useEffect(() => {
+    // console.log("StrawPurchase.js id: ", id);
     console.log("totalAmount", totalAmount);
     // show prompt.cash QR code
     if (totalAmount > 0) {
@@ -61,6 +114,10 @@ const StrawPurchase = () => {
     return () => clearInterval(interval);
   }, [progressBarValue]);
 
+  const checkExistingOrderStatus = (e) => {
+    e.preventDefault();
+  };
+
   const onFormSubmit = (e) => {
     e.preventDefault();
     setFormEnabled(false);
@@ -68,6 +125,7 @@ const StrawPurchase = () => {
 
     // build the payment request
     const paymentRequest = {
+      merchant,
       tipCustomAmount,
       tipPercentage,
       email,
@@ -86,6 +144,8 @@ const StrawPurchase = () => {
       production:
         "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
     };
+
+    // return null;
 
     fetch(invoiceApi[env], {
       method: "POST",
@@ -255,13 +315,28 @@ const StrawPurchase = () => {
           {/* form with text box for QR code link */}
           <div className="strawpurchase-form">
             <form>
+              {/* restaurant select dropdown */}
+              <div className="form-group">
+                <label htmlFor="restaurant">Restaurant</label>
+                <br />
+                <small id="restaurant-help" className="form-text text-muted">
+                  Select who you want to purchase from, more coming soon!
+                </small>
+                <select
+                  className="form-control"
+                  id="restaurant"
+                  onChange={(e) => setMerchant(e.target.value)}
+                >
+                  <option value="cracker barrel">Cracker Barrel</option>
+                </select>
+              </div>
               {/* password */}
               <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <br />
                 <small id="password-help" className="form-text text-muted">
                   <a href="/waiting-list-agent-purchase">Click here</a> to be
-                  placed on a waiting list.
+                  placed on a waiting list
                 </small>
                 <input
                   type="password"
@@ -277,7 +352,7 @@ const StrawPurchase = () => {
                 <label htmlFor="order-number">Order Number</label>
                 <br />
                 <small id="order-number-help" className="form-text text-muted">
-                  Enter the order number on your check (bill).
+                  Enter the order number on your check (bill)
                 </small>
                 <input
                   type="text"
@@ -294,11 +369,14 @@ const StrawPurchase = () => {
                 <br />
                 <small id="email-help" className="form-text text-muted">
                   To send you payment confirmation that we receive from the
-                  restaurant. View the confirmation email before leaving just in
+                  restaurant
+                  {/* View the confirmation email before leaving just in
                   case payment fails for some reason. Or just put your order
                   number into the restaurant{"'"}s website to see if it still
-                  exists.
+                  exists. */}
                 </small>
+                {/* add a "read more" link to read another paragraph */}
+
                 <input
                   type="email"
                   className="form-control"
@@ -328,8 +406,8 @@ const StrawPurchase = () => {
                   id="refund-address-help"
                   className="form-text text-muted"
                 >
-                  If there is a problem with your payment, we will send your
-                  refund to this address.
+                  If there's a problem with your payment, we'll refund this
+                  bitcoin address
                 </small>
                 <input
                   type="text"
@@ -409,6 +487,96 @@ const StrawPurchase = () => {
     // setTotalAmount(total_amount);
   };
 
+  const getPaymentStatusDiv = () => {
+    return (
+      <div className="outer-home-container">
+        <div className="home">
+          {/* orderID */}
+          <h3>Order ID: {id}</h3>
+
+          {/* crypto payment status */}
+          <h3>
+            Crypto Payment Status:
+            {cryptoPaymentStatus === "PAID" && (
+              <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
+            )}
+            {cryptoPaymentStatus === "UNPAID" && (
+              <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
+            )}
+            {cryptoPaymentStatus === "loading" && (
+              <span style={{ color: "grey", fontWeight: "bold" }}>LOADING</span>
+            )}
+          </h3>
+
+          {/* credit card payment status */}
+          <h3>
+            Credit Card Payment Status:
+            {creditCardPaymentStatus === "PAID" && (
+              <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
+            )}
+            {creditCardPaymentStatus === "UNPAID" && (
+              <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
+            )}
+            {creditCardPaymentStatus === "loading" && (
+              <span style={{ color: "grey", fontWeight: "bold" }}>LOADING</span>
+            )}
+          </h3>
+
+          {/* progress bar */}
+          {(cryptoPaymentStatus === "loading" ||
+            creditCardPaymentStatus === "loading") && (
+            <div>
+              <h3>Loading Payment Status</h3>
+              <p>May take up to 30 seconds.</p>
+              <div>
+                <ProgressBar
+                  now={progressBarValue}
+                  label={`${progressBarValue}%`}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const checkExistingOrderStatusForm = () => {
+    return (
+      <div className="outer-home-container">
+        <div className="home">
+          <h3>Check Status of an Existing Order</h3>
+          <p>
+            <small>
+              <a
+                href="#"
+                onClick={(e) => setViewStatusOfAnExistingOrder(false)}
+              >
+                or submit a new order
+              </a>
+            </small>
+          </p>
+          <form onSubmit={checkExistingOrderStatus}>
+            <div className="form-group">
+              <label htmlFor="order-numbrer">Order Number</label>
+              <input
+                type="text"
+                className="form-control"
+                id="order-number"
+                aria-describedby="order-number"
+                placeholder="Enter Order Number"
+                onChange={(e) => setOrderNumber(e.target.value)}
+              />
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Check Status
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="outer-home-container">
       <div className="home">
@@ -417,22 +585,22 @@ const StrawPurchase = () => {
           Send a QR-enabled receipt & crypto. We pay the restaurant.
         </strong>
 
+        {viewStatusOfAnExistingOrder ? checkExistingOrderStatusForm() : null}
+
+        <br />
+        <br />
+        <h3>Submit Your Order to be Paid Below</h3>
+        {/* small text */}
+        <p>
+          <small onClick={(e) => setViewStatusOfAnExistingOrder(true)}>
+            <a href="#">or view status of an existing order</a>
+          </small>
+        </p>
+
         <div>
           <hr />
-          <h3>Accepted Restaurants</h3>
-          <p>
-            Cracker Barrel
-            <br />
-            Another Broken Egg Cafe (coming soon)
-            <br />
-            ...more coming soon
-          </p>
-          <p>
-            Suggest restaurants who have QR code payment receipts by{" "}
-            <a href="/new-restaurant-agent">clicking here</a>.
-          </p>
 
-          <hr />
+          {paymentStatus !== null ? getPaymentStatusDiv() : null}
 
           {/* Error Message Display Div */}
           {invoiceError ? (
@@ -444,7 +612,8 @@ const StrawPurchase = () => {
           {!showPromptCashPayButton &&
           !formEnabled &&
           !invoiceError &&
-          !totalAmount ? (
+          !totalAmount &&
+          !creditCardPaymentStatus ? (
             <>
               <div
                 id="loading-message"
@@ -465,10 +634,6 @@ const StrawPurchase = () => {
         {getAgentPurchaseForm()}
         {showPromptCashPayButton ? (
           <div>
-            <p>
-              If you would like to pay with BitcoinCash (BCH), please click the
-              button below.
-            </p>
             <form
               name="prompt-cash-form"
               action="https://prompt.cash/pay"
@@ -502,7 +667,7 @@ const StrawPurchase = () => {
                     type="hidden"
                     name="return"
                     value={
-                      "http://localhost:3000/order-received/" +
+                      "http://localhost:3000/agent/" +
                       customOrderId +
                       "-" +
                       orderNumber
@@ -510,19 +675,44 @@ const StrawPurchase = () => {
                   />
                 </>
               )}
-              {/* <input
+              <input
                 type="hidden"
                 name="callback"
-                value="https://076riutd1i.execute-api.us-east-1.amazonaws.com/default/bchMerchant01"
-              /> */}
+                value="https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
+              />
               <button type="submit" className="btn btn-primary">
                 Pay ${totalAmount.toFixed(2)} with BitcoinCash (BCH)
               </button>
+              <hr />
+              {/* display red warning text below */}
+              <p style={{ color: "red", maxWidth: "600px" }}>
+                <strong>
+                  <ol>
+                    <li>On the next page, you will send your payment</li>
+                    <li>
+                      After you make your payment, wait for the green checkmark
+                      confirmation
+                    </li>
+                    <li>
+                      If there is no green checkmark within 30 seconds, refresh
+                      the page
+                    </li>
+                    <li>
+                      Once you see it turn green, your order is paid. You will
+                      then be taken back to our site and see confirmation.
+                    </li>
+                  </ol>
+                </strong>
+              </p>
             </form>
           </div>
         ) : null}
 
-        <br />
+        <hr />
+        <p>
+          More restaurants coming soon! Suggest restaurants who have QR code
+          payment receipts by <a href="/new-restaurant-agent">clicking here</a>.
+        </p>
         <hr />
 
         <p>
