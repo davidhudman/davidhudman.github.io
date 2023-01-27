@@ -126,7 +126,8 @@ const StrawPurchase = () => {
     // build the payment request
     const paymentRequest = {
       merchant,
-      tipCustomAmount,
+      // remove dollar sign and commas from tipCustomAmount
+      tipCustomAmount: tipCustomAmount.replace(/[$,]/g, ""),
       tipPercentage,
       email,
       qrCodeLink,
@@ -408,7 +409,7 @@ const StrawPurchase = () => {
                   className="form-text text-muted"
                 >
                   If there's a problem with your payment, we'll refund this
-                  bitcoin address
+                  bitcoin cash address
                 </small>
                 <input
                   type="text"
@@ -690,7 +691,7 @@ const StrawPurchase = () => {
               </button>
               <hr />
               {/* display red warning text below */}
-              <p style={{ color: "red", maxWidth: "600px" }}>
+              <p>
                 <strong>
                   <ol>
                     <li>On the next page, you will send your payment</li>
@@ -698,9 +699,10 @@ const StrawPurchase = () => {
                       After you make your payment, wait for the green checkmark
                       confirmation
                     </li>
-                    <li>
-                      If there is no green checkmark within 30 seconds, refresh
-                      the page
+                    <li style={{ color: "red" }}>
+                      On the next page if there is no green checkmark within 30
+                      seconds of payment, refresh the page until you see the
+                      green checkmark confirmation
                     </li>
                     <li>
                       Once you see it turn green, your order is paid. You will
