@@ -12,11 +12,18 @@ import "./strawpurchase.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const StrawPurchase = () => {
+  const steps = [
+    "orderNum",
+    "tipEtc",
+    "confirmation",
+    "payment",
+    "orderReceived",
+  ];
   const [whichTipPercentageChecked, setWhichTipPercentageChecked] =
     useState("option0");
   const [tipPercentage, setTipPercentage] = useState(0);
   const [isShowTip, setIsShowTip] = useState(true);
-  const [tipCustomAmount, setTipCustomAmount] = useState(0);
+  const [tipCustomAmount, setTipCustomAmount] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
   const [formEnabled, setFormEnabled] = useState(true);
   const [showPromptCashPayButton, setShowPromptCashPayButton] = useState(false);
@@ -36,8 +43,12 @@ const StrawPurchase = () => {
   const [cryptoPaymentStatus, setCryptoPaymentStatus] = useState(null);
   const [creditCardPaymentStatus, setCreditCardPaymentStatus] = useState(null);
   const [merchant, setMerchant] = useState("cracker barrel");
-  const [viewStatusOfAnExistingOrder, setViewStatusOfAnExistingOrder] =
+  const [step, setStep] = useState(steps[0]);
+  const [showAgentPurchasesText, setShowAgentPurchasesText] = useState(false);
+  const [showRestaurantSuggestionsText, setShowRestaurantSuggestionsText] =
     useState(false);
+  const [checkIfOrderExistsButtonEnabled, setCheckIfOrderExistsButtonEnabled] =
+    useState(true);
 
   // useParams to get the id
   const { id } = useParams();
@@ -49,7 +60,7 @@ const StrawPurchase = () => {
       setPaymentStatus("loading");
       setCryptoPaymentStatus("loading");
       setCreditCardPaymentStatus("loading");
-      console.log("StrawPurchase.js useEffect() id: ", id);
+      console.log("useEffect() id: ", id);
       // fetch the order from the prompt cash get-payment api
       fetch(
         `https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2?tx=${id}`,
@@ -65,11 +76,11 @@ const StrawPurchase = () => {
         }
       )
         .then((res) => {
-          console.log("StrawPurchase.js useEffect() res: ", res);
+          console.log("useEffect() res: ", res);
           return res.json();
         })
         .then((data) => {
-          console.log("StrawPurchase.js useEffect() data: ", data);
+          console.log("useEffect() data: ", data);
           // TODO: get the credit card and crypto payment status of the order - if pending, display the progress bar
           if (data.cryptoPaymentReceived) {
             setCryptoPaymentStatus(data.cryptoPaymentReceived);
@@ -79,14 +90,14 @@ const StrawPurchase = () => {
           }
         })
         .catch((err) => {
-          console.log("StrawPurchase.js useEffect() err: ", err);
+          console.log("useEffect() err: ", err);
         });
     }
   }, [id]);
 
   // useEffect for totalAmount
   useEffect(() => {
-    // console.log("StrawPurchase.js id: ", id);
+    // console.log("id: ", id);
     console.log("totalAmount", totalAmount);
     // show prompt.cash QR code
     if (totalAmount > 0) {
@@ -122,15 +133,18 @@ const StrawPurchase = () => {
     e.preventDefault();
     setFormEnabled(false);
     setProgressBarValue(0);
+    setStep(steps[3]);
 
     // build the payment request
     const paymentRequest = {
       merchant,
       // remove dollar sign and commas from tipCustomAmount
-      tipCustomAmount: tipCustomAmount.replace(/[$,]/g, ""),
+      tipCustomAmount: tipCustomAmount
+        ? tipCustomAmount.replace(/[$,]/g, "")
+        : 0,
       tipPercentage,
       email,
-      qrCodeLink,
+      // qrCodeLink,
       refundAddress,
       password,
       // remove the dash from orderNumber
@@ -164,11 +178,6 @@ const StrawPurchase = () => {
         (data) => {
           console.log("data", data);
           setFormEnabled(false);
-          setTotalAmount(data.totalAfterTip);
-          setCustomOrderId(data.customOrderId);
-          if (data.totalAfterTip > 0) {
-            setShowPromptCashPayButton(true);
-          }
 
           // if data.error is set, set the error message to invoiceError
           if (data.error) {
@@ -191,8 +200,18 @@ const StrawPurchase = () => {
                 setInvoiceError("Please enter a tip amount.");
                 break;
               default:
-                setInvoiceError(data.error);
+                if (data?.error?.details?.[0]?.message) {
+                  setInvoiceError(data.error.details[0].message);
+                } else {
+                  setInvoiceError(data.error);
+                }
                 break;
+            }
+          } else {
+            setTotalAmount(data.totalAfterTip);
+            setCustomOrderId(data.customOrderId);
+            if (data.totalAfterTip > 0) {
+              setShowPromptCashPayButton(true);
             }
           }
         } // end of .then()
@@ -202,87 +221,6 @@ const StrawPurchase = () => {
   const getTipForm = () => {
     return (
       <>
-        {/* bill amount */}
-        {/* <div className="form-group">
-          <label htmlFor="bill-amount">Bill Amount Before Tip (optional)</label>
-          <br />
-          <small id="bill-amount-help" className="form-text text-muted">
-            We will charge you based on the QR code you send, not the amount
-            entered here. This is just so you can specify a tip.
-          </small>
-          <input
-            type="number"
-            className="form-control"
-            id="bill-amount"
-            placeholder="Enter Bill Amount"
-          />
-        </div> */}
-        {/* tip percentage buttons */}
-        {showPercentageTip ? (
-          <div className="form-group">
-            <label htmlFor="tip-percentage">Tip Percentage</label>
-            <br />
-            <div className="btn-group btn-group-toggle" data-toggle="buttons">
-              <label className="btn btn-secondary active">
-                <input
-                  type="radio"
-                  name="options"
-                  id="option0"
-                  autoComplete="off"
-                  defaultChecked
-                  value="0"
-                  onClick={tipPercentageClickHandler}
-                />{" "}
-                0%
-              </label>
-              <label className="btn btn-secondary">
-                <input
-                  type="radio"
-                  name="options"
-                  id="option15"
-                  autoComplete="off"
-                  value="15"
-                  onClick={tipPercentageClickHandler}
-                />{" "}
-                15%
-              </label>
-              <label className="btn btn-secondary">
-                <input
-                  type="radio"
-                  name="options"
-                  id="option18"
-                  autoComplete="off"
-                  value="18"
-                  onClick={tipPercentageClickHandler}
-                />{" "}
-                18%
-              </label>
-              <label className="btn btn-secondary">
-                <input
-                  type="radio"
-                  name="options"
-                  id="option20"
-                  autoComplete="off"
-                  value="20"
-                  onClick={tipPercentageClickHandler}
-                />{" "}
-                20%
-              </label>
-              <label className="btn btn-secondary">
-                <input
-                  type="radio"
-                  name="options"
-                  id="optionother"
-                  autoComplete="off"
-                  value=""
-                  onClick={tipPercentageClickHandler}
-                />{" "}
-                other
-              </label>
-            </div>
-          </div>
-        ) : null}
-
         {/* tip amount */}
         {showCustomTip ? (
           <div className="form-group">
@@ -294,149 +232,405 @@ const StrawPurchase = () => {
               className="form-control"
               id="tip-amount"
               placeholder="Enter Tip Amount"
+              value={tipCustomAmount}
               onChange={(e) => setTipCustomAmount(e.target.value)}
             />
           </div>
         ) : null}
-        {/* <small id="custom-tip-help" className="form-text text-muted">
-            Enter any amount you want to tip
-          </small> */}
-        {/* total amount */}
-        {/* <div className="form-group">
-          <label htmlFor="total-amount">Total Amount (in dollars)</label>
-          <h3 id="total-amount">${totalAmount}</h3>
-        </div> */}
       </>
     );
+  };
+
+  // check if order exists in the database; if it doesn't exist, take the user to step 2; if it does exist, take the user to the confirmation page
+  const checkIfOrderExists = () => {
+    // disable checkIfOrderExistsButton to prevent multiple clicks
+    setCheckIfOrderExistsButtonEnabled(false);
+    setProgressBarValue(0);
+
+    // query API to see if order exists
+    const orderApi = {
+      local: "http://localhost:3001/order",
+      local2:
+        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+      production:
+        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+    };
+
+    // fetch GET request to check if order exists
+    fetch(orderApi[env] + `/?tx=${orderNumber}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "access-control-allow-origin": "*",
+      },
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => {
+          console.log("data", data);
+          setCheckIfOrderExistsButtonEnabled(true);
+          if (data.cryptoPaymentReceived === "PAID") {
+            // if order exists, redirect user to /agent/${orderNumber}
+            if (env === "production") {
+              window.location.href = `https://davidhudman.com/agent/${orderNumber}`;
+            } else {
+              window.location.href = `http://localhost:3000/agent/${orderNumber}`;
+            }
+          } else {
+            // if order doesn't exist, set step to 2
+            setStep(steps[1]);
+          }
+        } // end of .then()
+      ); // end of fetch()
   };
 
   const getAgentPurchaseForm = () => {
     if (formEnabled) {
       return (
         <>
+          {step === steps[0] ? (
+            <>
+              <h1>Agent Purchases</h1>
+              <strong>
+                Send a QR-enabled receipt & crypto. We pay the restaurant.
+              </strong>
+
+              <br />
+              <hr />
+            </>
+          ) : null}
           {/* form with text box for QR code link */}
           <div className="strawpurchase-form">
             <form>
-              {/* restaurant select dropdown */}
-              <div className="form-group">
-                <label htmlFor="restaurant">Restaurant</label>
-                <br />
-                <small id="restaurant-help" className="form-text text-muted">
-                  Select who you want to purchase from, more coming soon!
-                </small>
-                <select
-                  className="form-control"
-                  id="restaurant"
-                  onChange={(e) => setMerchant(e.target.value)}
-                >
-                  <option value="cracker barrel">Cracker Barrel</option>
-                </select>
-              </div>
-              {/* password */}
-              <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <br />
-                <small id="password-help" className="form-text text-muted">
-                  <a href="/waiting-list-agent-purchase">Click here</a> to be
-                  placed on a waiting list
-                </small>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  placeholder="Enter Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+              {step === steps[0] ? (
+                <>
+                  {/* restaurant select dropdown */}
+                  <div className="form-group">
+                    <label htmlFor="restaurant">Restaurant</label>
+                    <br />
+                    <small
+                      id="restaurant-help"
+                      className="form-text text-muted"
+                    >
+                      Select who you want to purchase from, more coming soon!
+                    </small>
+                    <select
+                      className="form-control"
+                      id="restaurant"
+                      onChange={(e) => setMerchant(e.target.value)}
+                    >
+                      <option value="cracker barrel">Cracker Barrel</option>
+                    </select>
+                  </div>
 
-              {/* order number */}
-              <div className="form-group">
-                <label htmlFor="order-number">Order Number</label>
-                <br />
-                <small id="order-number-help" className="form-text text-muted">
-                  Enter the order number on your check (bill)
-                </small>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="order-number"
-                  placeholder="Enter Order Number"
-                  onChange={(e) => setOrderNumber(e.target.value)}
-                />
-              </div>
+                  {/* order number */}
+                  <div className="form-group">
+                    <label htmlFor="order-number">Order Number</label>
+                    <br />
+                    <small
+                      id="order-number-help"
+                      className="form-text text-muted"
+                    >
+                      The order number on your check. Or enter it here to check
+                      the status
+                    </small>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="order-number"
+                      placeholder="Enter Order Number"
+                      value={orderNumber}
+                      onChange={(e) => setOrderNumber(e.target.value)}
+                    />
+                  </div>
+                  {/* create next button */}
+                  <br />
+                  <button
+                    type="button"
+                    id="checkIfOrderExistsButton"
+                    disabled={!checkIfOrderExistsButtonEnabled}
+                    className="btn btn-primary btn-lg btn-block"
+                    onClick={() => checkIfOrderExists()}
+                  >
+                    Next
+                  </button>
+                  {/* progress bar */}
+                  <div hidden={checkIfOrderExistsButtonEnabled}>
+                    <ProgressBar now={progressBarValue} animated />
+                  </div>
+                </>
+              ) : null}
+              {step === steps[1] ? (
+                <>
+                  {/* password */}
+                  <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <br />
+                    <small id="password-help" className="form-text text-muted">
+                      <a href="/waiting-list-agent-purchase">Click here</a> to
+                      be placed on a waiting list
+                    </small>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      placeholder="Enter Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
 
-              {/* email */}
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <br />
-                <small id="email-help" className="form-text text-muted">
-                  To send you payment confirmation that we receive from the
-                  restaurant
-                  {/* View the confirmation email before leaving just in
+                  {/* email */}
+                  <div className="form-group">
+                    <label htmlFor="email">Email</label>
+                    <br />
+                    <small id="email-help" className="form-text text-muted">
+                      To send you payment confirmation that we receive from the
+                      restaurant...once we fix the bug causing that to not work
+                      :)
+                      {/* View the confirmation email before leaving just in
                   case payment fails for some reason. Or just put your order
                   number into the restaurant{"'"}s website to see if it still
                   exists. */}
-                </small>
-                {/* add a "read more" link to read another paragraph */}
+                    </small>
+                    {/* add a "read more" link to read another paragraph */}
 
-                <input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  placeholder="Enter Email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              {unlockParagraphClickCount >= 3 ? (
-                <div className="form-group">
-                  <label htmlFor="qr-code-link">QR Code Link</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="qr-code-link"
-                    placeholder="Enter QR Code Link"
-                    onChange={(e) => setQrCodeLink(e.target.value)}
-                  />
-                </div>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      placeholder="Enter Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  {unlockParagraphClickCount >= 3 ? (
+                    <div className="form-group">
+                      <label htmlFor="qr-code-link">QR Code Link</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="qr-code-link"
+                        placeholder="Enter QR Code Link"
+                        value={qrCodeLink}
+                        onChange={(e) => setQrCodeLink(e.target.value)}
+                      />
+                    </div>
+                  ) : null}
+                  {/* refund address */}
+                  <div className="form-group">
+                    <label htmlFor="refund-address">Refund Address</label>
+                    <br />
+                    {/* small italic text */}
+                    <small
+                      id="refund-address-help"
+                      className="form-text text-muted"
+                    >
+                      If there's a problem with your payment, we'll refund this
+                      bitcoin cash address
+                    </small>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="refund-address"
+                      placeholder="Enter Refund Address"
+                      value={refundAddress}
+                      onChange={(e) => setRefundAddress(e.target.value)}
+                    />
+                  </div>
+
+                  {getTipForm()}
+
+                  {/* create button to go back to step[0] */}
+                  <br />
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-lg btn-block"
+                    onClick={() => setStep(steps[0])}
+                  >
+                    Go Back
+                  </button>
+                  <br />
+                  <br />
+
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-lg btn-block"
+                    onClick={() => setStep(steps[2])}
+                  >
+                    Next
+                  </button>
+                </>
               ) : null}
-              {/* refund address */}
-              <div className="form-group">
-                <label htmlFor="refund-address">Refund Address</label>
-                <br />
-                {/* small italic text */}
-                <small
-                  id="refund-address-help"
-                  className="form-text text-muted"
-                >
-                  If there's a problem with your payment, we'll refund this
-                  bitcoin cash address
-                </small>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="refund-address"
-                  placeholder="Enter Refund Address"
-                  onChange={(e) => setRefundAddress(e.target.value)}
-                />
-              </div>
 
-              {getTipForm()}
+              {/* show warning text before showing user the payment button */}
+              {step === steps[2] ? (
+                <>
+                  <hr />
+                  {/* display red warning text below */}
+                  <h3>Read All Of This</h3>
+                  <h4>
+                    especially the
+                    <span style={{ color: "red", fontWeight: "bold" }}>
+                      &nbsp;red text&nbsp;
+                    </span>
+                    in point 3
+                  </h4>
+                  <br />
+                  <p>
+                    <ol>
+                      <li>On the next page, you will send your payment</li>
+                      <li>
+                        After you make your payment, wait for the green
+                        checkmark confirmation
+                      </li>
+                      <li style={{ color: "red", fontWeight: "bold" }}>
+                        On the next page if there is no green checkmark within
+                        30 seconds of payment, refresh the page until you see
+                        the green checkmark confirmation
+                      </li>
+                      <li>
+                        Once you see it turn green, your order is paid. You will
+                        then be taken back to our site and see confirmation.
+                      </li>
+                    </ol>
+                  </p>
+                  {/* back and next buttons */}
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-lg btn-block"
+                    onClick={() => setStep(steps[1])}
+                  >
+                    Go Back
+                  </button>
 
-              {/* submit button */}
-              <button
-                type="submit"
-                className="btn btn-lg btn-block btn-primary"
-                style={{ fontSize: "18px" }}
-                onClick={(e) => onFormSubmit(e)}
-              >
-                Submit
-              </button>
+                  <br />
+                  <br />
+
+                  {/* submit button */}
+                  <button
+                    type="submit"
+                    className="btn btn-lg btn-block btn-primary"
+                    onClick={(e) => onFormSubmit(e)}
+                  >
+                    I Understand, Submit
+                  </button>
+                </>
+              ) : null}
             </form>
           </div>
         </>
       );
     } else {
-      return null;
+      // form is no longer enabled so show pay button, payment status, etc
+      return (
+        <>
+          {/* show payment button */}
+          {step === steps[3] ? (
+            <>
+              {!showPromptCashPayButton &&
+              !formEnabled &&
+              !invoiceError &&
+              !totalAmount &&
+              !creditCardPaymentStatus ? (
+                <>
+                  <div
+                    id="loading-message"
+                    className="alert alert-info"
+                    role="alert"
+                  >
+                    <strong>
+                      If you are not shown the payment button within 30 seconds,
+                      please refresh the page and try again.
+                    </strong>
+                  </div>
+                  {/* create a loading spinner with inline css */}
+                  <ProgressBar now={progressBarValue} animated />
+                </>
+              ) : null}
+
+              {showPromptCashPayButton ? (
+                <div>
+                  <form
+                    name="prompt-cash-form"
+                    action="https://prompt.cash/pay"
+                    method="get"
+                  >
+                    <input type="hidden" name="token" value="608-eiDIZuKh" />
+                    <input
+                      type="hidden"
+                      name="tx_id"
+                      value={
+                        customOrderId + "-" + orderNumber.replace(/-/g, "")
+                      }
+                    />
+                    <input type="hidden" name="amount" value={totalAmount} />
+                    <input type="hidden" name="currency" value="USD" />
+                    <input
+                      type="hidden"
+                      name="desc"
+                      value={orderNumber.replace(/-/g, "")}
+                    />
+                    {env === "production" ? (
+                      <>
+                        <input
+                          type="hidden"
+                          name="return"
+                          value={
+                            "https://davidhudman.com/agent/" +
+                            customOrderId +
+                            "-" +
+                            orderNumber.replace(/-/g, "")
+                          }
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <input
+                          type="hidden"
+                          name="return"
+                          value={
+                            "http://localhost:3000/agent/" +
+                            customOrderId +
+                            "-" +
+                            orderNumber.replace(/-/g, "")
+                          }
+                        />
+                      </>
+                    )}
+                    <input
+                      type="hidden"
+                      name="callback"
+                      value="https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
+                    />
+                    <p style={{ color: "red", fontWeight: "bold" }}>
+                      After you make your payment on the next page, if there is
+                      no green checkmark within 30 seconds of payment, refresh
+                      the page until you see the green checkmark confirmation.
+                    </p>
+                    <br />
+                    <p>
+                      If you don't receive an email confirmation after you pay
+                      us, just ask the cashier to check your order number on
+                      your check to ensure your order was paid. If payment
+                      failed for some reason, we will refund you to the email or
+                      crypto address you provided.
+                    </p>
+                    <br />
+                    <button type="submit" className="btn btn-primary">
+                      Pay ${totalAmount.toFixed(2)} BitcoinCash
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <>
+                  <h3>Loading Payment Button</h3>
+                </>
+              )}
+            </>
+          ) : null}
+        </>
+      );
     }
   };
 
@@ -494,10 +688,10 @@ const StrawPurchase = () => {
       <div className="outer-home-container">
         <div className="home">
           {/* orderID */}
-          <h3>Order ID: {id}</h3>
+          <h3>Order ID: {id.slice(-9)}</h3>
 
           {/* crypto payment status */}
-          <h3>
+          <span style={{ fontSize: "18px" }}>
             Crypto Payment Status:
             {cryptoPaymentStatus === "PAID" && (
               <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
@@ -508,10 +702,10 @@ const StrawPurchase = () => {
             {cryptoPaymentStatus === "loading" && (
               <span style={{ color: "grey", fontWeight: "bold" }}>LOADING</span>
             )}
-          </h3>
-
+          </span>
+          <br />
           {/* credit card payment status */}
-          <h3>
+          <span style={{ fontSize: "18px" }}>
             Credit Card Payment Status:
             {creditCardPaymentStatus === "PAID" && (
               <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
@@ -522,14 +716,13 @@ const StrawPurchase = () => {
             {creditCardPaymentStatus === "loading" && (
               <span style={{ color: "grey", fontWeight: "bold" }}>LOADING</span>
             )}
-          </h3>
+          </span>
 
           {/* progress bar */}
           {(cryptoPaymentStatus === "loading" ||
             creditCardPaymentStatus === "loading") && (
             <div>
               <h3>Loading Payment Status</h3>
-              <p>May take up to 30 seconds.</p>
               <div>
                 <ProgressBar
                   now={progressBarValue}
@@ -538,42 +731,15 @@ const StrawPurchase = () => {
               </div>
             </div>
           )}
-        </div>
-      </div>
-    );
-  };
 
-  const checkExistingOrderStatusForm = () => {
-    return (
-      <div className="outer-home-container">
-        <div className="home">
-          <h3>Check Status of an Existing Order</h3>
+          <br />
           <p>
-            <small>
-              <a
-                href="#"
-                onClick={(e) => setViewStatusOfAnExistingOrder(false)}
-              >
-                or submit a new order
-              </a>
-            </small>
+            If you don't receive an email confirmation after you pay us, just
+            ask the cashier to check your order number on your check to ensure
+            your order was paid. If payment failed for some reason, we will
+            refund you to the email or crypto address you provided.
           </p>
-          <form onSubmit={checkExistingOrderStatus}>
-            <div className="form-group">
-              <label htmlFor="order-numbrer">Order Number</label>
-              <input
-                type="text"
-                className="form-control"
-                id="order-number"
-                aria-describedby="order-number"
-                placeholder="Enter Order Number"
-                onChange={(e) => setOrderNumber(e.target.value)}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Check Status
-            </button>
-          </form>
+          <br />
         </div>
       </div>
     );
@@ -582,26 +748,7 @@ const StrawPurchase = () => {
   return (
     <div className="outer-home-container">
       <div className="home">
-        <h1>Agent Purchases</h1>
-        <strong>
-          Send a QR-enabled receipt & crypto. We pay the restaurant.
-        </strong>
-
-        {viewStatusOfAnExistingOrder ? checkExistingOrderStatusForm() : null}
-
-        <br />
-        <br />
-        <h3>Submit Your Order to be Paid Below</h3>
-        {/* small text */}
-        <p>
-          <small onClick={(e) => setViewStatusOfAnExistingOrder(true)}>
-            <a href="#">or view status of an existing order</a>
-          </small>
-        </p>
-
         <div>
-          <hr />
-
           {paymentStatus !== null ? getPaymentStatusDiv() : null}
 
           {/* Error Message Display Div */}
@@ -610,143 +757,79 @@ const StrawPurchase = () => {
               <strong>Error!</strong> {invoiceError}
             </div>
           ) : null}
-
-          {!showPromptCashPayButton &&
-          !formEnabled &&
-          !invoiceError &&
-          !totalAmount &&
-          !creditCardPaymentStatus ? (
-            <>
-              <div
-                id="loading-message"
-                className="alert alert-info"
-                role="alert"
-              >
-                <strong>
-                  If you are not shown the payment button within 30 seconds,
-                  please refresh the page and try again.
-                </strong>
-              </div>
-              {/* create a loading spinner with inline css */}
-              <ProgressBar now={progressBarValue} animated />
-            </>
-          ) : null}
         </div>
 
         {getAgentPurchaseForm()}
-        {showPromptCashPayButton ? (
-          <div>
-            <form
-              name="prompt-cash-form"
-              action="https://prompt.cash/pay"
-              method="get"
+
+        {step === steps[0] ? (
+          <>
+            <hr />
+            <button
+              type="button"
+              className="btn btn-xs btn-block btn-secondary"
+              style={{ fontSize: "18px" }}
+              onClick={() =>
+                setShowRestaurantSuggestionsText(!showRestaurantSuggestionsText)
+              }
             >
-              <input type="hidden" name="token" value="608-eiDIZuKh" />
-              <input
-                type="hidden"
-                name="tx_id"
-                value={customOrderId + "-" + orderNumber.replace(/-/g, "")}
-              />
-              <input type="hidden" name="amount" value={totalAmount} />
-              <input type="hidden" name="currency" value="USD" />
-              <input
-                type="hidden"
-                name="desc"
-                value={orderNumber.replace(/-/g, "")}
-              />
-              {env === "production" ? (
-                <>
-                  <input
-                    type="hidden"
-                    name="return"
-                    value={
-                      "https://davidhudman.com/order-received/" +
-                      customOrderId +
-                      "-" +
-                      orderNumber.replace(/-/g, "")
-                    }
-                  />
-                </>
-              ) : (
-                <>
-                  <input
-                    type="hidden"
-                    name="return"
-                    value={
-                      "http://localhost:3000/agent/" +
-                      customOrderId +
-                      "-" +
-                      orderNumber.replace(/-/g, "")
-                    }
-                  />
-                </>
-              )}
-              <input
-                type="hidden"
-                name="callback"
-                value="https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
-              />
-              <button type="submit" className="btn btn-primary">
-                Pay ${totalAmount.toFixed(2)} with BitcoinCash (BCH)
-              </button>
-              <hr />
-              {/* display red warning text below */}
-              <p>
-                <strong>
-                  <ol>
-                    <li>On the next page, you will send your payment</li>
-                    <li>
-                      After you make your payment, wait for the green checkmark
-                      confirmation
-                    </li>
-                    <li style={{ color: "red" }}>
-                      On the next page if there is no green checkmark within 30
-                      seconds of payment, refresh the page until you see the
-                      green checkmark confirmation
-                    </li>
-                    <li>
-                      Once you see it turn green, your order is paid. You will
-                      then be taken back to our site and see confirmation.
-                    </li>
-                  </ol>
-                </strong>
-              </p>
-            </form>
-          </div>
+              &#9660;&nbsp;Suggest Restaurants&nbsp;&#9660;
+            </button>
+            <br />
+            {showRestaurantSuggestionsText ? (
+              <>
+                <p>
+                  More restaurants coming soon! Suggest restaurants who have QR
+                  code payment receipts by{" "}
+                  <a href="/new-restaurant-agent">clicking here</a>.
+                </p>
+                <br />
+              </>
+            ) : null}
+
+            {/* "what are agent purchases" button - click to expand and see text */}
+            <button
+              type="button"
+              className="btn btn-xs btn-block btn-secondary"
+              style={{ fontSize: "18px" }}
+              onClick={() => setShowAgentPurchasesText(!showAgentPurchasesText)}
+            >
+              &#9660;&nbsp;What are Agent Purchases?&nbsp;&#9660;
+            </button>
+            <br />
+            <br />
+            {showAgentPurchasesText ? (
+              <>
+                <p>
+                  Agent purchases (or proxy purchases) are a way to pay for your
+                  meal at a restaurant that has QR code payments on their bill.
+                  You can pay for your meal by asking for your bill and scanning
+                  it with your phone. Then you can send the order number to us,
+                  and we will request the equivalent amount of crypto from you.
+                  Once we receive right amount of crypto from you, we will pay
+                  the restaurant bill on your behalf.
+                </p>
+                <br />
+                <p onClick={unlockParagraphClickHandler}>
+                  The restaurant will not know that you paid with crypto, and
+                  you will not have to give them your credit card or cash. If
+                  they ask, just say that you paid through the QR code on the
+                  receipt.
+                </p>
+                <p>
+                  If you have suggestions for restaurants that we should add to
+                  our list who accept QR code payment receipts, let us know by{" "}
+                  <a href="/new-restaurant-agent">clicking here</a>.
+                </p>
+                <br />
+              </>
+            ) : null}
+          </>
         ) : null}
 
-        <hr />
-        <p>
-          More restaurants coming soon! Suggest restaurants who have QR code
-          payment receipts by <a href="/new-restaurant-agent">clicking here</a>.
-        </p>
-        <hr />
-
-        <p>
-          Agent purchases (or proxy purchases) are a way to pay for your meal at
-          a restaurant that has QR code payments on their bill. You can pay for
-          your meal by asking for your bill and scanning it with your phone.
-          Then you can send the order number to us, and we will request the
-          equivalent amount of crypto from you. Once we receive right amount of
-          crypto from you, we will pay the restaurant bill on your behalf.
-        </p>
-        <br />
-        <p onClick={unlockParagraphClickHandler}>
-          The restaurant will not know that you paid with crypto, and you will
-          not have to give them your credit card or cash. If they ask, just say
-          that you paid through the QR code on the receipt.
-        </p>
-        <p>
-          If you have suggestions for restaurants that we should add to our list
-          who accept QR code payment receipts, let us know by{" "}
-          <a href="/new-restaurant-agent">clicking here</a>.
-        </p>
-        <br />
-
         {/* footer */}
-        <div className="footer">
+        {/* <div className="footer">
           <p>&copy; {new Date().getFullYear()} David Hudman</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
