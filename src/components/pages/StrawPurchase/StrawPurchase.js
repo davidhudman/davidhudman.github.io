@@ -49,49 +49,60 @@ const StrawPurchase = () => {
     useState(false);
   const [checkIfOrderExistsButtonEnabled, setCheckIfOrderExistsButtonEnabled] =
     useState(true);
+  const [paymentIframeEnabled, setPaymentIframeEnabled] = useState(true);
+  const [waitIHaventPaidButtonEnabled, setWaitIHaventPaidButtonEnabled] =
+    useState(true);
 
   // useParams to get the id
   const { id } = useParams();
 
+  // create check payment status method
+  const checkPaymentStatus = (id) => {
+    setFormEnabled(false);
+    setPaymentStatus("loading");
+    setCryptoPaymentStatus("loading");
+    setCreditCardPaymentStatus("loading");
+    console.log("useEffect() id: ", id);
+    // fetch the order from the prompt cash get-payment api
+    fetch(
+      `https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2?tx=${id}`,
+      {
+        method: "GET",
+        // fix cors error
+        // mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+          //   fix cors error
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    )
+      .then((res) => {
+        console.log("useEffect() res: ", res);
+        return res.json();
+      })
+      .then((data) => {
+        console.log("useEffect() data: ", data);
+        // TODO: get the credit card and crypto payment status of the order - if pending, display the progress bar
+        if (data.cryptoPaymentReceived) {
+          setCryptoPaymentStatus(data.cryptoPaymentReceived);
+        }
+        if (data.creditCardPaymentStatus) {
+          setCreditCardPaymentStatus(data.creditCardPaymentStatus);
+          if (data.creditCardPaymentStatus === "PAID") {
+            setWaitIHaventPaidButtonEnabled(false);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("useEffect() err: ", err);
+      });
+  };
+
   // useEffect for id
   useEffect(() => {
     if (id && id.length > 0) {
-      setFormEnabled(false);
-      setPaymentStatus("loading");
-      setCryptoPaymentStatus("loading");
-      setCreditCardPaymentStatus("loading");
-      console.log("useEffect() id: ", id);
-      // fetch the order from the prompt cash get-payment api
-      fetch(
-        `https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2?tx=${id}`,
-        {
-          method: "GET",
-          // fix cors error
-          // mode: "no-cors",
-          headers: {
-            "Content-Type": "application/json",
-            //   fix cors error
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      )
-        .then((res) => {
-          console.log("useEffect() res: ", res);
-          return res.json();
-        })
-        .then((data) => {
-          console.log("useEffect() data: ", data);
-          // TODO: get the credit card and crypto payment status of the order - if pending, display the progress bar
-          if (data.cryptoPaymentReceived) {
-            setCryptoPaymentStatus(data.cryptoPaymentReceived);
-          }
-          if (data.creditCardPaymentStatus) {
-            setCreditCardPaymentStatus(data.creditCardPaymentStatus);
-          }
-        })
-        .catch((err) => {
-          console.log("useEffect() err: ", err);
-        });
+      checkPaymentStatus(id);
     }
   }, [id]);
 
@@ -453,12 +464,13 @@ const StrawPurchase = () => {
                   <br />
                   <br />
 
+                  {/* submit button */}
                   <button
-                    type="button"
-                    className="btn btn-primary btn-lg btn-block"
-                    onClick={() => setStep(steps[2])}
+                    type="submit"
+                    className="btn btn-lg btn-block btn-primary"
+                    onClick={(e) => onFormSubmit(e)}
                   >
-                    Next
+                    Pay
                   </button>
                 </>
               ) : null}
@@ -477,24 +489,22 @@ const StrawPurchase = () => {
                     in point 3
                   </h4>
                   <br />
-                  <p>
-                    <ol>
-                      <li>On the next page, you will send your payment</li>
-                      <li>
-                        After you make your payment, wait for the green
-                        checkmark confirmation
-                      </li>
-                      <li style={{ color: "red", fontWeight: "bold" }}>
-                        On the next page if there is no green checkmark within
-                        30 seconds of payment, refresh the page until you see
-                        the green checkmark confirmation
-                      </li>
-                      <li>
-                        Once you see it turn green, your order is paid. You will
-                        then be taken back to our site and see confirmation.
-                      </li>
-                    </ol>
-                  </p>
+                  <ol>
+                    <li>On the next page, you will send your payment</li>
+                    <li>
+                      After you make your payment, wait for the green checkmark
+                      confirmation
+                    </li>
+                    <li style={{ color: "red", fontWeight: "bold" }}>
+                      On the next page if there is no green checkmark within 30
+                      seconds of payment, refresh the page until you see the
+                      green checkmark confirmation
+                    </li>
+                    <li>
+                      Once you see it turn green, your order is paid. You will
+                      then be taken back to our site and see confirmation.
+                    </li>
+                  </ol>
                   {/* back and next buttons */}
                   <button
                     type="button"
@@ -549,12 +559,130 @@ const StrawPurchase = () => {
                 </>
               ) : null}
 
-              {showPromptCashPayButton ? (
+              {showPromptCashPayButton && customOrderId && orderNumber ? (
                 <div>
+                  {/* <p>
+                    iframe src:{" "}
+                    {"https://prompt.cash/pay-frame?token=608-eiDIZuKh&currency=USD&tx_id=" +
+                      customOrderId +
+                      "-" +
+                      orderNumber.replace(/-/g, "") +
+                      "&amount=" +
+                      totalAmount +
+                      "&desc=" +
+                      orderNumber.replace(/-/g, "") +
+                      "&callback=" +
+                      "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"}
+                  </p> */}
+
+                  {/* button for "wait, I still need to pay" */}
+                  <div>
+                    <br />
+                    <br />
+                    <button
+                      hidden={
+                        paymentIframeEnabled || !waitIHaventPaidButtonEnabled
+                      }
+                      hiddenold={
+                        paymentIframeEnabled ||
+                        (paymentStatus &&
+                          paymentStatus.creditCardPaymentStatus === "PAID")
+                      }
+                      type="button"
+                      className="btn btn-lg btn-block btn-secondary"
+                      onClick={() => {
+                        setPaymentIframeEnabled(true);
+                      }}
+                    >
+                      Wait, I Still Need To Pay
+                    </button>
+                    <hr />
+                    {paymentStatus !== null ? getPaymentStatusDiv() : null}
+                  </div>
+
+                  <div hidden={!paymentIframeEnabled}>
+                    {/* label and button */}
+                    <label htmlFor="bill-paid-button">
+                      When you pay and see the green checkmark, click the button
+                      below so we can look in our system and confirm your
+                      payment.
+                    </label>
+                    <br />
+                    <br />
+                    <button
+                      type="button"
+                      className="btn btn-lg btn-block btn-primary"
+                      id="bill-paid-button"
+                      onClick={() => {
+                        console.log(
+                          "check payment status for order number: ",
+                          orderNumber
+                        );
+                        setPaymentIframeEnabled(false);
+                        // check payment status every 5 seconds
+                        checkPaymentStatus(
+                          customOrderId + "-" + orderNumber.replace(/-/g, "")
+                        );
+                        const interval = setInterval(() => {
+                          if (
+                            paymentStatus &&
+                            paymentStatus.creditCardPaymentStatus !== "PAID"
+                          ) {
+                            checkPaymentStatus(
+                              customOrderId +
+                                "-" +
+                                orderNumber.replace(/-/g, "")
+                            );
+                          } else {
+                            if (
+                              paymentStatus &&
+                              paymentStatus.creditCardPaymentStatus === "PAID"
+                            ) {
+                              console.log(
+                                "payment status is PAID - clearing interval"
+                              );
+                              clearInterval(interval);
+                            } else {
+                              console.log("have not seen payment status yet");
+                            }
+                          }
+                        }, 5000);
+                        // clear interval after 90 seconds
+                        setTimeout(() => {
+                          clearInterval(interval);
+                        }, 90000);
+                      }}
+                    >
+                      Look For My Payment
+                    </button>
+                    <br />
+                    <iframe
+                      id="prompt-frame"
+                      scrolling="no"
+                      style={{ overflow: "hidden" }}
+                      width="400"
+                      height="800"
+                      src={
+                        "https://prompt.cash/pay-frame?token=608-eiDIZuKh&currency=USD&tx_id=" +
+                        customOrderId +
+                        "-" +
+                        orderNumber.replace(/-/g, "") +
+                        "&amount=" +
+                        totalAmount +
+                        "&desc=" +
+                        orderNumber.replace(/-/g, "") +
+                        "&callback=" +
+                        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
+                      }
+                    ></iframe>
+                  </div>
+                  <br />
+                  <br />
                   <form
                     name="prompt-cash-form"
                     action="https://prompt.cash/pay"
                     method="get"
+                    hidden={!paymentIframeEnabled}
                   >
                     <input type="hidden" name="token" value="608-eiDIZuKh" />
                     <input
@@ -603,20 +731,8 @@ const StrawPurchase = () => {
                       name="callback"
                       value="https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
                     />
-                    <p style={{ color: "red", fontWeight: "bold" }}>
-                      After you make your payment on the next page, if there is
-                      no green checkmark within 30 seconds of payment, refresh
-                      the page until you see the green checkmark confirmation.
-                    </p>
                     <br />
-                    <p>
-                      If you don't receive an email confirmation after you pay
-                      us, just ask the cashier to check your order number on
-                      your check to ensure your order was paid. If payment
-                      failed for some reason, we will refund you to the email or
-                      crypto address you provided.
-                    </p>
-                    <br />
+                    <p>If barcode to pay doesn't load, click here</p>
                     <button type="submit" className="btn btn-primary">
                       Pay ${totalAmount.toFixed(2)} BitcoinCash
                     </button>
@@ -688,7 +804,10 @@ const StrawPurchase = () => {
       <div className="outer-home-container">
         <div className="home">
           {/* orderID */}
-          <h3>Order ID: {id.slice(-9)}</h3>
+          <h3>
+            Order ID:{" "}
+            {id ? id.slice(-9) : orderNumber ? orderNumber : "unknown"}
+          </h3>
 
           {/* crypto payment status */}
           <span style={{ fontSize: "18px" }}>
@@ -733,6 +852,7 @@ const StrawPurchase = () => {
           )}
 
           <br />
+          <br />
           <p>
             If you don't receive an email confirmation after you pay us, just
             ask the cashier to check your order number on your check to ensure
@@ -749,8 +869,6 @@ const StrawPurchase = () => {
     <div className="outer-home-container">
       <div className="home">
         <div>
-          {paymentStatus !== null ? getPaymentStatusDiv() : null}
-
           {/* Error Message Display Div */}
           {invoiceError ? (
             <div id="error-message" className="alert alert-danger" role="alert">
