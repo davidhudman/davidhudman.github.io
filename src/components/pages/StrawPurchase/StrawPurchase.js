@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Fragment
+import React, { useState, useEffect, useRef } from "react"; // Fragment
 import {
   // BrowserRouter as Router,
   // Route,
@@ -43,7 +43,6 @@ const StrawPurchase = () => {
   const [cryptoPaymentStatus, setCryptoPaymentStatus] = useState(null);
   const [creditCardPaymentStatus, setCreditCardPaymentStatus] = useState(null);
   const [merchant, setMerchant] = useState("cracker barrel");
-  const [step, setStep] = useState(steps[0]);
   const [showAgentPurchasesText, setShowAgentPurchasesText] = useState(false);
   const [showRestaurantSuggestionsText, setShowRestaurantSuggestionsText] =
     useState(false);
@@ -52,20 +51,46 @@ const StrawPurchase = () => {
   const [paymentIframeEnabled, setPaymentIframeEnabled] = useState(true);
   const [waitIHaventPaidButtonEnabled, setWaitIHaventPaidButtonEnabled] =
     useState(true);
+  const [paymentStatusChecked, setPaymentStatusChecked] = useState(false);
+  const [step, setStep] = useState(steps[0]); // change back to steps[0] - alt steps[3]
+
 
   // useParams to get the id
   const { id } = useParams();
 
   // create check payment status method
-  const checkPaymentStatus = (id) => {
+  const checkPaymentStatus = (
+    creditCardPaymentStatus,
+    customOrderId,
+    orderNumber
+  ) => {
+    console.log(
+      "checkPaymentStatus() creditCardPaymentStatus: ",
+      creditCardPaymentStatus
+    );
+    if (creditCardPaymentStatus != "PAID") {
+      console.log("checkPaymentStatus() creditCardPaymentStatus is not PAID");
+      setPaymentStatus("loading");
+      setCryptoPaymentStatus("loading");
+      setCreditCardPaymentStatus("loading");
+    } else {
+      console.log("checkPaymentStatus() creditCardPaymentStatus is PAID");
+      return;
+    }
+    let _fullOrderNum =
+      customOrderId && orderNumber
+        ? customOrderId + "-" + orderNumber.replace(/-/g, "")
+        : null;
+
+    if (!_fullOrderNum) {
+      console.log("useEffect() _fullOrderNum is null, return");
+      return;
+    }
     setFormEnabled(false);
-    setPaymentStatus("loading");
-    setCryptoPaymentStatus("loading");
-    setCreditCardPaymentStatus("loading");
-    console.log("useEffect() id: ", id);
+    console.log("useEffect() _fullOrderNum: ", _fullOrderNum);
     // fetch the order from the prompt cash get-payment api
     fetch(
-      `https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2?tx=${id}`,
+      `https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2?tx=${_fullOrderNum}`,
       {
         method: "GET",
         // fix cors error
@@ -85,12 +110,28 @@ const StrawPurchase = () => {
         console.log("useEffect() data: ", data);
         // TODO: get the credit card and crypto payment status of the order - if pending, display the progress bar
         if (data.cryptoPaymentReceived) {
+          console.log(
+            "setting cryptoPaymentReceived: ",
+            data.cryptoPaymentReceived
+          );
           setCryptoPaymentStatus(data.cryptoPaymentReceived);
         }
         if (data.creditCardPaymentStatus) {
-          setCreditCardPaymentStatus(data.creditCardPaymentStatus);
+          // fix refreshing everytime setInterval is called
+          if (data.creditCardPaymentStatus != creditCardPaymentStatus) {
+            console.log(
+              "setting creditCardPaymentStatus: ",
+              data.creditCardPaymentStatus,
+              " creditCardPaymentStatus: ",
+              creditCardPaymentStatus,
+              " paymentStatus: ",
+              paymentStatus
+            );
+            setCreditCardPaymentStatus(data.creditCardPaymentStatus);
+          }
           if (data.creditCardPaymentStatus === "PAID") {
             setWaitIHaventPaidButtonEnabled(false);
+            setPaymentIframeEnabled(false);
           }
         }
       })
@@ -105,6 +146,57 @@ const StrawPurchase = () => {
       checkPaymentStatus(id);
     }
   }, [id]);
+
+  // useEffect for step is 3, formEnabled is true, showPromptCashPayButton is true, customOrderId is not empty, and orderNumber is not empty
+  let myIntervalRef = useRef();
+  useEffect(() => {
+    if (step === steps[3] && customOrderId && paymentStatusChecked === false) {
+      setPaymentStatusChecked(true);
+      console.log("check payment status for order: ", orderNumber);
+      // check payment status every 5 seconds
+      checkPaymentStatus(creditCardPaymentStatus, customOrderId, orderNumber);
+      if (creditCardPaymentStatus != "PAID") {
+        myIntervalRef.current = setInterval(
+          (creditCardPaymentStatus, customOrderId, orderNumber) => {
+            checkPaymentStatus(
+              creditCardPaymentStatus,
+              customOrderId,
+              orderNumber
+            );
+
+            // TODO - if we can figure out how to pass in parameters to setInterval, we can clearInterval when the paymentStatus is PAID
+          },
+          5000,
+          creditCardPaymentStatus,
+          customOrderId,
+          orderNumber
+        );
+      }
+      // clear interval after 120 seconds
+      setTimeout(() => {
+        if (myIntervalRef) {
+          clearInterval(myIntervalRef.current);
+          // TODO: update 40 seconds to longer period for user to pay
+        }
+      }, 40000);
+    } else {
+      console.log(
+        "step: ",
+        step,
+        " customOrderId: ",
+        customOrderId,
+        " paymentStatusChecked: ",
+        paymentStatusChecked
+      );
+      if (creditCardPaymentStatus == "PAID") {
+        console.log("creditCardPaymentStatus is PAID - clear interval");
+        if (myIntervalRef) {
+          console.log("clearing interval");
+          clearInterval(myIntervalRef.current);
+        }
+      }
+    }
+  }, [customOrderId, creditCardPaymentStatus]);
 
   // useEffect for totalAmount
   useEffect(() => {
@@ -293,6 +385,37 @@ const StrawPurchase = () => {
           }
         } // end of .then()
       ); // end of fetch()
+  };
+
+  const getPaymentIframe = () => {
+    return (
+      <div hidden={!paymentIframeEnabled}>
+        <p>
+          Click the "Pay in Wallet" button to open your wallet or copy the
+          address below the QR code and paste it into your wallet.
+        </p>
+        <br />
+        <iframe
+          id="prompt-frame"
+          scrolling="no"
+          style={{ overflow: "hidden" }}
+          width="400"
+          height="800"
+          src={
+            "https://prompt.cash/pay-frame?token=608-eiDIZuKh&currency=USD&tx_id=" +
+            customOrderId +
+            "-" +
+            orderNumber.replace(/-/g, "") +
+            "&amount=" +
+            totalAmount +
+            "&desc=" +
+            orderNumber.replace(/-/g, "") +
+            "&callback=" +
+            "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
+          }
+        ></iframe>
+      </div>
+    );
   };
 
   const getAgentPurchaseForm = () => {
@@ -576,106 +699,8 @@ const StrawPurchase = () => {
                   </p> */}
 
                   {/* button for "wait, I still need to pay" */}
-                  <div>
-                    <br />
-                    <br />
-                    <button
-                      hidden={
-                        paymentIframeEnabled || !waitIHaventPaidButtonEnabled
-                      }
-                      hiddenold={
-                        paymentIframeEnabled ||
-                        (paymentStatus &&
-                          paymentStatus.creditCardPaymentStatus === "PAID")
-                      }
-                      type="button"
-                      className="btn btn-lg btn-block btn-secondary"
-                      onClick={() => {
-                        setPaymentIframeEnabled(true);
-                      }}
-                    >
-                      Wait, I Still Need To Pay
-                    </button>
-                    <hr />
-                    {paymentStatus !== null ? getPaymentStatusDiv() : null}
-                  </div>
 
-                  <div hidden={!paymentIframeEnabled}>
-                    {/* label and button */}
-                    <label htmlFor="bill-paid-button">
-                      When you pay and see the green checkmark, click the button
-                      below so we can look in our system and confirm your
-                      payment.
-                    </label>
-                    <br />
-                    <br />
-                    <button
-                      type="button"
-                      className="btn btn-lg btn-block btn-primary"
-                      id="bill-paid-button"
-                      onClick={() => {
-                        console.log(
-                          "check payment status for order number: ",
-                          orderNumber
-                        );
-                        setPaymentIframeEnabled(false);
-                        // check payment status every 5 seconds
-                        checkPaymentStatus(
-                          customOrderId + "-" + orderNumber.replace(/-/g, "")
-                        );
-                        const interval = setInterval(() => {
-                          if (
-                            paymentStatus &&
-                            paymentStatus.creditCardPaymentStatus !== "PAID"
-                          ) {
-                            checkPaymentStatus(
-                              customOrderId +
-                                "-" +
-                                orderNumber.replace(/-/g, "")
-                            );
-                          } else {
-                            if (
-                              paymentStatus &&
-                              paymentStatus.creditCardPaymentStatus === "PAID"
-                            ) {
-                              console.log(
-                                "payment status is PAID - clearing interval"
-                              );
-                              clearInterval(interval);
-                            } else {
-                              console.log("have not seen payment status yet");
-                            }
-                          }
-                        }, 5000);
-                        // clear interval after 90 seconds
-                        setTimeout(() => {
-                          clearInterval(interval);
-                        }, 90000);
-                      }}
-                    >
-                      Look For My Payment
-                    </button>
-                    <br />
-                    <iframe
-                      id="prompt-frame"
-                      scrolling="no"
-                      style={{ overflow: "hidden" }}
-                      width="400"
-                      height="800"
-                      src={
-                        "https://prompt.cash/pay-frame?token=608-eiDIZuKh&currency=USD&tx_id=" +
-                        customOrderId +
-                        "-" +
-                        orderNumber.replace(/-/g, "") +
-                        "&amount=" +
-                        totalAmount +
-                        "&desc=" +
-                        orderNumber.replace(/-/g, "") +
-                        "&callback=" +
-                        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
-                      }
-                    ></iframe>
-                  </div>
+                  {paymentIframeEnabled ? getPaymentIframe() : null}
                   <br />
                   <br />
                   <form
@@ -876,6 +901,14 @@ const StrawPurchase = () => {
             </div>
           ) : null}
         </div>
+
+        {/* get payment status div */}
+        {step === steps[3] &&
+        cryptoPaymentStatus &&
+        creditCardPaymentStatus &&
+        !paymentIframeEnabled
+          ? getPaymentStatusDiv()
+          : null}
 
         {getAgentPurchaseForm()}
 
