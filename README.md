@@ -19,6 +19,33 @@
 
 ## Todos
 
+Phase 3 (Agent):
+
+- it should really hide iFrame when it detects that cryptoPaymentReceived is PAID
+- when timeout finishes searching for credit card / crypto payment status, show a button telling the user that we couldn't find it and ask user if they want us to continue searching
+- figure out if we still want to useParams to get id because that is breaking for the user when the order already exists after the first step
+- test progress bar to see if we broke it when the user is waiting for credit card payment to clear
+
+- better sanitization of inputs (order numbers, bitcoin addresses, emails)
+- integrate changes for callback from prompt.cash and test at CB
+  - everything will be on agent page
+- add a select dropdown with "CB" selected by default
+- new flow
+  - start with selecting merchant and entering order number
+  - at this point, either allow the user to choose between paying and checking order status or just run the GET orderNumber and make decision based on that
+    - check order status (just show it)
+    - payment
+      - fill out payment form in addition to orderNumber and merchant already filled out, add:
+        - refund address, email, tip, password
+- refactor backend code to reduce copied code
+- add periodic health tests
+  - CB API, our API, prompt.cash API
+- slack alerts
+- setup monitoring?
+  - uptime robot
+  - new relic
+  - sentry
+
 Phase 2:
 
 issues:

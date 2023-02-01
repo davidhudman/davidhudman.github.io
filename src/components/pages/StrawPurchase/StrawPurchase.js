@@ -53,7 +53,10 @@ const StrawPurchase = () => {
     useState(true);
   const [paymentStatusChecked, setPaymentStatusChecked] = useState(false);
   const [step, setStep] = useState(steps[0]); // change back to steps[0] - alt steps[3]
-
+  const [showEmailConfirmInfoText, setShowEmailConfirmInfoText] =
+    useState(false);
+  const [showRefreshOrderStatusInfoText, setShowRefreshOrderStatusInfoText] =
+    useState(false);
 
   // useParams to get the id
   const { id } = useParams();
@@ -68,10 +71,13 @@ const StrawPurchase = () => {
       "checkPaymentStatus() creditCardPaymentStatus: ",
       creditCardPaymentStatus
     );
+    if (cryptoPaymentStatus != "PAID") {
+      console.log("checkPaymentStatus() cryptoPaymentStatus is not PAID");
+      setCryptoPaymentStatus("loading");
+    }
     if (creditCardPaymentStatus != "PAID") {
       console.log("checkPaymentStatus() creditCardPaymentStatus is not PAID");
       setPaymentStatus("loading");
-      setCryptoPaymentStatus("loading");
       setCreditCardPaymentStatus("loading");
     } else {
       console.log("checkPaymentStatus() creditCardPaymentStatus is PAID");
@@ -80,7 +86,14 @@ const StrawPurchase = () => {
     let _fullOrderNum =
       customOrderId && orderNumber
         ? customOrderId + "-" + orderNumber.replace(/-/g, "")
+        : id
+        ? id
         : null;
+
+    if (id) {
+      console.log("found id - need to go diretly to step 3");
+      setStep(steps[3]);
+    }
 
     if (!_fullOrderNum) {
       console.log("useEffect() _fullOrderNum is null, return");
@@ -115,6 +128,14 @@ const StrawPurchase = () => {
             data.cryptoPaymentReceived
           );
           setCryptoPaymentStatus(data.cryptoPaymentReceived);
+          if (data.cryptoPaymentReceived == "PAID") {
+            setWaitIHaventPaidButtonEnabled(false);
+            setPaymentIframeEnabled(false);
+          }
+          if (id) {
+            console.log("found id - need to set total amount");
+            data.totalAfterTip && setTotalAmount(data.totalAfterTip);
+          }
         }
         if (data.creditCardPaymentStatus) {
           // fix refreshing everytime setInterval is called
@@ -129,10 +150,10 @@ const StrawPurchase = () => {
             );
             setCreditCardPaymentStatus(data.creditCardPaymentStatus);
           }
-          if (data.creditCardPaymentStatus === "PAID") {
-            setWaitIHaventPaidButtonEnabled(false);
-            setPaymentIframeEnabled(false);
-          }
+        }
+        if (id) {
+          data.customOrderId && setCustomOrderId(data.customOrderId);
+          setOrderNumber(id);
         }
       })
       .catch((err) => {
@@ -177,8 +198,10 @@ const StrawPurchase = () => {
         if (myIntervalRef) {
           clearInterval(myIntervalRef.current);
           // TODO: update 40 seconds to longer period for user to pay
+
+          // TODO: when timer ends, show a button to ask the user if they want us to keep checking for payment
         }
-      }, 40000);
+      }, 120000);
     } else {
       console.log(
         "step: ",
@@ -378,6 +401,7 @@ const StrawPurchase = () => {
               window.location.href = `https://davidhudman.com/agent/${orderNumber}`;
             } else {
               window.location.href = `http://localhost:3000/agent/${orderNumber}`;
+              // TODO: try going to step 3
             }
           } else {
             // if order doesn't exist, set step to 2
@@ -399,7 +423,7 @@ const StrawPurchase = () => {
           id="prompt-frame"
           scrolling="no"
           style={{ overflow: "hidden" }}
-          width="400"
+          width="360"
           height="800"
           src={
             "https://prompt.cash/pay-frame?token=608-eiDIZuKh&currency=USD&tx_id=" +
@@ -835,8 +859,11 @@ const StrawPurchase = () => {
           </h3>
 
           {/* crypto payment status */}
+          <h4 style={{ marginBottom: "-5px" }}>Crypto Payment Status:</h4>
+          {/* small text */}
+          <small className="form-text text-muted">(from you to us)</small>
+          <br />
           <span style={{ fontSize: "18px" }}>
-            Crypto Payment Status:
             {cryptoPaymentStatus === "PAID" && (
               <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
             )}
@@ -844,13 +871,17 @@ const StrawPurchase = () => {
               <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
             )}
             {cryptoPaymentStatus === "loading" && (
-              <span style={{ color: "grey", fontWeight: "bold" }}>LOADING</span>
+              <span style={{ color: "grey", fontWeight: "bold" }}>PENDING</span>
             )}
           </span>
           <br />
+          {/* text to float left */}
+          <h4 style={{ marginBottom: "-5px" }}>Credit Card Payment Status:</h4>
+          {/* small text */}
+          <small className="form-text text-muted">(from us to merchant)</small>
           {/* credit card payment status */}
+          <br />
           <span style={{ fontSize: "18px" }}>
-            Credit Card Payment Status:
             {creditCardPaymentStatus === "PAID" && (
               <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
             )}
@@ -858,9 +889,12 @@ const StrawPurchase = () => {
               <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
             )}
             {creditCardPaymentStatus === "loading" && (
-              <span style={{ color: "grey", fontWeight: "bold" }}>LOADING</span>
+              <span style={{ color: "grey", fontWeight: "bold" }}>PENDING</span>
             )}
           </span>
+
+          {/* div that is below the float left and float right text */}
+          <div style={{ clear: "both" }}>&nbsp;</div>
 
           {/* progress bar */}
           {(cryptoPaymentStatus === "loading" ||
@@ -878,13 +912,52 @@ const StrawPurchase = () => {
 
           <br />
           <br />
-          <p>
-            If you don't receive an email confirmation after you pay us, just
-            ask the cashier to check your order number on your check to ensure
-            your order was paid. If payment failed for some reason, we will
-            refund you to the email or crypto address you provided.
-          </p>
+          <button
+            type="button"
+            className="btn btn-xs btn-block btn-secondary"
+            style={{ fontSize: "18px" }}
+            onClick={() =>
+              setShowEmailConfirmInfoText(!showEmailConfirmInfoText)
+            }
+          >
+            &#9660;&nbsp;No email confirmation?&nbsp;&#9660;
+          </button>
           <br />
+          <br />
+          {showEmailConfirmInfoText && (
+            <>
+              <p>
+                If you don't receive an email confirmation after you pay us,
+                just ask the cashier to check your order number on your check to
+                ensure your order was paid. If payment failed for some reason,
+                we will refund you to the email or crypto address you provided.
+              </p>
+              <br />
+            </>
+          )}
+
+          <button
+            type="button"
+            className="btn btn-xs btn-block btn-secondary"
+            style={{ fontSize: "18px" }}
+            onClick={() =>
+              setShowRefreshOrderStatusInfoText(!showRefreshOrderStatusInfoText)
+            }
+          >
+            &#9660;&nbsp;Recheck order status?&nbsp;&#9660;
+          </button>
+          <br />
+          <br />
+          {showRefreshOrderStatusInfoText && (
+            <>
+              <p>
+                If your order status doesn't load and you want to check again,
+                you can refresh the page and enter your order number again to
+                check the status.
+              </p>
+              <br />
+            </>
+          )}
         </div>
       </div>
     );
