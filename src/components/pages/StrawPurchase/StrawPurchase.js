@@ -57,28 +57,31 @@ const StrawPurchase = () => {
     useState(false);
   const [showRefreshOrderStatusInfoText, setShowRefreshOrderStatusInfoText] =
     useState(false);
+  // const [haveSetCryptoPaymentLoading, setHaveSetCryptoPaymentLoading] =
+  //   useState(false);
+  // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
+  //   useState(false);
 
   // useParams to get the id
   const { id } = useParams();
 
+  // let creditCardPaymentStatus = useRef();
+  // let cryptoPaymentStatus = useRef();
+  let haveSetCryptoPaymentLoading = useRef();
+  let haveSetCreditCardPaymentLoading = useRef();
   // create check payment status method
-  const checkPaymentStatus = (
-    creditCardPaymentStatus,
-    customOrderId,
-    orderNumber
-  ) => {
+  const checkPaymentStatus = (customOrderId, orderNumber) => {
     console.log(
       "checkPaymentStatus() creditCardPaymentStatus: ",
-      creditCardPaymentStatus
+      creditCardPaymentStatus,
+      " cryptoPaymentStatus: ",
+      cryptoPaymentStatus
     );
     if (cryptoPaymentStatus != "PAID") {
       console.log("checkPaymentStatus() cryptoPaymentStatus is not PAID");
-      setCryptoPaymentStatus("loading");
     }
     if (creditCardPaymentStatus != "PAID") {
       console.log("checkPaymentStatus() creditCardPaymentStatus is not PAID");
-      setPaymentStatus("loading");
-      setCreditCardPaymentStatus("loading");
     } else {
       console.log("checkPaymentStatus() creditCardPaymentStatus is PAID");
       return;
@@ -127,7 +130,9 @@ const StrawPurchase = () => {
             "setting cryptoPaymentReceived: ",
             data.cryptoPaymentReceived
           );
-          setCryptoPaymentStatus(data.cryptoPaymentReceived);
+          if (data.cryptoPaymentReceived != cryptoPaymentStatus) {
+            setCryptoPaymentStatus(data.cryptoPaymentReceived);
+          }
           if (data.cryptoPaymentReceived == "PAID") {
             setWaitIHaventPaidButtonEnabled(false);
             setPaymentIframeEnabled(false);
@@ -141,7 +146,7 @@ const StrawPurchase = () => {
           // fix refreshing everytime setInterval is called
           if (data.creditCardPaymentStatus != creditCardPaymentStatus) {
             console.log(
-              "setting creditCardPaymentStatus: ",
+              "setting creditCardPaymentStatus data.creditCardPaymentStatus: ",
               data.creditCardPaymentStatus,
               " creditCardPaymentStatus: ",
               creditCardPaymentStatus,
@@ -175,25 +180,23 @@ const StrawPurchase = () => {
       setPaymentStatusChecked(true);
       console.log("check payment status for order: ", orderNumber);
       // check payment status every 5 seconds
-      checkPaymentStatus(creditCardPaymentStatus, customOrderId, orderNumber);
+      checkPaymentStatus(customOrderId, orderNumber);
       if (creditCardPaymentStatus != "PAID") {
+        setCryptoPaymentStatus("loading");
+        setPaymentStatus("loading");
+        setCreditCardPaymentStatus("loading");
         myIntervalRef.current = setInterval(
-          (creditCardPaymentStatus, customOrderId, orderNumber) => {
-            checkPaymentStatus(
-              creditCardPaymentStatus,
-              customOrderId,
-              orderNumber
-            );
+          (customOrderId, orderNumber) => {
+            checkPaymentStatus(customOrderId, orderNumber);
 
             // TODO - if we can figure out how to pass in parameters to setInterval, we can clearInterval when the paymentStatus is PAID
           },
           5000,
-          creditCardPaymentStatus,
           customOrderId,
           orderNumber
         );
       }
-      // clear interval after 120 seconds
+      // clear interval after 180 seconds
       setTimeout(() => {
         if (myIntervalRef) {
           clearInterval(myIntervalRef.current);
@@ -201,7 +204,7 @@ const StrawPurchase = () => {
 
           // TODO: when timer ends, show a button to ask the user if they want us to keep checking for payment
         }
-      }, 120000);
+      }, 180000);
     } else {
       console.log(
         "step: ",
@@ -244,10 +247,10 @@ const StrawPurchase = () => {
   // setTimeout to update the progressBarValue by 1 every 300ms
   useEffect(() => {
     const interval = setInterval(() => {
-      if (progressBarValue !== 99) {
+      if (progressBarValue !== 100) {
         setProgressBarValue(progressBarValue + 1);
       }
-    }, 300);
+    }, 800);
     return () => clearInterval(interval);
   }, [progressBarValue]);
 
@@ -863,16 +866,19 @@ const StrawPurchase = () => {
           {/* small text */}
           <small className="form-text text-muted">(from you to us)</small>
           <br />
-          <span style={{ fontSize: "18px" }}>
-            {cryptoPaymentStatus === "PAID" && (
+          <span style={{ fontSize: "24px" }}>
+            {cryptoPaymentStatus == "PAID" && (
               <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
             )}
-            {cryptoPaymentStatus === "UNPAID" && (
+            {cryptoPaymentStatus == "UNPAID" && (
               <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
             )}
-            {cryptoPaymentStatus === "loading" && (
-              <span style={{ color: "grey", fontWeight: "bold" }}>PENDING</span>
-            )}
+            {cryptoPaymentStatus != "PAID" &&
+              cryptoPaymentStatus != "UNPAID" && (
+                <span style={{ color: "grey", fontWeight: "bold" }}>
+                  PENDING
+                </span>
+              )}
           </span>
           <br />
           {/* text to float left */}
@@ -881,14 +887,15 @@ const StrawPurchase = () => {
           <small className="form-text text-muted">(from us to merchant)</small>
           {/* credit card payment status */}
           <br />
-          <span style={{ fontSize: "18px" }}>
-            {creditCardPaymentStatus === "PAID" && (
+          <span style={{ fontSize: "24px" }}>
+            {creditCardPaymentStatus == "PAID" && (
               <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
             )}
-            {creditCardPaymentStatus === "UNPAID" && (
+            {creditCardPaymentStatus == "UNPAID" && progressBarValue >= 99 && (
               <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
             )}
-            {creditCardPaymentStatus === "loading" && (
+            {(creditCardPaymentStatus == "loading" ||
+              (creditCardPaymentStatus != "PAID" && progressBarValue < 99)) && (
               <span style={{ color: "grey", fontWeight: "bold" }}>PENDING</span>
             )}
           </span>
@@ -897,8 +904,10 @@ const StrawPurchase = () => {
           <div style={{ clear: "both" }}>&nbsp;</div>
 
           {/* progress bar */}
-          {(cryptoPaymentStatus === "loading" ||
-            creditCardPaymentStatus === "loading") && (
+          {(cryptoPaymentStatus == "loading" ||
+            creditCardPaymentStatus == "loading" ||
+            creditCardPaymentStatus == "PENDING" ||
+            creditCardPaymentStatus == "UNPAID") && (
             <div>
               <h3>Loading Payment Status</h3>
               <div>

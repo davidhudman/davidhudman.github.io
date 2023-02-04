@@ -27,6 +27,7 @@ import Wallet from "./components/pages/Wallet/Wallet";
 import OrderReceived from "./components/pages/OrderReceived/OrderReceived";
 import FormWaitingList from "./components/pages/FormWaitingListAgentPurchases/FormWaitingList";
 import FormNewRestaurantAgentPurchase from "./components/pages/FormNewRestaurantAgentPurchase/FormNewRestaurantAgentPurchase";
+import Events from "./components/pages/Events/Events";
 
 const App = () => (
   <Router>
@@ -47,15 +48,18 @@ const App = () => (
         <Route path="/proxy-purchase" element={<StrawPurchase />} />
         <Route path="/proxy" element={<StrawPurchase />} />
         <Route path="/agent" element={<StrawPurchase />} />
+        <Route path="/events" element={<Events />} />
         <Route path="/agent/:id" element={<StrawPurchase />} />
         <Route
           path="/waiting-list-agent-purchase"
           element={<FormWaitingList />}
         />
+        <Route path="/wait" element={<FormWaitingList />} />
         <Route
           path="/new-restaurant-agent"
           element={<FormNewRestaurantAgentPurchase />}
         />
+        <Route path="/new" element={<FormNewRestaurantAgentPurchase />} />
         <Route path="/add-merchant" element={<AddMerchant />} />
         <Route path="/paybch" element={<App1 />} />
         <Route path="/merchant/:merchantId" element={<Merchant />} />
