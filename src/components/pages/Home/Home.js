@@ -103,13 +103,12 @@ const Home = () => {
           </a>
           <br />
           <a
-            href="http://jaxsocialgroup.org"
-            target="_blank"
+            href="/events"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-danger"
             style={{ fontSize: "18px" }}
           >
-            Jax Social Group
+            Events
           </a>
           <br />
         </div>

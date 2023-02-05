@@ -6,6 +6,7 @@ import {
   Link,
 } from "react-router-dom";
 import { ProgressBar } from "react-bootstrap";
+import * as yup from "yup";
 
 import "./events.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -36,54 +37,73 @@ const Events = () => {
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    setFormEnabled(false);
-    setProgressBarValue(0);
+    setFormError("");
 
-    // build the payment request
-    const req = {
-      email,
-      firstName,
-      lastName,
-      message,
-      formType: "events",
-    };
+    // validate form against yup schema
+    const schema = yup.object().shape({
+      email: yup.string().max(100).email().required(),
+      firstName: yup.string().max(100).required(),
+      lastName: yup.string().max(100).required(),
+      message: yup.string().max(1000).required(),
+    });
 
-    // send the payment request to the server
-    // local endpoint
-    const formApi = {
-      local: "http://localhost:3001/formWaitingListAgentPurchases",
-      local2:
-        "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
-      production:
-        "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
-    };
+    schema
+      .validate({ email, firstName, lastName, message })
+      .then(() => {
+        setFormEnabled(false);
+        setProgressBarValue(0);
 
-    fetch(formApi[env], {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // access-control-allow-origin: *
+        // build the payment request
+        const req = {
+          email,
+          firstName,
+          lastName,
+          message,
+          formType: "events",
+        };
 
-        "Access-Control-Allow-Origin": "*", // this is the important part
-      },
-      body: JSON.stringify(req),
-    })
-      .then((res) => res.json())
-      .then(
-        (data) => {
-          console.log("data", data);
-          setFormEnabled(false);
-          setProgressBarValue(100);
+        // send the payment request to the server
+        // local endpoint
+        const formApi = {
+          local: "http://localhost:3001/formWaitingListAgentPurchases",
+          local2:
+            "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
+          production:
+            "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
+        };
 
-          // if data.error is set, set the error message to formError
-          if (data.error) {
-            // TODO: handle error cases
-            setFormError(data.error);
-          } else {
-            setFormSuccess(true);
-          }
-        } // end of .then()
-      ); // end of fetch()
+        fetch(formApi[env], {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // access-control-allow-origin: *
+
+            "Access-Control-Allow-Origin": "*", // this is the important part
+          },
+          body: JSON.stringify(req),
+        })
+          .then((res) => res.json())
+          .then(
+            (data) => {
+              console.log("data", data);
+              setFormEnabled(false);
+              setProgressBarValue(100);
+
+              // if data.error is set, set the error message to formError
+              if (data.error) {
+                // TODO: handle error cases
+                setFormError(JSON.stringify(data.error));
+              } else {
+                setFormSuccess(true);
+              }
+            } // end of .then()
+          ); // end of fetch()
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setFormError(err.errors[0]);
+        setFormEnabled(true);
+      });
   };
 
   const getWaitingListForm = () => {
@@ -175,9 +195,9 @@ const Events = () => {
         <br />
         <br />
         <p>
-          We may post some events here from time to time but most will be sent
-          via email. We will also notify you about any invites to group messages
-          or messaging platforms we use to communicate about the events.
+          I may post some social events here from time to time but most will be
+          sent via email. I will also notify you about any invites to group
+          messages or messaging platforms I use to communicate about the events.
         </p>
 
         <hr />
@@ -219,6 +239,9 @@ const Events = () => {
       {getWaitingListForm()}
 
       <br />
+      <br />
+      <br />
+
       <hr />
 
       {/* footer */}

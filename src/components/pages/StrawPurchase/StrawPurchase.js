@@ -61,6 +61,7 @@ const StrawPurchase = () => {
   //   useState(false);
   // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
   //   useState(false);
+  const [showJoinText, setShowJoinText] = useState(false);
 
   // useParams to get the id
   const { id } = useParams();
@@ -997,6 +998,30 @@ const StrawPurchase = () => {
         {step === steps[0] ? (
           <>
             <hr />
+            {/* "Want to Join?" button - click to expand and see text */}
+            <button
+              type="button"
+              className="btn btn-xs btn-block btn-secondary"
+              style={{ fontSize: "18px" }}
+              onClick={() => setShowJoinText(!showJoinText)}
+            >
+              &#9660;&nbsp;Need to Join?&nbsp;&#9660;
+            </button>
+            <br />
+            {showJoinText ? (
+              <>
+                <p>
+                  If you want to join our beta release as a customer, please
+                  fill out the{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    <a href="/wait">waiting list form here.</a>
+                  </span>
+                </p>
+                <br />
+              </>
+            ) : null}
+
+            {/* "suggest restaurants" button - click to expand and see text */}
             <button
               type="button"
               className="btn btn-xs btn-block btn-secondary"
@@ -1028,7 +1053,6 @@ const StrawPurchase = () => {
             >
               &#9660;&nbsp;What are Agent Purchases?&nbsp;&#9660;
             </button>
-            <br />
             <br />
             {showAgentPurchasesText ? (
               <>

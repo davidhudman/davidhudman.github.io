@@ -6,6 +6,7 @@ import {
   Link,
 } from "react-router-dom";
 import { ProgressBar } from "react-bootstrap";
+import * as yup from "yup";
 
 import "./formnewrestaurantagentpurchase.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -23,6 +24,7 @@ const FormNewRestaurantAgentPurchase = () => {
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
   const [env, setEnv] = useState("production");
   const [progressBarValue, setProgressBarValue] = useState(0);
+  const [showAgentPurchasesText, setShowAgentPurchasesText] = useState(false);
 
   // setTimeout to update the progressBarValue by 1 every 100ms
   useEffect(() => {
@@ -36,58 +38,76 @@ const FormNewRestaurantAgentPurchase = () => {
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    setFormEnabled(false);
-    setProgressBarValue(0);
+    setFormError("");
 
-    // build the payment request
-    const req = {
-      email,
-      firstName,
-      lastName,
-      message,
-      formType: "formNewRestaurantAgentPurchases",
-    };
+    // validate form against yup schema
+    const schema = yup.object().shape({
+      email: yup.string().max(100).email().required(),
+      firstName: yup.string().max(100).required(),
+      lastName: yup.string().max(100).required(),
+      message: yup.string().max(1000).required(),
+    });
 
-    // send the payment request to the server
-    // local endpoint
-    const formApi = {
-      local: "http://localhost:3001/formWaitingListAgentPurchases",
-      local2:
-        "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
-      production:
-        "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
-    };
+    schema
+      .validate({ email, firstName, lastName, message })
+      .then(() => {
+        setFormEnabled(false);
+        setProgressBarValue(0);
 
-    fetch(formApi[env], {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // access-control-allow-origin: *
+        // build the payment request
+        const req = {
+          email,
+          firstName,
+          lastName,
+          message,
+          formType: "formNewRestaurantAgentPurchases",
+        };
 
-        "Access-Control-Allow-Origin": "*", // this is the important part
-      },
-      body: JSON.stringify(req),
-    })
-      .then((res) => res.json())
-      .then(
-        (data) => {
-          console.log("data", data);
-          setFormEnabled(false);
-          setProgressBarValue(100);
+        // send the payment request to the server
+        // local endpoint
+        const formApi = {
+          local: "http://localhost:3001/formWaitingListAgentPurchases",
+          local2:
+            "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
+          production:
+            "https://ps5lyq6sa8.execute-api.us-east-1.amazonaws.com/default/formWaitingListAgentPurchases",
+        };
 
-          // if data.error is set, set the error message to formError
-          if (data.error) {
-            // TODO: handle error cases
-            if (data?.error?.details?.[0]?.message) {
-              setFormError(data.error.details[0].message);
-            } else {
-              setFormError("Something went wrong. Please try again.");
-            }
-          } else {
-            setFormSuccess(true);
-          }
-        } // end of .then()
-      ); // end of fetch()
+        fetch(formApi[env], {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // access-control-allow-origin: *
+
+            "Access-Control-Allow-Origin": "*", // this is the important part
+          },
+          body: JSON.stringify(req),
+        })
+          .then((res) => res.json())
+          .then(
+            (data) => {
+              console.log("data", data);
+              setFormEnabled(false);
+              setProgressBarValue(100);
+
+              // if data.error is set, set the error message to formError
+              if (data.error) {
+                // TODO: handle error cases
+                setFormError(
+                  "Something went wrong. Please try again: " +
+                    JSON.stringify(data.error)
+                );
+              } else {
+                setFormSuccess(true);
+              }
+            } // end of .then()
+          ); // end of fetch()
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setFormError(err.errors[0]);
+        setFormEnabled(true);
+      });
   };
 
   const getForm = () => {
@@ -220,23 +240,41 @@ const FormNewRestaurantAgentPurchase = () => {
       <br />
       <hr />
 
-      <p>
-        Agent purchases (or proxy purchases) are a way to pay for your meal at a
-        restaurant that has QR code payments on their bill. You can pay for your
-        meal by asking for your bill and scanning it with your phone. Then you
-        can send the order number to us, and we will request the equivalent
-        amount of crypto from you. Once we receive right amount of crypto from
-        you, we will pay the restaurant bill on your behalf.
-      </p>
+      {/* "what are agent purchases" button - click to expand and see text */}
+      <button
+        type="button"
+        className="btn btn-xs btn-block btn-secondary"
+        style={{ fontSize: "18px" }}
+        onClick={() => setShowAgentPurchasesText(!showAgentPurchasesText)}
+      >
+        &#9660;&nbsp;What are Agent Purchases?&nbsp;&#9660;
+      </button>
       <br />
-      <p>
-        If you don't have access to the agent purchases feature and would like
-        to join the waiting list, let us know by{" "}
-        <a href="/waiting-list-agent-purchase">clicking here</a>. Or if you have
-        access to the agent purchases feature, you can visit the page by{" "}
-        <a href="/agent-purchase">clicking here</a>.
-      </p>
-      <br />
+      {showAgentPurchasesText ? (
+        <>
+          <p>
+            Agent purchases (or proxy purchases) are a way to pay for your meal
+            at a restaurant that has QR code payments on their bill. You can pay
+            for your meal by asking for your bill and scanning it with your
+            phone. Then you can send the order number to us, and we will request
+            the equivalent amount of crypto from you. Once we receive right
+            amount of crypto from you, we will pay the restaurant bill on your
+            behalf.
+          </p>
+          <br />
+          <p>
+            The restaurant will not know that you paid with crypto, and you will
+            not have to give them your credit card or cash. If they ask, just
+            say that you paid through the QR code on the receipt.
+          </p>
+          <p>
+            If you have suggestions for restaurants that we should add to our
+            list who accept QR code payment receipts, let us know by{" "}
+            <a href="/new-restaurant-agent">clicking here</a>.
+          </p>
+          <br />
+        </>
+      ) : null}
 
       {/* footer */}
       <div className="footer">
