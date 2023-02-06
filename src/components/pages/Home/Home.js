@@ -111,6 +111,19 @@ const Home = () => {
             Events
           </a>
           <br />
+          <a
+            href="/coach"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block"
+            style={{
+              fontSize: "18px",
+              backgroundColor: "purple",
+              color: "white",
+            }}
+          >
+            Personal Coaching
+          </a>
+          <br />
         </div>
 
         {/* footer */}

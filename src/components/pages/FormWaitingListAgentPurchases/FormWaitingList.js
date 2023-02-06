@@ -166,7 +166,7 @@ const FormWaitingList = () => {
                 <small id="message-help" className="form-text text-muted">
                   Tell us why you are interested in this service.
                 </small>
-                <input
+                <textarea
                   type="text"
                   className="form-control"
                   id="message"

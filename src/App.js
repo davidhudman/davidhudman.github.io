@@ -28,6 +28,7 @@ import OrderReceived from "./components/pages/OrderReceived/OrderReceived";
 import FormWaitingList from "./components/pages/FormWaitingListAgentPurchases/FormWaitingList";
 import FormNewRestaurantAgentPurchase from "./components/pages/FormNewRestaurantAgentPurchase/FormNewRestaurantAgentPurchase";
 import Events from "./components/pages/Events/Events";
+import Coach from "./components/pages/Coach/Coach";
 
 const App = () => (
   <Router>
@@ -59,6 +60,10 @@ const App = () => (
           path="/new-restaurant-agent"
           element={<FormNewRestaurantAgentPurchase />}
         />
+        <Route path="/coach" element={<Coach />} />
+        <Route path="/train" element={<Coach />} />
+        <Route path="/trainer" element={<Coach />} />
+
         <Route path="/new" element={<FormNewRestaurantAgentPurchase />} />
         <Route path="/add-merchant" element={<AddMerchant />} />
         <Route path="/paybch" element={<App1 />} />

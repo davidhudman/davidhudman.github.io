@@ -160,7 +160,7 @@ const Events = () => {
                   Tell me about how you found this site and what you hope to get
                   out of the event(s)
                 </small>
-                <input
+                <textarea
                   type="text"
                   className="form-control"
                   id="message"

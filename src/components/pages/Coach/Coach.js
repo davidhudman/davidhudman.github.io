@@ -8,10 +8,10 @@ import {
 import { ProgressBar } from "react-bootstrap";
 import * as yup from "yup";
 
-import "./formnewrestaurantagentpurchase.css";
+import "./coach.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const FormNewRestaurantAgentPurchase = () => {
+const Coach = () => {
   const [formEnabled, setFormEnabled] = useState(true);
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -24,7 +24,6 @@ const FormNewRestaurantAgentPurchase = () => {
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
   const [env, setEnv] = useState("production");
   const [progressBarValue, setProgressBarValue] = useState(0);
-  const [showAgentPurchasesText, setShowAgentPurchasesText] = useState(false);
 
   // setTimeout to update the progressBarValue by 1 every 100ms
   useEffect(() => {
@@ -60,7 +59,7 @@ const FormNewRestaurantAgentPurchase = () => {
           firstName,
           lastName,
           message,
-          formType: "formNewRestaurantAgentPurchases",
+          formType: "coach",
         };
 
         // send the payment request to the server
@@ -93,10 +92,7 @@ const FormNewRestaurantAgentPurchase = () => {
               // if data.error is set, set the error message to formError
               if (data.error) {
                 // TODO: handle error cases
-                setFormError(
-                  "Something went wrong. Please try again: " +
-                    JSON.stringify(data.error)
-                );
+                setFormError(JSON.stringify(data.error));
               } else {
                 setFormSuccess(true);
               }
@@ -110,7 +106,7 @@ const FormNewRestaurantAgentPurchase = () => {
       });
   };
 
-  const getForm = () => {
+  const getWaitingListForm = () => {
     if (formEnabled) {
       return (
         <>
@@ -158,26 +154,27 @@ const FormNewRestaurantAgentPurchase = () => {
 
               {/* message */}
               <div className="form-group">
-                <label htmlFor="message">Restaurant Name</label>
+                <label htmlFor="message">Message</label>
                 <br />
                 <small id="message-help" className="form-text text-muted">
-                  Please only send restaurants that currently support QR code
-                  payments
+                  Tell me about how you found this site and what you hope to
+                  achieve.
                 </small>
                 <textarea
                   type="text"
                   className="form-control"
                   id="message"
-                  placeholder="Enter Restaurant Name"
+                  placeholder="Enter Message"
                   onChange={(e) => setMessage(e.target.value)}
                 />
               </div>
+              <br />
 
               {/* submit button */}
               <button
                 type="submit"
                 className="btn btn-lg btn-block btn-primary"
-                style={{ fontSize: "18px" }}
+                style={{ fontSize: "20px" }}
                 onClick={(e) => onFormSubmit(e)}
               >
                 Submit
@@ -194,10 +191,25 @@ const FormNewRestaurantAgentPurchase = () => {
   return (
     <div className="outer-home-container">
       <div className="home">
-        <h1>Restaurant Suggestions</h1>
-        <strong>
-          Submit this form only if you know of restaurants with QR code payment
-        </strong>
+        <h1>Personal Coaching</h1>
+        <strong>Submit this form to join the people I train!</strong>
+        <br />
+        <br />
+        <p>
+          I am currently accepting a limited number of people to train. If you
+          are interested in personal coaching, please submit this form. I will
+          contact you to discuss your goals and how I can help you achieve them.
+        </p>
+        <br />
+        <p>
+          I primarily work with runners, but I have also worked with people to
+          advance their careers and projects in software engineering.
+        </p>
+        <br />
+        <p>
+          The first step is always the hardest. Take the first step and submit
+          this form.
+        </p>
 
         <hr />
 
@@ -215,8 +227,8 @@ const FormNewRestaurantAgentPurchase = () => {
             className="alert alert-success"
             role="alert"
           >
-            <strong>Success!</strong> You have submitted a restaurant for us to
-            review.
+            <strong>Success!</strong> We received your submission for personal
+            coaching. We will be in touch soon. Thank you!
           </div>
         ) : null}
 
@@ -235,46 +247,13 @@ const FormNewRestaurantAgentPurchase = () => {
         ) : null}
       </div>
 
-      {getForm()}
+      {getWaitingListForm()}
 
       <br />
+      <br />
+      <br />
+
       <hr />
-
-      {/* "what are agent purchases" button - click to expand and see text */}
-      <button
-        type="button"
-        className="btn btn-xs btn-block btn-secondary"
-        style={{ fontSize: "18px" }}
-        onClick={() => setShowAgentPurchasesText(!showAgentPurchasesText)}
-      >
-        &#9660;&nbsp;What are Agent Purchases?&nbsp;&#9660;
-      </button>
-      <br />
-      {showAgentPurchasesText ? (
-        <>
-          <p>
-            Agent purchases (or proxy purchases) are a way to pay for your meal
-            at a restaurant that has QR code payments on their bill. You can pay
-            for your meal by asking for your bill and scanning it with your
-            phone. Then you can send the order number to us, and we will request
-            the equivalent amount of crypto from you. Once we receive right
-            amount of crypto from you, we will pay the restaurant bill on your
-            behalf.
-          </p>
-          <br />
-          <p>
-            The restaurant will not know that you paid with crypto, and you will
-            not have to give them your credit card or cash. If they ask, just
-            say that you paid through the QR code on the receipt.
-          </p>
-          <p>
-            If you have suggestions for restaurants that we should add to our
-            list who accept QR code payment receipts, let us know by{" "}
-            <a href="/new-restaurant-agent">clicking here</a>.
-          </p>
-          <br />
-        </>
-      ) : null}
 
       {/* footer */}
       <div className="footer">
@@ -284,4 +263,4 @@ const FormNewRestaurantAgentPurchase = () => {
   );
 };
 
-export default FormNewRestaurantAgentPurchase;
+export default Coach;
