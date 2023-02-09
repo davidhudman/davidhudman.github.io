@@ -245,14 +245,13 @@ const FormWaitingList = () => {
       <button
         type="button"
         className="btn btn-xs btn-block btn-secondary"
-        style={{ fontSize: "18px" }}
-        onClick={() => setShowAgentPurchasesText(!showAgentPurchasesText)}
+        data-toggle="collapse"
+        data-target="#collapse1"
       >
-        &#9660;&nbsp;What are Agent Purchases?&nbsp;&#9660;
+        What are Agent Purchases?
       </button>
-      <br />
-      {showAgentPurchasesText ? (
-        <>
+      <div id="collapse1" className="collapse">
+        <div className="well">
           <p>
             Agent purchases (or proxy purchases) are a way to pay for your meal
             at a restaurant that has QR code payments on their bill. You can pay
@@ -273,9 +272,8 @@ const FormWaitingList = () => {
             list who accept QR code payment receipts, let us know by{" "}
             <a href="/new-restaurant-agent">clicking here</a>.
           </p>
-          <br />
-        </>
-      ) : null}
+        </div>
+      </div>
 
       {/* footer */}
       <div className="footer">

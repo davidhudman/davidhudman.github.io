@@ -43,9 +43,6 @@ const StrawPurchase = () => {
   const [cryptoPaymentStatus, setCryptoPaymentStatus] = useState(null);
   const [creditCardPaymentStatus, setCreditCardPaymentStatus] = useState(null);
   const [merchant, setMerchant] = useState("cracker barrel");
-  const [showAgentPurchasesText, setShowAgentPurchasesText] = useState(false);
-  const [showRestaurantSuggestionsText, setShowRestaurantSuggestionsText] =
-    useState(false);
   const [checkIfOrderExistsButtonEnabled, setCheckIfOrderExistsButtonEnabled] =
     useState(true);
   const [paymentIframeEnabled, setPaymentIframeEnabled] = useState(true);
@@ -61,7 +58,6 @@ const StrawPurchase = () => {
   //   useState(false);
   // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
   //   useState(false);
-  const [showJoinText, setShowJoinText] = useState(false);
 
   // useParams to get the id
   const { id } = useParams();
@@ -456,8 +452,9 @@ const StrawPurchase = () => {
               <strong>
                 Send a QR-enabled receipt & crypto. We pay the restaurant.
               </strong>
-
               <br />
+              <br />
+              <p>Early Release Beta v0.2</p>
               <hr />
             </>
           ) : null}
@@ -529,6 +526,7 @@ const StrawPurchase = () => {
                     <label htmlFor="password">Password</label>
                     <br />
                     <small id="password-help" className="form-text text-muted">
+                      Required for early access.{" "}
                       <a href="/waiting-list-agent-purchase">Click here</a> to
                       be placed on a waiting list
                     </small>
@@ -1000,62 +998,59 @@ const StrawPurchase = () => {
             <hr />
             {/* "Want to Join?" button - click to expand and see text */}
             <button
+              class="btn btn-secondary btn-xs btn-block"
               type="button"
-              className="btn btn-xs btn-block btn-secondary"
-              style={{ fontSize: "18px" }}
-              onClick={() => setShowJoinText(!showJoinText)}
+              data-toggle="collapse"
+              data-target="#collapse1"
             >
-              &#9660;&nbsp;Need to Join?&nbsp;&#9660;
+              Signup
+              <br />
+              <small
+                className="form-text text-muted"
+                style={{ fontSize: "14px" }}
+              >
+                required for early access
+              </small>
             </button>
+            <div class="collapse" id="collapse1">
+              <div class="well">
+                If you want to join our beta release as a customer, please fill
+                out the{" "}
+                <span style={{ fontWeight: "bold" }}>
+                  <a href="/wait">waiting list form here.</a>
+                </span>
+              </div>
+            </div>
             <br />
-            {showJoinText ? (
-              <>
-                <p>
-                  If you want to join our beta release as a customer, please
-                  fill out the{" "}
-                  <span style={{ fontWeight: "bold" }}>
-                    <a href="/wait">waiting list form here.</a>
-                  </span>
-                </p>
-                <br />
-              </>
-            ) : null}
-
-            {/* "suggest restaurants" button - click to expand and see text */}
+            {/* suggest restaurant button */}
             <button
+              class="btn btn-secondary btn-xs btn-block"
               type="button"
-              className="btn btn-xs btn-block btn-secondary"
-              style={{ fontSize: "18px" }}
-              onClick={() =>
-                setShowRestaurantSuggestionsText(!showRestaurantSuggestionsText)
-              }
+              data-toggle="collapse"
+              data-target="#collapse2"
             >
-              &#9660;&nbsp;Suggest Restaurants&nbsp;&#9660;
+              Suggest a Restaurant
             </button>
+            <div class="collapse" id="collapse2">
+              <div class="well">
+                More restaurants coming soon! Suggest restaurants who have QR
+                code payment receipts by{" "}
+                <a href="/new-restaurant-agent">clicking here</a>.
+              </div>
+            </div>
             <br />
-            {showRestaurantSuggestionsText ? (
-              <>
-                <p>
-                  More restaurants coming soon! Suggest restaurants who have QR
-                  code payment receipts by{" "}
-                  <a href="/new-restaurant-agent">clicking here</a>.
-                </p>
-                <br />
-              </>
-            ) : null}
 
-            {/* "what are agent purchases" button - click to expand and see text */}
+            {/* agent purchases button */}
             <button
+              class="btn btn-secondary btn-xs btn-block"
               type="button"
-              className="btn btn-xs btn-block btn-secondary"
-              style={{ fontSize: "18px" }}
-              onClick={() => setShowAgentPurchasesText(!showAgentPurchasesText)}
+              data-toggle="collapse"
+              data-target="#collapse3"
             >
-              &#9660;&nbsp;What are Agent Purchases?&nbsp;&#9660;
+              What are Agent Purchases?
             </button>
-            <br />
-            {showAgentPurchasesText ? (
-              <>
+            <div class="collapse" id="collapse3">
+              <div class="well">
                 <p>
                   Agent purchases (or proxy purchases) are a way to pay for your
                   meal at a restaurant that has QR code payments on their bill.
@@ -1077,9 +1072,9 @@ const StrawPurchase = () => {
                   our list who accept QR code payment receipts, let us know by{" "}
                   <a href="/new-restaurant-agent">clicking here</a>.
                 </p>
-                <br />
-              </>
-            ) : null}
+              </div>
+            </div>
+            <br />
           </>
         ) : null}
 
