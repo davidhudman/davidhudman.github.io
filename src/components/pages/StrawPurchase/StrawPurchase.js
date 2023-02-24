@@ -36,7 +36,7 @@ const StrawPurchase = () => {
   const [orderNumber, setOrderNumber] = useState("");
   const [customOrderId, setCustomOrderId] = useState(null);
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
-  const [env, setEnv] = useState("production");
+  const [env, setEnv] = useState(process.env.REACT_APP_STAGE);
   const [invoiceError, setInvoiceError] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState(null);
@@ -54,6 +54,7 @@ const StrawPurchase = () => {
     useState(false);
   const [showRefreshOrderStatusInfoText, setShowRefreshOrderStatusInfoText] =
     useState(false);
+  const [bucketImageKey, setBucketImageKey] = useState(null);
   // const [haveSetCryptoPaymentLoading, setHaveSetCryptoPaymentLoading] =
   //   useState(false);
   // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
@@ -151,6 +152,7 @@ const StrawPurchase = () => {
               paymentStatus
             );
             setCreditCardPaymentStatus(data.creditCardPaymentStatus);
+            setBucketImageKey(data.bucketImageKey);
           }
         }
         if (id) {
@@ -281,10 +283,8 @@ const StrawPurchase = () => {
     // local endpoint
     const invoiceApi = {
       local: "http://localhost:3001/invoice",
-      local2:
-        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
-      production:
-        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+      dev: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+      prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
     };
 
     // return null;
@@ -376,10 +376,8 @@ const StrawPurchase = () => {
     // query API to see if order exists
     const orderApi = {
       local: "http://localhost:3001/order",
-      local2:
-        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
-      production:
-        "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+      dev: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+      prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
     };
 
     // fetch GET request to check if order exists
@@ -397,7 +395,7 @@ const StrawPurchase = () => {
           setCheckIfOrderExistsButtonEnabled(true);
           if (data.cryptoPaymentReceived === "PAID") {
             // if order exists, redirect user to /agent/${orderNumber}
-            if (env === "production") {
+            if (env === "prod") {
               window.location.href = `https://davidhudman.com/agent/${orderNumber}`;
             } else {
               window.location.href = `http://localhost:3000/agent/${orderNumber}`;
@@ -444,6 +442,7 @@ const StrawPurchase = () => {
 
   const getAgentPurchaseForm = () => {
     if (formEnabled) {
+      console.log("env: ", env);
       return (
         <>
           {step === steps[0] ? (
@@ -453,8 +452,6 @@ const StrawPurchase = () => {
                 Send a QR-enabled receipt & crypto. We pay the restaurant.
               </strong>
               <br />
-              <br />
-              <p>Early Release Beta v0.2</p>
               <hr />
             </>
           ) : null}
@@ -750,7 +747,7 @@ const StrawPurchase = () => {
                       name="desc"
                       value={orderNumber.replace(/-/g, "")}
                     />
-                    {env === "production" ? (
+                    {env === "prod" ? (
                       <>
                         <input
                           type="hidden"
@@ -888,7 +885,35 @@ const StrawPurchase = () => {
           <br />
           <span style={{ fontSize: "24px" }}>
             {creditCardPaymentStatus == "PAID" && (
-              <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
+              <>
+                <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
+                {bucketImageKey && (
+                  <>
+                    <br />
+                    <hr />
+                    <a
+                      href={
+                        "https://s3.amazonaws.com/bch-invoice-public/" +
+                        bucketImageKey
+                      }
+                      target="_blank"
+                    >
+                      <img
+                        src={
+                          "https://s3.amazonaws.com/bch-invoice-public/" +
+                          bucketImageKey
+                        }
+                        width="100%"
+                        height="auto"
+                        alt="My Image"
+                      />
+                      <br />
+                      Click to Download Confirmation Image
+                    </a>
+                    <hr />
+                  </>
+                )}
+              </>
             )}
             {creditCardPaymentStatus == "UNPAID" && progressBarValue >= 99 && (
               <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
@@ -1002,12 +1027,15 @@ const StrawPurchase = () => {
               type="button"
               data-toggle="collapse"
               data-target="#collapse1"
+              style={{ lineHeight: 1 }}
             >
               Signup
               <br />
               <small
                 className="form-text text-muted"
-                style={{ fontSize: "14px" }}
+                style={{
+                  fontSize: "14px",
+                }}
               >
                 required for early access
               </small>
