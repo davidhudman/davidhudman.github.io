@@ -8,6 +8,9 @@ import {
 } from "react-router-dom";
 import { ProgressBar } from "react-bootstrap";
 
+// import Yup for form validation
+import { object, string, number, date, InferType } from "yup";
+
 import "./strawpurchase.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -55,6 +58,7 @@ const StrawPurchase = () => {
   const [showRefreshOrderStatusInfoText, setShowRefreshOrderStatusInfoText] =
     useState(false);
   const [bucketImageKey, setBucketImageKey] = useState(null);
+  const [formErrors, setFormErrors] = useState(null);
   // const [haveSetCryptoPaymentLoading, setHaveSetCryptoPaymentLoading] =
   //   useState(false);
   // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
@@ -257,19 +261,54 @@ const StrawPurchase = () => {
     e.preventDefault();
   };
 
-  const onFormSubmit = (e) => {
+  // validate form with Yup
+  const validate = async (values) => {
+    // create a Yup schema to validate each form field
+    let formSchema = object({
+      merchant: string().required("merchant is required"),
+      // tip amount must be a number
+      tipCustomAmount: number()
+        .typeError("Tip must be a number, even if it's 0")
+        .min(0, "Tip must be at least 0")
+        .required("tip amount is required"),
+      tipPercentage: number().optional(),
+      email: string()
+        .required("Email is required")
+        .test("len", "Must not be blank", (val) => val.length > 0), // force email behavior later - .email("Invalid email address")
+      refundAddress: string().required("Refund Address is required"),
+      password: string().required("Password is required"),
+      orderNumber: string().required("Order Number is required"),
+    });
+
+    // validate the form - new way
+    const errors = {};
+    try {
+      await formSchema.validate(values, { abortEarly: false });
+      setFormErrors({});
+    } catch (err) {
+      console.log("err: ", err);
+      // list all keys in the err object
+      Object.keys(err).forEach((key) => {
+        console.log("key: ", key);
+      });
+      err.inner.forEach((error) => {
+        errors[error.path] = error.message;
+      });
+      setFormErrors(errors);
+    }
+
+    return errors;
+  };
+
+  const onFormSubmit = async (e) => {
     e.preventDefault();
     setFormEnabled(false);
-    setProgressBarValue(0);
-    setStep(steps[3]);
 
-    // build the payment request
-    const paymentRequest = {
+    // validate the form - move this down below paymentRequest later
+    let paymentRequest = {
       merchant,
       // remove dollar sign and commas from tipCustomAmount
-      tipCustomAmount: tipCustomAmount
-        ? tipCustomAmount.replace(/[$,]/g, "")
-        : 0,
+      tipCustomAmount,
       tipPercentage,
       email,
       // qrCodeLink,
@@ -278,6 +317,27 @@ const StrawPurchase = () => {
       // remove the dash from orderNumber
       orderNumber: orderNumber.replace(/-/g, ""),
     };
+
+    const validateErrors = await validate(paymentRequest);
+
+    // TODO: remove this but just test validate for now
+    if (Object.keys(validateErrors).length > 0) {
+      console.log("validateErrors: ", validateErrors);
+      setFormEnabled(true);
+      return null;
+    } else {
+      console.log("no errors");
+    }
+
+    setProgressBarValue(0);
+    setStep(steps[3]);
+
+    // edit commas and dollar signs from tip amount
+    paymentRequest.tipCustomAmount = tipCustomAmount
+      ? tipCustomAmount.replace(/[$,]/g, "")
+      : 0;
+
+    console.log("paymentRequest: ", paymentRequest);
 
     // send the payment request to the server
     // local endpoint
@@ -352,6 +412,12 @@ const StrawPurchase = () => {
           <div className="form-group">
             <label htmlFor="tip-amount">Tip Amount (in USD dollars)</label>
             <br />
+            {/* add error text for formErrors.tipCustomAmount */}
+            {formErrors && formErrors.tipCustomAmount ? (
+              <span className="text-danger">
+                <b>{formErrors.tipCustomAmount}</b>
+              </span>
+            ) : null}
 
             <input
               type="number"
@@ -518,6 +584,16 @@ const StrawPurchase = () => {
               ) : null}
               {step === steps[1] ? (
                 <>
+                  {/* form errors show all errors in formErrors state object in a nice red box with a dark red outline of 1px */}
+                  {formErrors && (
+                    <div
+                      className="alert alert-danger"
+                      role="alert"
+                      hidden={formErrors.length === 0}
+                    >
+                      <p>Fix the errors in red below</p>
+                    </div>
+                  )}
                   {/* password */}
                   <div className="form-group">
                     <label htmlFor="password">Password</label>
@@ -527,6 +603,13 @@ const StrawPurchase = () => {
                       <a href="/waiting-list-agent-purchase">Click here</a> to
                       be placed on a waiting list
                     </small>
+                    <br />
+                    {/* add error text for formErrors.password */}
+                    {formErrors && formErrors.password ? (
+                      <span className="text-danger">
+                        <b>{formErrors.password}</b>
+                      </span>
+                    ) : null}
                     <input
                       type="password"
                       className="form-control"
@@ -543,14 +626,21 @@ const StrawPurchase = () => {
                     <br />
                     <small id="email-help" className="form-text text-muted">
                       To send you payment confirmation that we receive from the
-                      restaurant...once we fix the bug causing that to not work
-                      :)
+                      restaurant. If your email has a period in the username,
+                      you may not receive the email.
                       {/* View the confirmation email before leaving just in
                   case payment fails for some reason. Or just put your order
                   number into the restaurant{"'"}s website to see if it still
                   exists. */}
                     </small>
                     {/* add a "read more" link to read another paragraph */}
+                    <br />
+                    {/* add error text for formErrors.email */}
+                    {formErrors && formErrors.email ? (
+                      <span className="text-danger">
+                        <b>{formErrors.email}</b>
+                      </span>
+                    ) : null}
 
                     <input
                       type="email"
@@ -586,6 +676,13 @@ const StrawPurchase = () => {
                       If there's a problem with your payment, we'll refund this
                       bitcoin cash address
                     </small>
+                    <br />
+                    {/* add error text for formErrors.refundAddress */}
+                    {formErrors && formErrors.refundAddress ? (
+                      <span className="text-danger">
+                        <b>{formErrors.refundAddress}</b>
+                      </span>
+                    ) : null}
                     <input
                       type="text"
                       className="form-control"
@@ -663,9 +760,10 @@ const StrawPurchase = () => {
                   <br />
                   <br />
 
-                  {/* submit button */}
+                  {/* submit button - if button enabled */}
                   <button
                     type="submit"
+                    disabled={!formEnabled}
                     className="btn btn-lg btn-block btn-primary"
                     onClick={(e) => onFormSubmit(e)}
                   >
