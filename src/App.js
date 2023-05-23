@@ -49,7 +49,10 @@ const App = () => (
         <Route path="/proxy-purchase" element={<StrawPurchase />} />
         <Route path="/proxy" element={<StrawPurchase />} />
         <Route path="/agent" element={<StrawPurchase />} />
+        <Route path="/cracker" element={<StrawPurchase />} />
+        <Route path="/cb" element={<StrawPurchase />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/events/:eventId" element={<Events />} />
         <Route path="/agent/:id" element={<StrawPurchase />} />
         <Route
           path="/waiting-list-agent-purchase"
@@ -66,6 +69,7 @@ const App = () => (
 
         <Route path="/new" element={<FormNewRestaurantAgentPurchase />} />
         <Route path="/add-merchant" element={<AddMerchant />} />
+        <Route path="/add" element={<AddMerchant />} />
         <Route path="/paybch" element={<App1 />} />
         <Route path="/merchant/:merchantId" element={<Merchant />} />
         <Route path="/order-received/:id" element={<OrderReceived />} />

@@ -41,6 +41,7 @@ const StrawPurchase = () => {
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
   const [env, setEnv] = useState(process.env.REACT_APP_STAGE);
   const [invoiceError, setInvoiceError] = useState(null);
+  const [invoiceErrorDetails, setInvoiceErrorDetails] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [cryptoPaymentStatus, setCryptoPaymentStatus] = useState(null);
@@ -249,12 +250,14 @@ const StrawPurchase = () => {
 
   // setTimeout to update the progressBarValue by 1 every 300ms
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (progressBarValue !== 100) {
-        setProgressBarValue(progressBarValue + 1);
-      }
-    }, 800);
-    return () => clearInterval(interval);
+    if (progressBarValue > 0) {
+      const interval = setInterval(() => {
+        if (progressBarValue !== 100) {
+          setProgressBarValue(progressBarValue + 1);
+        }
+      }, 800);
+      return () => clearInterval(interval);
+    }
   }, [progressBarValue]);
 
   const checkExistingOrderStatus = (e) => {
@@ -270,6 +273,7 @@ const StrawPurchase = () => {
       tipCustomAmount: number()
         .typeError("Tip must be a number, even if it's 0")
         .min(0, "Tip must be at least 0")
+        .max(40, "Tip must be less than 40")
         .required("tip amount is required"),
       tipPercentage: number().optional(),
       email: string()
@@ -329,7 +333,7 @@ const StrawPurchase = () => {
       console.log("no errors");
     }
 
-    setProgressBarValue(0);
+    setProgressBarValue(1);
     setStep(steps[3]);
 
     // edit commas and dollar signs from tip amount
@@ -388,8 +392,14 @@ const StrawPurchase = () => {
               default:
                 if (data?.error?.details?.[0]?.message) {
                   setInvoiceError(data.error.details[0].message);
+                  setInvoiceErrorDetails(
+                    "Please check the order number above to ensure it matches the order number on the receipt."
+                  );
                 } else {
                   setInvoiceError(data.error);
+                  setInvoiceErrorDetails(
+                    "Please check the order number above to ensure it matches the order number on the receipt."
+                  );
                 }
                 break;
             }
@@ -513,7 +523,7 @@ const StrawPurchase = () => {
         <>
           {step === steps[0] ? (
             <>
-              <h1>Agent Purchases</h1>
+              <h1>Pay in BCH</h1>
               <strong>
                 Send a QR-enabled receipt & crypto. We pay the restaurant.
               </strong>
@@ -885,9 +895,11 @@ const StrawPurchase = () => {
                   </form>
                 </div>
               ) : (
-                <>
-                  <h3>Loading Payment Button</h3>
-                </>
+                !invoiceError && (
+                  <>
+                    <h3>Loading Payment Button</h3>
+                  </>
+                )
               )}
             </>
           ) : null}
@@ -1089,6 +1101,17 @@ const StrawPurchase = () => {
               <br />
             </>
           )}
+          <br />
+          {/* donate button (a tag styled as button) - link to /paybch */}
+          <a href="/paybch">
+            <button
+              className="btn btn-lg btn-block btn-secondary"
+              type="button"
+              style={{ color: "black", fontSize: "18px" }}
+            >
+              Donate to development
+            </button>
+          </a>
         </div>
       </div>
     );
@@ -1096,13 +1119,38 @@ const StrawPurchase = () => {
 
   return (
     <div className="outer-home-container">
+      {/* breadcrumb links to higher pages */}
+      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="breadcrumb-item" aria-current="page">
+            <Link to="/bitcoin">Bitcoin Cash</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            Pay in BCH
+          </li>
+        </ol>
+      </nav>
       <div className="home">
         <div>
           {/* Error Message Display Div */}
           {invoiceError ? (
-            <div id="error-message" className="alert alert-danger" role="alert">
-              <strong>Error!</strong> {invoiceError}
-            </div>
+            <>
+              {/* show order number */}
+              <h3>Order ID: {orderNumber ?? "unknown"}</h3>
+              <div
+                id="error-message"
+                className="alert alert-danger"
+                role="alert"
+              >
+                <strong>Error!</strong> {invoiceError}
+                <br />
+                <br />
+                <p>{invoiceErrorDetails ?? "No details available."}</p>
+              </div>
+            </>
           ) : null}
         </div>
 
@@ -1119,6 +1167,33 @@ const StrawPurchase = () => {
         {step === steps[0] ? (
           <>
             <hr />
+            <div>
+              <a href="https://youtu.be/euI-3ciQ1_s">
+                <i
+                  className="fa fa-youtube-play"
+                  style={{
+                    fontSize: "48px",
+                    color: "red",
+                  }}
+                ></i>
+                <div
+                  style={{
+                    margin: "-15px -20px",
+                  }}
+                >
+                  &nbsp;
+                </div>
+                <small
+                  className="form-text text-muted"
+                  style={{
+                    fontSize: "14px",
+                  }}
+                >
+                  Video Demo
+                </small>
+              </a>
+            </div>
+            <br />
             {/* "Want to Join?" button - click to expand and see text */}
             <button
               class="btn btn-secondary btn-xs btn-block"
@@ -1138,6 +1213,17 @@ const StrawPurchase = () => {
                 required for early access
               </small>
             </button>
+            <br />
+            {/* donate button (a tag styled as button) - link to /paybch */}
+            <a href="/paybch">
+              <button
+                className="btn btn-lg btn-block btn-secondary"
+                type="button"
+                style={{ color: "black" }}
+              >
+                Donate
+              </button>
+            </a>
             <div class="collapse" id="collapse1">
               <div class="well">
                 If you want to join our beta release as a customer, please fill

@@ -15,7 +15,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "3.0.1",
     "reactstrap": "^9.0.2",
-    "yup": "^0.32.11"
+    "yup": "^1.0.0"
   },
   "devDependencies": {
     "typescript": "3.3.3"

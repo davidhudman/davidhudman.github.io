@@ -28,7 +28,7 @@ const Home = () => {
           <br />
 
           <a
-            href="https://drive.google.com/file/d/1EUCtMWTBrS1XcNVteu6IcWiR9XNa1U1s/view?usp=sharing"
+            href="https://drive.google.com/file/d/1vEPbeTHk96-SyzP9jSun-088m9rlOkvg/view"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-primary"
@@ -45,7 +45,6 @@ const Home = () => {
             style={{ fontSize: "18px" }}
           >
             LinkedIn
-            <i className="fab fa-linkedin"></i>
           </a>
           <br />
           <a
@@ -74,12 +73,12 @@ const Home = () => {
           <h2>Projects</h2>
           <br />
           <a
-            href="/payment"
+            href="/bitcoin"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-success"
             style={{ fontSize: "18px" }}
           >
-            Free Bitcoin Cash Register v0.0.5
+            Bitcoin Cash
           </a>
           <br />
           <a

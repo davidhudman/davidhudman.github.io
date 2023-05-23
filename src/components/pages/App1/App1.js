@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles.css";
@@ -84,6 +85,22 @@ export default function App() {
 
   return (
     <div className="App1">
+      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="breadcrumb-item" aria-current="page">
+            <Link to="/bitcoin">Bitcoin Cash</Link>
+          </li>
+          <li className="breadcrumb-item" aria-current="page">
+            <Link to="/pay">Donate or Pay</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            Pay Me BCH
+          </li>
+        </ol>
+      </nav>
       {/* Title */}
       <h1>Pay Me BCH</h1>
       <br />
@@ -93,7 +110,7 @@ export default function App() {
         <input
           type="number"
           onChange={(e) => changeInvoiceAmount(e)}
-          placeholder="Enter amount owed"
+          placeholder="Enter amount (USD)"
           className="form-control text-center"
           style={{ fontSize: "24px" }}
         />

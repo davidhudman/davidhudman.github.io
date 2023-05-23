@@ -8,6 +8,9 @@ import {
 } from "react-router-dom";
 import QRCode from "react-qr-code";
 
+// import the bch-accepted-here-white png from "/src/assets" folder
+import BCHAcceptedHereWhite from "../../../assets/bch-accepted-here-white.png";
+
 import "./merchant.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -161,7 +164,7 @@ export default function Merchant() {
           </div>
         )}
 
-        {/* QR Code */}
+        {/* Link, BCH Accepted Here, QR Code */}
         <div className="qr-code">
           {/* full link text */}
           <div className="qr-code-text">
@@ -169,24 +172,48 @@ export default function Merchant() {
               davidhudman.com/merchant/{merchantId}
             </label>
           </div>
+          {/* display BCHAcceptedHereWhite */}
+          <img
+            src={BCHAcceptedHereWhite}
+            alt="BCH Accepted Here"
+            style={{ width: "100%" }}
+          />
+          <br />
+
+          <br />
+          <p style={{ textAlign: "center" }}>
+            **Get a Bitcoin Cash Wallet at <b>davidhudman.com/wallet</b>
+            **
+          </p>
+          {/* display QR code */}
           <QRCode value={"/merchant/" + merchantId} />
         </div>
 
         {/* Instructions */}
         <h2>Instructions</h2>
+        <small
+          style={{
+            fontSize: "12px",
+            textAlign: "center",
+            display: "block",
+          }}
+        >
+          Regular customers may do this without staff assistance if business
+          allows.
+        </small>
         <div className="instructions">
           <p>
             1. <b>STAFF</b>: scan this QR code with your phone.
           </p>
 
           <p>
-            2. <b>STAFF</b>: on the webpage, enter the amount of crypto owed by
-            the customer. They can also enter a tip amount.
+            2. <b>STAFF</b>: on the webpage, enter the amount owed by the
+            customer (in dollars). They can also enter a tip amount.
           </p>
 
           <p>
-            3. <b>STAFF</b>: A new barcode will be generated for payment to show
-            to the customer. Please leave your phone on this screen while the
+            3. <b>STAFF</b>: A new barcode will be generated for payment. Show
+            it to the customer. Leave your phone on this screen while the
             customer scans it with their crypto wallet app and confirms payment.
           </p>
 
@@ -237,7 +264,7 @@ export default function Merchant() {
           <input
             type="number"
             onChange={(e) => changeInvoiceAmount(e)}
-            placeholder="Enter amount owed"
+            placeholder="Enter amount (USD)"
             className="form-control text-center"
             style={{ fontSize: "24px" }}
           />

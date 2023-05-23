@@ -143,6 +143,20 @@ const AddMerchant = () => {
 
   return (
     <div className="outer-addmerchant-container">
+      {/* breadcrumb links to higher pages */}
+      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="breadcrumb-item" aria-current="page">
+            <Link to="/bitcoin">Bitcoin Cash</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            Add Merchant
+          </li>
+        </ol>
+      </nav>
       <div className="addmerchant">
         <div className="header">
           <h1>Add Bitcoin Cash Merchant</h1>

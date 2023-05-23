@@ -12,6 +12,21 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const Wallet = () => {
   return (
     <div className="outer-home-container">
+      {/* breadcrumb links to higher pages */}
+      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="breadcrumb-item" aria-current="page">
+            <Link to="/bitcoin">Bitcoin Cash</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            Wallet
+          </li>
+        </ol>
+      </nav>
+
       <div className="home">
         <h1>Getting Started</h1>
         {/* subtitle */}

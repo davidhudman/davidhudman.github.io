@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import GMap from "./GMap";
+import { Link } from "react-router-dom";
 
 // TODO: API key of the google map that I will absolutely delete and change later
 const GOOGLE_MAP_API_KEY = "AIzaSyB--d-Av1sjfOez49woBxKNYVR8BxTnoa4";
@@ -115,6 +116,20 @@ const App = () => {
 
   return (
     <div className="App">
+      {/* breadcrumb links to higher pages */}
+      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="breadcrumb-item" aria-current="page">
+            <Link to="/bitcoin">Bitcoin Cash</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            Map
+          </li>
+        </ol>
+      </nav>
       <h2>Crypto Merchant Map</h2>
       <button
         className="btn btn-lg btn-block btn-default"

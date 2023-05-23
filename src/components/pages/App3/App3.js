@@ -162,7 +162,7 @@ const App3 = () => {
           <input
             id="invoiceAmount"
             name="invoiceAmount"
-            placeholder="Enter amount owed"
+            placeholder="Enter amount (USD)"
             className="form-control text-center"
             type="number"
             onChange={formik.handleChange}

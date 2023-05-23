@@ -4,13 +4,14 @@
     width: 90%;
     margin: 0 auto;
     text-align: center;
+    align-items: center;
+    justify-content: center;
   }
   
   .outer-home-container {
     /* display: flex; */
     /* flex-direction: column; */
-    align-items: center;
-    justify-content: center;
+    
     /* height: 100vh; */
     width: 100%;
     /* background-color: #333333;
