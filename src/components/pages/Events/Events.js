@@ -161,8 +161,8 @@ const Events = () => {
                 <label htmlFor="message">Message</label>
                 <br />
                 <small id="message-help" className="form-text text-muted">
-                  Tell me about how you found this site and what you hope to get
-                  out of the event(s)
+                  Tell me which event you're waiting for and/or what you're
+                  interested in and how you found this site
                 </small>
                 <textarea
                   type="text"
@@ -197,14 +197,6 @@ const Events = () => {
         <div className="home">
           <h1>Event List</h1>
           <strong>Submit this form to join the email list for events</strong>
-          <br />
-          <br />
-          <p>
-            I may post some social events here from time to time but most will
-            be sent via email. I will also notify you about any invites to group
-            messages or messaging platforms I use to communicate about the
-            events.
-          </p>
 
           <hr />
 
@@ -256,19 +248,44 @@ const Events = () => {
     // create a mock function that will return a list of events after a delay
     let useMocks = false;
     if (!useMocks) {
-      // get events from this api - https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents
-      return fetch(
-        "https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents"
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("data", data);
-          setEvents(data.socialEvents);
-        })
-        .catch((err) => {
-          console.log("err", err);
-          return [];
-        });
+      if (eventId) {
+        // get events from this api - specific event
+        return fetch(
+          `https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents?id=${eventId}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("specific event data: ", data);
+            if (data && data.socialEvents && data.socialEvents.Item) {
+              setEvents([data.socialEvents.Item]);
+            } else {
+            }
+          })
+          .catch((err) => {
+            console.log("err", err);
+            return [];
+          });
+      } else {
+        // get events from this api - all public events
+        return fetch(
+          "https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents"
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("public events data: ", data);
+            if (data && data.socialEvents) {
+              setEvents(data.socialEvents);
+            } else {
+              console.log(
+                "called public event api, but no events were returned"
+              );
+            }
+          })
+          .catch((err) => {
+            console.log("err", err);
+            return [];
+          });
+      }
     }
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -299,44 +316,72 @@ const Events = () => {
         <>
           <div className="home">
             <h1>{event.title}</h1>
+            <div>{event.cost > 0 ? "$" + event.cost : "Free to attend"}</div>
+            <div>{event.date}</div>
             <div>
-              <strong>Date:</strong> {event.date}
+              {event.time} ({event.length})
             </div>
+            <div>{event.location}</div>
             <div>
-              <strong>Time:</strong> {event.time} ({event.length})
-            </div>
-            <div>
-              <strong>Location:</strong> {event.location}
-            </div>
-            {/* remaining slots */}
-            <div>
-              <strong>Spaces Left:</strong> {event.spacesLeft}
-            </div>
-            {/* cost */}
-            <div>
-              <strong>Cost:</strong>{" "}
-              {event.cost > 0 ? "$" + event.cost : "Free"}
+              {event.spacesLeft != "" ? (
+                <>
+                  <strong>Spaces Left:</strong> {event.spacesLeft}
+                </>
+              ) : null}
             </div>
             <hr />
             <p>{event.description}</p>
             <br />
+            <div>
+              {event.spacesLeft > 0 && event.cost > 0 ? (
+                <>
+                  Spots go to the first people to pay. When they're gone,
+                  they're gone. Remaining spots will update shortly after you
+                  pay. I will see your name on Venmo/CashApp, but{" "}
+                  <b>
+                    you must write your name in the description if you pay with
+                    Crypto
+                  </b>
+                  .
+                </>
+              ) : null}
+            </div>
             <hr />
             {/* Pay button */}
-            <div className="text-center">
-              <a
-                type="button"
-                disabled={event.spacesLeft == 0}
-                href="/pay"
-                className={
-                  event.spacesLeft == 0
-                    ? "btn btn-lg btn-warning"
-                    : "btn btn-lg btn-success"
-                }
-                style={{ fontSize: "18px" }}
-              >
-                Reserve Your Spot - Pay Now
-              </a>
-            </div>
+            {event.spacesLeft != "" && event.spacesLeft == 0 ? (
+              <div className="text-center">
+                <a
+                  type="button"
+                  href="/events"
+                  className="btn btn-lg btn-warning"
+                  style={{ fontSize: "18px" }}
+                >
+                  Sold Out! Sign up for the waiting list.
+                </a>
+              </div>
+            ) : event.cost > 0 ? (
+              <div className="text-center">
+                <a
+                  type="button"
+                  href="/pay"
+                  className="btn btn-lg btn-success"
+                  style={{ fontSize: "18px" }}
+                >
+                  Reserve Your Spot - Pay Now
+                </a>
+              </div>
+            ) : (
+              <div className="text-center">
+                <a
+                  type="button"
+                  href="/events"
+                  className="btn btn-lg btn-warning"
+                  style={{ fontSize: "18px" }}
+                >
+                  Sign up to be notified for future events
+                </a>
+              </div>
+            )}
           </div>
         </>
       );
@@ -354,7 +399,7 @@ const Events = () => {
   const getLoadingEventsPage = () => {
     setTimeout(() => {
       setFailedToFindEvent(true);
-    }, 1000);
+    }, 5000);
     return (
       <>
         <div className="home">

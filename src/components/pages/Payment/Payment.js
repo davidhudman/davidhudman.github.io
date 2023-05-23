@@ -76,6 +76,18 @@ const Payment = () => {
           </button>
           <br />
 
+          {/* a third party service for holding your money stable in dollars */}
+          {/* https://app.bchbull.com/ */}
+          <a
+            href="https://app.bchbull.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-lg btn-block btn-primary"
+            style={{ fontSize: "18px" }}
+          >
+            Stabilize your crypto's value in dollars
+          </a>
+
           <br />
         </div>
 
