@@ -38,6 +38,7 @@ const Events = () => {
   const [env, setEnv] = useState("production");
   const [progressBarValue, setProgressBarValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [events, setEvents] = useState([]);
 
   // setTimeout to update the progressBarValue by 1 every 100ms
@@ -454,9 +455,9 @@ const Events = () => {
       date: yup.string().required(),
       time: yup.string().required(),
       length: yup.string().required(),
-      location: yup.string().required(),
-      generalpublic: yup.boolean().required(),
-      spacesLeft: yup.number().optional(),
+      location: yup.string().optional(),
+      generalpublic: yup.boolean().optional(),
+      spacesLeft: yup.string().optional(),
     });
 
     const getInitialValues = () => {
@@ -474,16 +475,16 @@ const Events = () => {
         const spacesLeft = searchParams.get("spacesLeft");
 
         return {
-          socialEventId,
-          title,
-          cost,
-          description,
-          date,
-          time,
-          length,
-          location,
-          generalpublic,
-          spacesLeft,
+          socialEventId: socialEventId ?? "",
+          title: title ?? "",
+          cost: cost ?? 0,
+          description: description ?? "",
+          date: date ?? "",
+          time: time ?? "",
+          length: length ?? "",
+          location: location ?? "",
+          generalpublic: generalpublic ?? false,
+          spacesLeft: spacesLeft ?? "",
         };
       } catch (err) {
         console.log("err finding search params", err);
@@ -491,7 +492,7 @@ const Events = () => {
           title: "",
           password: "",
           socialEventId: "",
-          cost: "",
+          cost: 0,
           description: "",
           date: "",
           time: "",
@@ -526,6 +527,18 @@ const Events = () => {
                     return;
                   }
 
+                  // set success message
+                  setSuccessMessage("Event created successfully");
+                  setErrorMessage("");
+
+                  // set timeout to clear success message after 5 seconds
+                  setTimeout(() => {
+                    setSuccessMessage("");
+                    if (res?.data?.dbVal?.socialEventId) {
+                      navigate(`/events/${res?.data?.dbVal?.socialEventId}`);
+                    }
+                  }, 2000);
+
                   resetForm();
                   setEvents([...events, res.data]);
                 })
@@ -535,9 +548,9 @@ const Events = () => {
                   if (
                     error.response &&
                     error.response.data &&
-                    error.response.data.message
+                    error.response.data.error
                   ) {
-                    setErrorMessage(error.response.data.message);
+                    setErrorMessage(error.response.data.error);
                   }
                 });
             }}
@@ -794,13 +807,6 @@ const Events = () => {
         </ol>
       </nav>
 
-      {/* show error message */}
-      {errorMessage && (
-        <div className="alert alert-danger" role="alert">
-          {errorMessage}
-        </div>
-      )}
-
       {eventId && eventId.startsWith("create")
         ? getCreateEventForm()
         : eventId && eventId.length > 0
@@ -812,6 +818,20 @@ const Events = () => {
       <br />
       <br />
       <br />
+
+      {/* show success message */}
+      {successMessage && (
+        <div className="alert alert-success" role="alert">
+          {successMessage}
+        </div>
+      )}
+
+      {/* show error message */}
+      {errorMessage && (
+        <div className="alert alert-danger" role="alert">
+          {errorMessage}
+        </div>
+      )}
 
       <hr />
 
