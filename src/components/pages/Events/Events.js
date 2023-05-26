@@ -5,12 +5,18 @@ import {
   // Routes,
   Link,
   useParams,
+  useNavigate,
+  useLocation,
 } from "react-router-dom";
 import { ProgressBar } from "react-bootstrap";
 import * as yup from "yup";
+import { Formik, Field, ErrorMessage } from "formik";
+import axios from "axios";
 
 import "./events.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+const EVENT_API_URL = `https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents`;
 
 const Events = () => {
   const [formEnabled, setFormEnabled] = useState(true);
@@ -25,9 +31,14 @@ const Events = () => {
 
   const { eventId } = useParams();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
   const [env, setEnv] = useState("production");
   const [progressBarValue, setProgressBarValue] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [events, setEvents] = useState([]);
 
   // setTimeout to update the progressBarValue by 1 every 100ms
   useEffect(() => {
@@ -238,11 +249,22 @@ const Events = () => {
           ) : null}
         </div>
         {getWaitingListForm()}
+        {/* button to navigate to create event page */}
+        <hr />
+        <div className="create-event-button">
+          <Link to="/events/create">
+            <button
+              type="button"
+              className="btn btn-lg btn-block btn-default"
+              style={{ fontSize: "18px" }}
+            >
+              Submit An Event for Approval
+            </button>
+          </Link>
+        </div>
       </>
     );
   };
-
-  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     // create a mock function that will return a list of events after a delay
@@ -250,9 +272,7 @@ const Events = () => {
     if (!useMocks) {
       if (eventId) {
         // get events from this api - specific event
-        return fetch(
-          `https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents?id=${eventId}`
-        )
+        return fetch(`${EVENT_API_URL}?id=${eventId}`)
           .then((res) => res.json())
           .then((data) => {
             console.log("specific event data: ", data);
@@ -267,9 +287,7 @@ const Events = () => {
           });
       } else {
         // get events from this api - all public events
-        return fetch(
-          "https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents"
-        )
+        return fetch(EVENT_API_URL)
           .then((res) => res.json())
           .then((data) => {
             console.log("public events data: ", data);
@@ -350,13 +368,14 @@ const Events = () => {
             {/* Pay button */}
             {event.spacesLeft != "" && event.spacesLeft == 0 ? (
               <div className="text-center">
+                <h3>Sold Out!</h3>
                 <a
                   type="button"
                   href="/events"
                   className="btn btn-lg btn-warning"
                   style={{ fontSize: "18px" }}
                 >
-                  Sold Out! Sign up for the waiting list.
+                  Sign up for the wait list
                 </a>
               </div>
             ) : event.cost > 0 ? (
@@ -372,16 +391,35 @@ const Events = () => {
               </div>
             ) : (
               <div className="text-center">
+                <h3>Event Full</h3>
                 <a
                   type="button"
                   href="/events"
                   className="btn btn-lg btn-warning"
                   style={{ fontSize: "18px" }}
                 >
-                  Sign up to be notified for future events
+                  Sign up for wait list
                 </a>
               </div>
             )}
+            {/* edit button - onPress, render page for /create and fill fields with event info */}
+            <br />
+            <div className="text-center">
+              <button
+                type="button"
+                className="btn btn-block btn-lg btn-primary"
+                style={{ fontSize: "18px" }}
+                onClick={() => {
+                  // Construct query params from event details
+                  const queryParams = new URLSearchParams(event).toString();
+
+                  // Use the history object to navigate to the create page with the event details as query parameters
+                  navigate(`/events/create?${queryParams}`);
+                }}
+              >
+                Edit Event - password required
+              </button>
+            </div>
           </div>
         </>
       );
@@ -394,6 +432,307 @@ const Events = () => {
         </>
       );
     }
+  };
+
+  const getCreateEventForm = () => {
+    const searchParams = new URLSearchParams(location.search);
+    try {
+      const socialEventId = searchParams.get("socialEventId");
+    } catch (err) {
+      console.log("err finding search params", err);
+    }
+
+    // define the yup schema from this joi schema
+    const yupSchema = yup.object().shape({
+      title: yup.string().required(),
+      password: yup.string().optional(),
+      socialEventId: yup.string().required(),
+      cost: yup.number().required(),
+      description: yup.string().required(),
+      date: yup.string().required(),
+      time: yup.string().required(),
+      length: yup.string().required(),
+      location: yup.string().required(),
+      generalpublic: yup.boolean().required(),
+      spacesLeft: yup.number().optional(),
+    });
+
+    const getInitialValues = () => {
+      const searchParams = new URLSearchParams(location.search);
+      try {
+        const socialEventId = searchParams.get("socialEventId");
+        const title = searchParams.get("title");
+        const cost = searchParams.get("cost");
+        const description = searchParams.get("description");
+        const date = searchParams.get("date");
+        const time = searchParams.get("time");
+        const length = searchParams.get("length");
+        const location = searchParams.get("location");
+        const generalpublic = searchParams.get("generalpublic");
+        const spacesLeft = searchParams.get("spacesLeft");
+
+        return {
+          socialEventId,
+          title,
+          cost,
+          description,
+          date,
+          time,
+          length,
+          location,
+          generalpublic,
+          spacesLeft,
+        };
+      } catch (err) {
+        console.log("err finding search params", err);
+        return {
+          title: "",
+          password: "",
+          socialEventId: "",
+          cost: "",
+          description: "",
+          date: "",
+          time: "",
+          length: "",
+          location: "",
+          generalpublic: false,
+          spacesLeft: "",
+        };
+      }
+    };
+
+    return (
+      <>
+        <div className="home">
+          <h1>Create Event</h1>
+          <Formik
+            initialValues={getInitialValues()}
+            validationSchema={yupSchema}
+            onSubmit={(values, { setSubmitting, resetForm }) => {
+              console.log("values", values);
+              setSubmitting(true);
+              // make async call - POST request to same URL as GET
+              axios
+                .post(EVENT_API_URL, values)
+                .then((res) => {
+                  console.log("res", res);
+                  setSubmitting(false);
+
+                  // if res status is not 2XX, then throw error
+                  if (res.status !== 200 && res.status !== 201) {
+                    setErrorMessage("Error creating event");
+                    return;
+                  }
+
+                  resetForm();
+                  setEvents([...events, res.data]);
+                })
+                .catch((error) => {
+                  console.log("error", error);
+                  setSubmitting(false);
+                  if (
+                    error.response &&
+                    error.response.data &&
+                    error.response.data.message
+                  ) {
+                    setErrorMessage(error.response.data.message);
+                  }
+                });
+            }}
+          >
+            {(props) => {
+              const {
+                values,
+                touched,
+                errors,
+                isSubmitting,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+              } = props;
+              return (
+                <form onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="title">Title</label>
+                    <Field
+                      name="title"
+                      id="title"
+                      placeholder="Title"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="title"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <Field
+                      name="password"
+                      id="password"
+                      placeholder="Password"
+                      type="password"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="password"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="date">Date</label>
+                    <Field
+                      name="date"
+                      id="date"
+                      placeholder="Date"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="date"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="socialEventId">Social Event ID</label>
+                    <Field
+                      name="socialEventId"
+                      id="socialEventId"
+                      placeholder="Social Event ID"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="socialEventId"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="cost">Cost</label>
+                    <Field
+                      name="cost"
+                      id="cost"
+                      placeholder="Cost"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="cost"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="description">Description</label>
+                    <Field
+                      name="description"
+                      id="description"
+                      placeholder="Description"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="description"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="time">Time</label>
+                    <Field
+                      name="time"
+                      id="time"
+                      placeholder="Time"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="time"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="length">Length</label>
+                    <Field
+                      name="length"
+                      id="length"
+                      placeholder="Length"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="length"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="location">Location</label>
+                    <Field
+                      name="location"
+                      id="location"
+                      placeholder="Location"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="location"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="generalpublic">General Public</label>
+                    <Field
+                      name="generalpublic"
+                      id="generalpublic"
+                      type="checkbox"
+                      checked={values.generalpublic}
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="generalpublic"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="spacesLeft">Spaces Left</label>
+                    <Field
+                      name="spacesLeft"
+                      id="spacesLeft"
+                      placeholder="Spaces Left"
+                      type="text"
+                      className="input-field"
+                    />
+                    <ErrorMessage
+                      name="spacesLeft"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-block"
+                    disabled={isSubmitting}
+                  >
+                    Submit
+                  </button>
+                </form>
+              );
+            }}
+          </Formik>
+        </div>
+      </>
+    );
   };
 
   const getLoadingEventsPage = () => {
@@ -431,7 +770,16 @@ const Events = () => {
         </ol>
       </nav>
 
-      {eventId && eventId.length > 0
+      {/* show error message */}
+      {errorMessage && (
+        <div className="alert alert-danger" role="alert">
+          {errorMessage}
+        </div>
+      )}
+
+      {eventId && eventId.startsWith("create")
+        ? getCreateEventForm()
+        : eventId && eventId.length > 0
         ? events && events.length > 0
           ? getSpecificEventPage()
           : getLoadingEventsPage()

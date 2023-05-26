@@ -51,3 +51,42 @@
   .btn-primary a:hover{
     text-decoration: none;
   }
+
+  /* Define the error styling for input fields */
+.input-field.error {
+  border-color: red;
+}
+
+/* Define the error message styling */
+.input-feedback {
+  color: red;
+  margin-top: 5px;
+}
+
+/* Style your fields normally */
+.input-field {
+  /* Your regular styles */
+
+  /* style the input field to be full width */
+  width: 100%;
+}
+
+/* Change the field border to red when an error message is present */
+.input-feedback + .input-field {
+  border-color: red;
+}
+
+/* Style your error messages */
+.input-feedback {
+  color: red;
+}
+
+/* style label to be above the input */
+label {
+  display: block;
+  margin-bottom: 1px;
+}
+
+#description {
+  font-size: 14px;
+}
