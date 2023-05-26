@@ -389,7 +389,7 @@ const Events = () => {
                   Reserve Your Spot - Pay Now
                 </a>
               </div>
-            ) : (
+            ) : event && event.spacesLeft == 0 ? (
               <div className="text-center">
                 <h3>Event Full</h3>
                 <a
@@ -401,6 +401,8 @@ const Events = () => {
                   Sign up for wait list
                 </a>
               </div>
+            ) : (
+              <>{/* reserve for free */}</>
             )}
             {/* edit button - onPress, render page for /create and fill fields with event info */}
             <br />
@@ -559,7 +561,9 @@ const Events = () => {
                       id="title"
                       placeholder="Title"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="title"
@@ -574,7 +578,9 @@ const Events = () => {
                       id="password"
                       placeholder="Password"
                       type="password"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="password"
@@ -589,7 +595,9 @@ const Events = () => {
                       id="date"
                       placeholder="Date"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="date"
@@ -604,7 +612,9 @@ const Events = () => {
                       id="socialEventId"
                       placeholder="Social Event ID"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="socialEventId"
@@ -619,7 +629,9 @@ const Events = () => {
                       id="cost"
                       placeholder="Cost"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="cost"
@@ -634,7 +646,9 @@ const Events = () => {
                       id="description"
                       placeholder="Description"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="description"
@@ -649,7 +663,9 @@ const Events = () => {
                       id="time"
                       placeholder="Time"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="time"
@@ -665,7 +681,9 @@ const Events = () => {
                       id="length"
                       placeholder="Length"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="length"
@@ -680,7 +698,9 @@ const Events = () => {
                       id="location"
                       placeholder="Location"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="location"
@@ -695,7 +715,9 @@ const Events = () => {
                       id="generalpublic"
                       type="checkbox"
                       checked={values.generalpublic}
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="generalpublic"
@@ -710,7 +732,9 @@ const Events = () => {
                       id="spacesLeft"
                       placeholder="Spaces Left"
                       type="text"
-                      className="input-field"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
                     />
                     <ErrorMessage
                       name="spacesLeft"
