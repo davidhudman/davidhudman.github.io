@@ -208,7 +208,52 @@ const Events = () => {
       <>
         <div className="home">
           <h1>Event List</h1>
-          <strong>Submit this form to join the email list for events</strong>
+          {/* event link is href={`/events/${event.socialEventId}`} */}
+          {/* display each element in events array in a clean bootstrap card */}
+          {events.map((event) => {
+            return (
+              <div
+                className="card"
+                style={{
+                  width: "100%",
+                  border: "1px solid black",
+                  borderRadius: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                <a href={`/events/${event.socialEventId}`}>
+                  <div className="card-body">
+                    <div className="card-title" style={{ fontSize: "18px" }}>
+                      {event.title}
+                    </div>
+                    <div className="card-footer text-muted">
+                      @ {event.location}
+                    </div>
+                    <div className="card-footer text-muted">
+                      {event.date} @ {event.time}
+                    </div>
+                  </div>
+                </a>
+              </div>
+            );
+          })}
+
+          {/* button to navigate to create event page */}
+          <hr />
+          <div className="create-event-button">
+            <Link to="/events/create">
+              <button
+                type="button"
+                className="btn btn-lg btn-block btn-default"
+                style={{ fontSize: "18px" }}
+              >
+                Submit An Event for Approval
+              </button>
+            </Link>
+          </div>
+
+          <hr />
+          <strong>Join the email list for events</strong>
 
           <hr />
 
@@ -250,19 +295,6 @@ const Events = () => {
           ) : null}
         </div>
         {getWaitingListForm()}
-        {/* button to navigate to create event page */}
-        <hr />
-        <div className="create-event-button">
-          <Link to="/events/create">
-            <button
-              type="button"
-              className="btn btn-lg btn-block btn-default"
-              style={{ fontSize: "18px" }}
-            >
-              Submit An Event for Approval
-            </button>
-          </Link>
-        </div>
       </>
     );
   };
@@ -374,7 +406,7 @@ const Events = () => {
                   type="button"
                   href="/events"
                   className="btn btn-lg btn-warning"
-                  style={{ fontSize: "18px" }}
+                  style={{ fontSize: "18px", width: "100%" }}
                 >
                   Sign up for the wait list
                 </a>
@@ -385,7 +417,7 @@ const Events = () => {
                   type="button"
                   href="/pay"
                   className="btn btn-lg btn-success"
-                  style={{ fontSize: "18px" }}
+                  style={{ fontSize: "18px", width: "100%" }}
                 >
                   Reserve Your Spot - Pay Now
                 </a>
@@ -397,7 +429,7 @@ const Events = () => {
                   type="button"
                   href="/events"
                   className="btn btn-lg btn-warning"
-                  style={{ fontSize: "18px" }}
+                  style={{ fontSize: "18px", width: "100%" }}
                 >
                   Sign up for wait list
                 </a>
@@ -411,7 +443,7 @@ const Events = () => {
               <button
                 type="button"
                 className="btn btn-block btn-lg btn-primary"
-                style={{ fontSize: "18px" }}
+                style={{ fontSize: "18px", width: "100%" }}
                 onClick={() => {
                   // Construct query params from event details
                   const queryParams = new URLSearchParams(event).toString();
@@ -420,7 +452,7 @@ const Events = () => {
                   navigate(`/events/create?${queryParams}`);
                 }}
               >
-                Edit Event - password required
+                Edit Event (password required)
               </button>
             </div>
           </div>
@@ -431,6 +463,8 @@ const Events = () => {
         <>
           <div className="home">
             <h1>Event Not Found</h1>
+            {/* in small text, show "try refreshing page" */}
+            <div className="text-muted">Try refreshing the page</div>
           </div>
         </>
       );
