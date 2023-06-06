@@ -705,16 +705,6 @@ const StrawPurchase = () => {
 
                   {getTipForm()}
 
-                  {/* create button to go back to step[0] */}
-                  <br />
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-lg btn-block"
-                    onClick={() => setStep(steps[0])}
-                  >
-                    Go Back
-                  </button>
-                  <br />
                   <br />
 
                   {/* submit button */}
@@ -724,6 +714,17 @@ const StrawPurchase = () => {
                     onClick={(e) => onFormSubmit(e)}
                   >
                     Pay
+                  </button>
+                  <br />
+                  <br />
+
+                  {/* create button to go back to step[0] */}
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-lg btn-block"
+                    onClick={() => setStep(steps[0])}
+                  >
+                    Go Back
                   </button>
                 </>
               ) : null}

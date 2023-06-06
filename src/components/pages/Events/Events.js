@@ -40,6 +40,7 @@ const Events = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [events, setEvents] = useState([]);
+  const [event, setEvent] = useState({});
 
   // setTimeout to update the progressBarValue by 1 every 100ms
   useEffect(() => {
@@ -203,14 +204,29 @@ const Events = () => {
     }
   };
 
+  // function to convert date "May 29, 2023" to "Mon May 29"
+  const convertDate = (date) => {
+    const d = new Date(date);
+    const day = d.toLocaleString("default", { weekday: "short" });
+    const month = d.toLocaleString("default", { month: "short" });
+    const dayOfMonth = d.getDate();
+    return `${day} ${month} ${dayOfMonth}`;
+  };
+
   const getSignUpPage = () => {
     return (
       <>
         <div className="home">
-          <h1>Event List</h1>
           {/* event link is href={`/events/${event.socialEventId}`} */}
           {/* display each element in events array in a clean bootstrap card */}
-          {events.map((event) => {
+          {events.map((eventItem) => {
+            // if date is before yesterday, don't show it
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const eventDate = new Date(eventItem.date);
+            if (eventDate < yesterday) {
+              return null;
+            }
             return (
               <div
                 className="card"
@@ -221,16 +237,16 @@ const Events = () => {
                   marginBottom: "10px",
                 }}
               >
-                <a href={`/events/${event.socialEventId}`}>
+                <a href={`/events/${eventItem.socialEventId}`}>
                   <div className="card-body">
                     <div className="card-title" style={{ fontSize: "18px" }}>
-                      {event.title}
+                      {eventItem.title}
                     </div>
                     <div className="card-footer text-muted">
-                      @ {event.location}
+                      {convertDate(eventItem.date)} {eventItem.time}
                     </div>
                     <div className="card-footer text-muted">
-                      {event.date} @ {event.time}
+                      @ {eventItem.location}
                     </div>
                   </div>
                 </a>
@@ -244,10 +260,10 @@ const Events = () => {
             <Link to="/events/create">
               <button
                 type="button"
-                className="btn btn-lg btn-block btn-default"
+                className="btn btn-lg btn-block btn-primary"
                 style={{ fontSize: "18px" }}
               >
-                Submit An Event for Approval
+                Create Your Own Event
               </button>
             </Link>
           </div>
@@ -299,37 +315,20 @@ const Events = () => {
     );
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     // create a mock function that will return a list of events after a delay
     let useMocks = false;
     if (!useMocks) {
       if (eventId) {
         // get events from this api - specific event
-        return fetch(`${EVENT_API_URL}?id=${eventId}`)
+        await fetch(`${EVENT_API_URL}?id=${eventId}`)
           .then((res) => res.json())
           .then((data) => {
             console.log("specific event data: ", data);
             if (data && data.socialEvents && data.socialEvents.Item) {
-              setEvents([data.socialEvents.Item]);
+              console.log("setting event: ", data.socialEvents.Item);
+              setEvent(data.socialEvents.Item);
             } else {
-            }
-          })
-          .catch((err) => {
-            console.log("err", err);
-            return [];
-          });
-      } else {
-        // get events from this api - all public events
-        return fetch(EVENT_API_URL)
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("public events data: ", data);
-            if (data && data.socialEvents) {
-              setEvents(data.socialEvents);
-            } else {
-              console.log(
-                "called public event api, but no events were returned"
-              );
             }
           })
           .catch((err) => {
@@ -337,32 +336,62 @@ const Events = () => {
             return [];
           });
       }
+      // get events from this api - all public events
+      await fetch(EVENT_API_URL)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("public events data: ", data);
+          if (data && data.socialEvents) {
+            // sort events by date
+            data.socialEvents.sort((a, b) => {
+              return new Date(a.date) - new Date(b.date);
+            });
+            setEvents(data.socialEvents);
+          } else {
+            console.log("called public event api, but no events were returned");
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+          return [];
+        });
     }
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(
-          setEvents([
-            {
-              socialEventId: "1", // "top-golf-tuesday-001",
-              title: "A Fake Event For Testing",
-              date: "May 23, 2023",
-              time: "7:15 PM",
-              location: "Jax Beach Pier, Jacksonville, FL",
-              length: "2 hours",
-              spacesLeft: 1,
-              cost: 10,
-              description: "fish all you want, but eat all you fish",
-            },
-          ])
-        );
-      }, 1000);
-    });
+    // return new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve(
+    //       setEvents([
+    //         {
+    //           socialEventId: "1", // "top-golf-tuesday-001",
+    //           title: "A Fake Event For Testing",
+    //           date: "May 23, 2023",
+    //           time: "7:15 PM",
+    //           location: "Jax Beach Pier, Jacksonville, FL",
+    //           length: "2 hours",
+    //           spacesLeft: 1,
+    //           cost: 10,
+    //           description: "fish all you want, but eat all you fish",
+    //         },
+    //       ])
+    //     );
+    //   }, 1000);
+    // });
   }, []);
 
   const getSpecificEventPage = () => {
-    const event = events.find((e) => e.socialEventId === eventId);
+    getLoadingEventsPage();
+    // let event = null;
+    // if (events && events.length > 0) {
+    //   oneEvent = events.find((e) => e.socialEventId === eventId);
+    // } else
+    // if (event && event.socialEventId === eventId) {
+    //   console.log("event.socialEventId === eventId, event: ");
+    //   event = event;
+    // }
+    // console.log("oneEvent: ", event);
 
-    if (event) {
+    // setEvent(oneEvent)
+
+    if (event && event.socialEventId === eventId) {
       return (
         <>
           <div className="home">
@@ -452,7 +481,7 @@ const Events = () => {
                   navigate(`/events/create?${queryParams}`);
                 }}
               >
-                Edit Event (password required)
+                Admin Edit
               </button>
             </div>
           </div>
@@ -462,9 +491,11 @@ const Events = () => {
       return (
         <>
           <div className="home">
-            <h1>Event Not Found</h1>
+            <h1>Event Loading</h1>
             {/* in small text, show "try refreshing page" */}
-            <div className="text-muted">Try refreshing the page</div>
+            <div className="text-muted">
+              Try refreshing the page if it takes a while.
+            </div>
           </div>
         </>
       );
@@ -844,9 +875,7 @@ const Events = () => {
       {eventId && eventId.startsWith("create")
         ? getCreateEventForm()
         : eventId && eventId.length > 0
-        ? events && events.length > 0
-          ? getSpecificEventPage()
-          : getLoadingEventsPage()
+        ? getSpecificEventPage()
         : getSignUpPage()}
 
       <br />

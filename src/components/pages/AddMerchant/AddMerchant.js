@@ -144,7 +144,10 @@ const AddMerchant = () => {
   return (
     <div className="outer-addmerchant-container">
       {/* breadcrumb links to higher pages */}
-      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
+      <nav
+        aria-label="breadcrumb"
+        style={{ maxWidth: "450px", textAlign: "left", margin: "auto" }}
+      >
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
             <Link to="/">Home</Link>

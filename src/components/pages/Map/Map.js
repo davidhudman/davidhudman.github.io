@@ -117,7 +117,14 @@ const App = () => {
   return (
     <div className="App">
       {/* breadcrumb links to higher pages */}
-      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
+      <nav
+        aria-label="breadcrumb"
+        style={{
+          maxWidth: "90%",
+          textAlign: "left",
+          margin: "auto",
+        }}
+      >
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
             <Link to="/">Home</Link>
