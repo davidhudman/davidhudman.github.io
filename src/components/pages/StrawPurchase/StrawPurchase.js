@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"; // Fragment
+import QRCodeScanner from "./QRCodeScanner";
 import {
   // BrowserRouter as Router,
   // Route,
@@ -35,7 +36,7 @@ const StrawPurchase = () => {
   const [email, setEmail] = useState("");
   const [qrCodeLink, setQrCodeLink] = useState("");
   const [refundAddress, setRefundAddress] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("shane95smi");
   const [orderNumber, setOrderNumber] = useState("");
   const [customOrderId, setCustomOrderId] = useState(null);
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
@@ -72,6 +73,29 @@ const StrawPurchase = () => {
   // let cryptoPaymentStatus = useRef();
   let haveSetCryptoPaymentLoading = useRef();
   let haveSetCreditCardPaymentLoading = useRef();
+
+  const handleScan = (data) => {
+    if (data) {
+      // Extract the order number from the QR code URL
+
+      // url will be "https://www.crackerbarrel.com/mobilepay?store=CB0234&code=M7RF3"
+      const url = new URL(data);
+      const storeParam = url.searchParams.get("store");
+      const codeParam = url.searchParams.get("code");
+
+      // storeParam will be "0234"
+      // codeParam will be "M7RF3"
+
+      const extractedStoreNumber = storeParam ? storeParam.slice(2) : null;
+      const extractedOrderNumber = codeParam ? codeParam.slice(0, 5) : null;
+      setOrderNumber(
+        String(extractedStoreNumber) + String(extractedOrderNumber)
+      );
+
+      // take user to next step
+      setStep(steps[1]);
+    }
+  };
   // create check payment status method
   const checkPaymentStatus = (customOrderId, orderNumber) => {
     console.log(
@@ -527,7 +551,15 @@ const StrawPurchase = () => {
               <strong>
                 Send a QR-enabled receipt & crypto. We pay the restaurant.
               </strong>
+              {/* warning text for all users: safari browser on iphone is not supported - use chrome */}
               <br />
+              <div className="alert alert-warning" role="alert">
+                <p>
+                  Warning: Safari browser on iPhone is not supported. Please use
+                  Chrome. If you are using something else, you can ignore this.
+                </p>
+              </div>
+
               <hr />
             </>
           ) : null}
@@ -539,7 +571,6 @@ const StrawPurchase = () => {
                   {/* restaurant select dropdown */}
                   <div className="form-group">
                     <label htmlFor="restaurant">Restaurant</label>
-                    <br />
                     <small
                       id="restaurant-help"
                       className="form-text text-muted"
@@ -557,14 +588,22 @@ const StrawPurchase = () => {
 
                   {/* order number */}
                   <div className="form-group">
-                    <label htmlFor="order-number">Order Number</label>
+                    <label htmlFor="order-number">
+                      Order Number / Scan QR Code
+                    </label>
+                    <QRCodeScanner
+                      width="300px"
+                      height="200px"
+                      onScan={handleScan}
+                    />
+
                     <br />
                     <small
-                      id="order-number-help"
+                      id="order-number-help2"
                       className="form-text text-muted"
                     >
-                      The order number on your check. Or enter it here to check
-                      the status
+                      If you prefer not to provide camera access, enter the
+                      order number on your check here to pay or check status.
                     </small>
                     <input
                       type="text"
@@ -594,6 +633,14 @@ const StrawPurchase = () => {
               ) : null}
               {step === steps[1] ? (
                 <>
+                  <label>Order Number</label>
+                  <br />
+                  <p>
+                    {String(orderNumber.slice(0, 4)) +
+                      "-" +
+                      String(orderNumber.slice(4))}
+                  </p>
+                  <br />
                   {/* form errors show all errors in formErrors state object in a nice red box with a dark red outline of 1px */}
                   {formErrors && (
                     <div
@@ -605,7 +652,7 @@ const StrawPurchase = () => {
                     </div>
                   )}
                   {/* password */}
-                  <div className="form-group">
+                  <div className="form-group" hidden>
                     <label htmlFor="password">Password</label>
                     <br />
                     <small id="password-help" className="form-text text-muted">
@@ -1196,24 +1243,26 @@ const StrawPurchase = () => {
             </div>
             <br />
             {/* "Want to Join?" button - click to expand and see text */}
-            <button
-              class="btn btn-secondary btn-xs btn-block"
-              type="button"
-              data-toggle="collapse"
-              data-target="#collapse1"
-              style={{ lineHeight: 1 }}
-            >
-              Signup
-              <br />
-              <small
-                className="form-text text-muted"
-                style={{
-                  fontSize: "14px",
-                }}
+            <div hidden>
+              <button
+                className="btn btn-secondary btn-xs btn-block"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapse1"
+                style={{ lineHeight: 1 }}
               >
-                required for early access
-              </small>
-            </button>
+                Signup
+                <br />
+                <small
+                  className="form-text text-muted"
+                  style={{
+                    fontSize: "14px",
+                  }}
+                >
+                  required for early access
+                </small>
+              </button>
+            </div>
             <br />
             {/* donate button (a tag styled as button) - link to /paybch */}
             <a href="/paybch">
@@ -1235,6 +1284,7 @@ const StrawPurchase = () => {
               </div>
             </div>
             <br />
+
             {/* suggest restaurant button */}
             <button
               class="btn btn-secondary btn-xs btn-block"
