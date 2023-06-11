@@ -2,26 +2,30 @@ name: Deployment
 on:
   pull_request:
   push:
-    branches:
-      - master
+    branches: [master]
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
     steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install Packages
-        run: yarn
+          node-version: "16"
+
+      - name: Install Serverless
+        run: yarn global add serverless
+
+      - name: Install dependencies
+        run: yarn install
+
       - name: change to prod vars
         run: export REACT_APP_STAGE=prod
+
       - name: Build page
         run: CI= yarn run build
+
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:

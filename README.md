@@ -19,8 +19,22 @@
 
 ## Todos
 
+Phase 4:
+
+- Big Feature: Auth, user payment pages (BCH, Cashapp), user events, event payments (5Ks too)
+- frontend should process any order that returns the receipt so that it can be printed out and shown to the user (will need backend support)
+- frontend should receive any 200 with body { message: "order not found" } and display that message to the user unless the orderNumber starts with 9999
+- use Joi objects to validate POST requests to condense happy path code
+- refactor into classes per merchant
+- fix re-rendering of page
+- for valid order numbers, open the lambda browser before the user pays and get ready to fill out the payment info as soon as the user pays
+  - only remain open for 2 minutes
+- Scan QR code
+- ensure backend runs locally
+
 Phase 3 (Agent):
 
+- count of recent paid transx (last 24 hours, last 7 days, last 30 days)
 - it should really hide iFrame when it detects that cryptoPaymentReceived is PAID
 - when timeout finishes searching for credit card / crypto payment status, show a button telling the user that we couldn't find it and ask user if they want us to continue searching
 - figure out if we still want to useParams to get id because that is breaking for the user when the order already exists after the first step
