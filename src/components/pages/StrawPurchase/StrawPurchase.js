@@ -92,8 +92,8 @@ const StrawPurchase = () => {
         String(extractedStoreNumber) + String(extractedOrderNumber)
       );
 
-      // take user to next step
-      setStep(steps[1]);
+      // check if order exist - same as manually entering order number and clicking next
+      checkIfOrderExists();
     }
   };
   // create check payment status method
@@ -635,7 +635,7 @@ const StrawPurchase = () => {
                 <>
                   <label>Order Number</label>
                   <br />
-                  <p>
+                  <p style={{ fontSize: "24px" }}>
                     {String(orderNumber.slice(0, 4)) +
                       "-" +
                       String(orderNumber.slice(4))}
