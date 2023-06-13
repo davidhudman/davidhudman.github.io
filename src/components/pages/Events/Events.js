@@ -723,6 +723,8 @@ const Events = () => {
                       name="description"
                       id="description"
                       placeholder="Description"
+                      component="textarea"
+                      rows="4"
                       type="text"
                       className={`form-control ${
                         touched.title && errors.title ? "is-invalid" : ""
