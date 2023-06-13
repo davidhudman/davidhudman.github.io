@@ -49,12 +49,14 @@ const Payment = () => {
           <hr />
 
           <a href="/agentpurchase" className="btn btn-lg btn-block btn-default">
-            Buy Cracker Barrel in BCH
             <div
               style={{
-                marginTop: "-10px",
+                marginBottom: "-10px",
+                fontSize: "20px",
               }}
-            ></div>
+            >
+              Buy Cracker Barrel in BCH
+            </div>
             <small
               className="form-text text-muted"
               style={{ fontSize: "12px" }}

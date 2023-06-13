@@ -61,6 +61,9 @@ const StrawPurchase = () => {
     useState(false);
   const [bucketImageKey, setBucketImageKey] = useState(null);
   const [formErrors, setFormErrors] = useState(null);
+  const [showCameraPrompt, setShowCameraPrompt] = useState(true);
+  const [isCameraPermissionGranted, setIsCameraPermissionGranted] =
+    useState(false);
   // const [haveSetCryptoPaymentLoading, setHaveSetCryptoPaymentLoading] =
   //   useState(false);
   // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
@@ -74,26 +77,14 @@ const StrawPurchase = () => {
   let haveSetCryptoPaymentLoading = useRef();
   let haveSetCreditCardPaymentLoading = useRef();
 
-  const handleScan = (data) => {
-    if (data) {
-      // Extract the order number from the QR code URL
-
-      // url will be "https://www.crackerbarrel.com/mobilepay?store=CB0234&code=M7RF3"
-      const url = new URL(data);
-      const storeParam = url.searchParams.get("store");
-      const codeParam = url.searchParams.get("code");
-
-      // storeParam will be "0234"
-      // codeParam will be "M7RF3"
-
-      const extractedStoreNumber = storeParam ? storeParam.slice(2) : null;
-      const extractedOrderNumber = codeParam ? codeParam.slice(0, 5) : null;
-      setOrderNumber(
-        String(extractedStoreNumber) + String(extractedOrderNumber)
-      );
-
-      // check if order exist - same as manually entering order number and clicking next
-      checkIfOrderExists();
+  const requestCameraPermission = async () => {
+    setShowCameraPrompt(false);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setIsCameraPermissionGranted(true);
+    } catch (err) {
+      console.error(err);
+      // Handle the error, e.g. show an error message to the user
     }
   };
   // create check payment status method
@@ -607,26 +598,34 @@ const StrawPurchase = () => {
                       <option value="cracker barrel">Cracker Barrel</option>
                     </select>
                   </div>
+                  <br />
 
                   {/* order number */}
                   <div className="form-group">
                     <label htmlFor="order-number">
-                      Order Number / Scan QR Code
+                      Scan QR Code on Receipt
                     </label>
-                    <QRCodeScanner
-                      width="300px"
-                      height="200px"
-                      onScan={checkIfOrderExists}
-                    />
-
-                    <br />
-                    <small
-                      id="order-number-help2"
-                      className="form-text text-muted"
-                    >
-                      If you prefer not to provide camera access, enter the
-                      order number on your check here to pay or check status.
-                    </small>
+                    {showCameraPrompt && (
+                      <div>
+                        <p>
+                          <a
+                            href="#"
+                            className="btn btn-lg btn-block btn-primary"
+                            onClick={requestCameraPermission}
+                          >
+                            Grant camera permission
+                          </a>
+                        </p>
+                      </div>
+                    )}
+                    {isCameraPermissionGranted && (
+                      <QRCodeScanner
+                        width="300px"
+                        height="200px"
+                        onScan={checkIfOrderExists}
+                      />
+                    )}
+                    Or enter order number manually:
                     <input
                       type="text"
                       className="form-control"
@@ -638,10 +637,13 @@ const StrawPurchase = () => {
                   </div>
                   {/* create next button */}
                   <br />
+                  <br />
                   <button
                     type="button"
                     id="checkIfOrderExistsButton"
-                    disabled={!checkIfOrderExistsButtonEnabled}
+                    disabled={
+                      !checkIfOrderExistsButtonEnabled || orderNumber.length < 9
+                    }
                     className="btn btn-primary btn-lg btn-block"
                     onClick={() => checkIfOrderExists()}
                   >
