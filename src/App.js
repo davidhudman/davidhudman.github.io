@@ -38,11 +38,18 @@ const App = () => (
         {/* fix react router for when user navigates to a specific link */}
         <Route exact path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
+
         <Route path="/pay" element={<Pay />} />
+
         <Route path="/payment" element={<Payment />} />
         <Route path="/bitcoin" element={<Payment />} />
         <Route path="/cash" element={<Payment />} />
+        <Route path="/bch" element={<Payment />} />
+        <Route path="/bitcoincash" element={<Payment />} />
+        <Route path="/bitcoin-cash" element={<Payment />} />
+
         <Route path="/wallet" element={<Wallet />} />
+
         <Route path="/strawpurchase" element={<StrawPurchase />} />
         <Route path="/agentpurchase" element={<StrawPurchase />} />
         <Route path="/agent-purchase" element={<StrawPurchase />} />
@@ -51,9 +58,11 @@ const App = () => (
         <Route path="/agent" element={<StrawPurchase />} />
         <Route path="/cracker" element={<StrawPurchase />} />
         <Route path="/cb" element={<StrawPurchase />} />
+        <Route path="/agent/:id" element={<StrawPurchase />} />
+
         <Route path="/events" element={<Events />} />
         <Route path="/events/:eventId" element={<Events />} />
-        <Route path="/agent/:id" element={<StrawPurchase />} />
+
         <Route
           path="/waiting-list-agent-purchase"
           element={<FormWaitingList />}

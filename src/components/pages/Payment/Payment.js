@@ -49,7 +49,7 @@ const Payment = () => {
           <hr />
 
           <a href="/agentpurchase" className="btn btn-lg btn-block btn-default">
-            Buy stuff in BCH
+            Buy Cracker Barrel in BCH
             <div
               style={{
                 marginTop: "-10px",
@@ -59,7 +59,7 @@ const Payment = () => {
               className="form-text text-muted"
               style={{ fontSize: "12px" }}
             >
-              At places like Cracker Barrel
+              Will need camera access to scan QR code
             </small>
           </a>
           <br />
