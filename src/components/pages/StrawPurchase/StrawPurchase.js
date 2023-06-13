@@ -80,7 +80,6 @@ const StrawPurchase = () => {
   const requestCameraPermission = async () => {
     setShowCameraPrompt(false);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       setIsCameraPermissionGranted(true);
     } catch (err) {
       console.error(err);
@@ -625,7 +624,8 @@ const StrawPurchase = () => {
                         onScan={checkIfOrderExists}
                       />
                     )}
-                    Or enter order number manually:
+                    <br />
+                    Or enter order number manually
                     <input
                       type="text"
                       className="form-control"
