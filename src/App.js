@@ -33,7 +33,7 @@ import Coach from "./components/pages/Coach/Coach";
 const App = () => (
   <Router>
     <Fragment>
-      <NavbarCustom />
+      {/* <NavbarCustom /> */}
       <Routes>
         {/* fix react router for when user navigates to a specific link */}
         <Route exact path="/" element={<Home />} />

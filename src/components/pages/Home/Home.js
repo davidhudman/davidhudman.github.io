@@ -19,12 +19,13 @@ const Home = () => {
         <br />
 
         <div className="home-links">
-          <button
+          <a
             className="btn btn-lg btn-block btn-default"
             style={{ fontSize: "18px" }}
+            href="/pay"
           >
-            <Link to="/pay">Donate / Pay Me</Link>
-          </button>
+            Donate / Pay Me
+          </a>
           <br />
 
           <a

@@ -31,13 +31,14 @@ const NavbarCustom = () => {
     <Navbar className="navbar-inverse">
       <Navbar.Header>
         <Navbar.Brand>
-          <NavLink to="/">DH</NavLink>
+          <a href="/">DH</a>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
       </Navbar.Header>
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
-          <NavItem>
+          {/* remove non-working nav links */}
+          {/* <NavItem>
             <NavLink to="/">Home</NavLink>
           </NavItem>
           <NavItem>
@@ -45,7 +46,7 @@ const NavbarCustom = () => {
           </NavItem>
           <NavItem>
             <NavLink to="/map">Crypto Merchant Map</NavLink>
-          </NavItem>
+          </NavItem> */}
           {/* Login or Logout depending on status */}
 
           {/* <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">

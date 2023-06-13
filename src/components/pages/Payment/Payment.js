@@ -34,22 +34,22 @@ const Payment = () => {
           <h3>Bitcoin Cash Merchants</h3>
           <hr />
 
-          <button className="btn btn-lg btn-block btn-primary">
-            <Link to="/add-merchant">Become One</Link>
-          </button>
+          <a className="btn btn-lg btn-block btn-primary" href="/add-merchant">
+            Become One
+          </a>
           <br />
 
-          <button className="btn btn-lg btn-block btn-default">
-            <Link to="/map">Map</Link>
-          </button>
+          <a href="/map" className="btn btn-lg btn-block btn-default">
+            Map
+          </a>
           <br />
           <br />
 
           <h3>Individuals</h3>
           <hr />
 
-          <button className="btn btn-lg btn-block btn-default">
-            <Link to="/agentpurchase">Buy stuff in BCH</Link>
+          <a href="/agentpurchase" className="btn btn-lg btn-block btn-default">
+            Buy stuff in BCH
             <div
               style={{
                 marginTop: "-10px",
@@ -61,21 +61,22 @@ const Payment = () => {
             >
               At places like Cracker Barrel
             </small>
-          </button>
+          </a>
           <br />
 
-          <button className="btn btn-lg btn-block btn-primary">
-            <Link to="/pay">Donate</Link>
-          </button>
+          <a className="btn btn-lg btn-block btn-primary" href="/pay">
+            Donate
+          </a>
           <br />
 
           {/* Create a bitcoin wallet */}
-          <button
+          <a
             className="btn btn-lg btn-block btn-default"
             style={{ fontSize: "18px" }}
+            href="/wallet"
           >
-            <Link to="/wallet">Get Started / Create a Bitcoin Wallet</Link>
-          </button>
+            Get Started / Create a Bitcoin Wallet
+          </a>
           <br />
 
           {/* a third party service for holding your money stable in dollars */}

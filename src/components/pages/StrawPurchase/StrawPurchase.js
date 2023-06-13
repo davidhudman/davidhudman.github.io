@@ -468,7 +468,7 @@ const StrawPurchase = () => {
   };
 
   // check if order exists in the database; if it doesn't exist, take the user to step 2; if it does exist, take the user to the confirmation page
-  const checkIfOrderExists = () => {
+  const checkIfOrderExists = (qrData) => {
     // disable checkIfOrderExistsButton to prevent multiple clicks
     setCheckIfOrderExistsButtonEnabled(false);
     setProgressBarValue(0);
@@ -480,8 +480,30 @@ const StrawPurchase = () => {
       prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
     };
 
+    let tempOrderNumber = orderNumber;
+
+    console.log("tempOrderNumber: ", tempOrderNumber);
+
+    if (qrData) {
+      // Extract the order number from the QR code URL
+      // url will be "https://www.crackerbarrel.com/mobilepay?store=CB0234&code=M7RF3"
+      const url = new URL(qrData);
+      const storeParam = url.searchParams.get("store");
+      const codeParam = url.searchParams.get("code");
+
+      const extractedStoreNumber = storeParam ? storeParam.slice(2) : null;
+      const extractedOrderNumber = codeParam ? codeParam.slice(0, 5) : null;
+
+      tempOrderNumber =
+        String(extractedStoreNumber) + String(extractedOrderNumber);
+
+      console.log("tempOrderNumber before setOrderNumber: ", tempOrderNumber);
+
+      setOrderNumber(tempOrderNumber);
+    }
+
     // fetch GET request to check if order exists
-    fetch(orderApi[env] + `/?tx=${orderNumber}`, {
+    fetch(orderApi[env] + `/?tx=${tempOrderNumber}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -494,11 +516,11 @@ const StrawPurchase = () => {
           console.log("data", data);
           setCheckIfOrderExistsButtonEnabled(true);
           if (data.cryptoPaymentReceived === "PAID") {
-            // if order exists, redirect user to /agent/${orderNumber}
+            // if order exists, redirect user to /agent/${tempOrderNumber}
             if (env === "prod") {
-              window.location.href = `https://davidhudman.com/agent/${orderNumber}`;
+              window.location.href = `https://davidhudman.com/agent/${tempOrderNumber}`;
             } else {
-              window.location.href = `http://localhost:3000/agent/${orderNumber}`;
+              window.location.href = `http://localhost:3000/agent/${tempOrderNumber}`;
               // TODO: try going to step 3
             }
           } else {
@@ -594,7 +616,7 @@ const StrawPurchase = () => {
                     <QRCodeScanner
                       width="300px"
                       height="200px"
-                      onScan={handleScan}
+                      onScan={checkIfOrderExists}
                     />
 
                     <br />
