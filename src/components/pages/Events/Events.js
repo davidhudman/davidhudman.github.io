@@ -860,19 +860,21 @@ const Events = () => {
   return (
     <div className="outer-home-container">
       {/* breadcrumb links to higher pages */}
-      <nav aria-label="breadcrumb" style={{ width: "100%", textAlign: "left" }}>
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item">
-            <Link to="/">Home</Link>
-          </li>
-          <li className="breadcrumb-item" aria-current="page">
-            <Link to="/events">Event Signup</Link>
-          </li>
-          <li className="breadcrumb-item active" aria-current="page">
-            Event Page
-          </li>
-        </ol>
-      </nav>
+      <div className="breadcrumbDiv">
+        <nav
+          aria-label="breadcrumb"
+          style={{ width: "100%", textAlign: "left" }}
+        >
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <a href="/">Home</a>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              Events
+            </li>
+          </ol>
+        </nav>
+      </div>
 
       {eventId && eventId.startsWith("create")
         ? getCreateEventForm()
