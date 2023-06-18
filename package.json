@@ -24,6 +24,7 @@
   },
   "scripts": {
     "start": "export REACT_APP_STAGE=dev && react-scripts start",
+    "local": "export REACT_APP_STAGE=local && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",

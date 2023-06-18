@@ -77,6 +77,16 @@ const StrawPurchase = () => {
   let haveSetCryptoPaymentLoading = useRef();
   let haveSetCreditCardPaymentLoading = useRef();
 
+  const isSafariOniOS = () => {
+    const userAgent = navigator.userAgent;
+    return (
+      userAgent.includes("Safari") &&
+      userAgent.includes("iPhone") &&
+      !userAgent.includes("CriOS") &&
+      !userAgent.includes("FxiOS")
+    );
+  };
+
   const requestCameraPermission = async () => {
     setShowCameraPrompt(false);
     try {
@@ -371,8 +381,6 @@ const StrawPurchase = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // access-control-allow-origin: *
-
         "Access-Control-Allow-Origin": "*", // this is the important part
       },
       body: JSON.stringify(paymentRequest),
@@ -465,7 +473,7 @@ const StrawPurchase = () => {
 
     // query API to see if order exists
     const orderApi = {
-      local: "http://localhost:3001/order",
+      local: "http://localhost:3001/invoice",
       dev: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
       prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
     };
@@ -563,14 +571,18 @@ const StrawPurchase = () => {
               <strong>
                 Send a QR-enabled receipt & crypto. We pay the restaurant.
               </strong>
-              {/* warning text for all users: safari browser on iphone is not supported - use chrome */}
-              <br />
-              <div className="alert alert-warning" role="alert">
-                <p>
-                  Warning: Safari browser on iPhone is not supported. Please use
-                  Chrome. If you are using something else, you can ignore this.
-                </p>
-              </div>
+              {isSafariOniOS() ? (
+                <>
+                  {/* warning text for all users: safari browser on iphone is not supported - use chrome */}
+                  <br />
+                  <div className="alert alert-warning" role="alert">
+                    <p>
+                      Warning: Safari browser on iPhone is not supported. Please
+                      use Chrome, Firefox, or Brave browser.
+                    </p>
+                  </div>
+                </>
+              ) : null}
 
               <hr />
             </>
