@@ -47,6 +47,7 @@ const App = () => {
         location: "2180 S Congress Ave Unit A, Palm Springs, FL 33406",
         phone: "(888) 219-8045",
         website: "commercialkitchenstop.com",
+        merchantId: "commercialkitchenstop",
       },
       {
         merchantName: "Oli's Fashion Cuisine",
@@ -58,6 +59,7 @@ const App = () => {
         location: "10610 Forest Hill Blvd #20, Wellington, FL 33414",
         phone: "(561) 792-2220",
         website: "olisfashioncuisine.com",
+        merchantId: "olisfashioncuisine",
       },
       {
         merchantName: "Dibartolo's Wholesale Food Warehouse",
@@ -69,6 +71,7 @@ const App = () => {
         location: "8140 Belvedere Rd, West Palm Beach, FL 33411",
         phone: "(561) 814-2988",
         website: "",
+        merchantId: "dibartoloswholesalefoodwarehouse",
       },
       {
         merchantName: "Marbar Grille",
@@ -80,6 +83,7 @@ const App = () => {
         location: "2001 Crestwood Blvd N, Royal Palm Beach, FL 33411",
         phone: "(561) 784-5225",
         website: "",
+        merchantId: "marbargrille",
       },
       {
         merchantName: "Hobo's Gourmet Kitchen",
@@ -91,6 +95,7 @@ const App = () => {
         location: "421 Northlake Blvd, North Palm Beach, FL 33408",
         phone: "(561) 841-8305",
         website: "hobosgourmetkitchen.net",
+        merchantId: "hobosgourmetkitchen",
       },
       {
         merchantName: "Cucina Palm Beach Gardens",
@@ -102,6 +107,7 @@ const App = () => {
         location: "7100 Fairway Dr, FL-786 #61A, Palm Beach Gardens, FL 33418",
         phone: "(561) 557-9510",
         website: "cucinapbg.com",
+        merchantId: "cucinapalmbeachgardens",
       }
     );
     setMerchants(data);
@@ -150,6 +156,19 @@ const App = () => {
             <div className="merchant" key={merchant.merchantId}>
               <h3>{merchant.merchantName}</h3>
               <p>Location: {merchant.location ? merchant.location : "N/A"}</p>
+              {/* link to merchant page "davidhudman.com/merchant/${merchantId}" */}
+              <p>
+                {
+                  <a
+                    href={`https://davidhudman.com/merchant/${merchant.merchantId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Payment Page
+                  </a>
+                }
+              </p>
+
               {/* horizontal line */}
               <hr />
             </div>

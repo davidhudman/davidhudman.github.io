@@ -37,7 +37,99 @@ export default function Merchant() {
         },
       }
     );
-    const data = await response.json();
+    let data = await response.json();
+
+    // if no data, then add hard coded data
+    if (!data.merchantId) {
+      console.log("No data found for merchantId: ", merchantId);
+      data = [
+        {
+          merchantName: "Commercial Kitchen Stop",
+          lastTransaction: "2022-05-20",
+          transactionslast30days: "597",
+          category: "Restaurant",
+          partnerLevel: 4,
+          coordinates: { lat: 26.64435, lng: -80.08751 },
+          location: "2180 S Congress Ave Unit A, Palm Springs, FL 33406",
+          phone: "(888) 219-8045",
+          website: "commercialkitchenstop.com",
+          merchantId: "commercialkitchenstop",
+        },
+        {
+          merchantName: "Oli's Fashion Cuisine",
+          lastTransaction: "2022-05-20",
+          transactionslast30days: "321",
+          category: "Restaurant",
+          partnerLevel: 1,
+          coordinates: { lat: 26.65018, lng: -80.21585 },
+          location: "10610 Forest Hill Blvd #20, Wellington, FL 33414",
+          phone: "(561) 792-2220",
+          website: "olisfashioncuisine.com",
+          merchantId: "olisfashioncuisine",
+        },
+        {
+          merchantName: "Dibartolo's Wholesale Food Warehouse",
+          lastTransaction: "2022-05-20",
+          transactionslast30days: "125",
+          category: "Restaurant",
+          partnerLevel: 3,
+          coordinates: { lat: 26.69091, lng: -80.17668 },
+          location: "8140 Belvedere Rd, West Palm Beach, FL 33411",
+          phone: "(561) 814-2988",
+          website: "",
+          merchantId: "dibartoloswholesalefoodwarehouse",
+        },
+        {
+          merchantName: "Marbar Grille",
+          lastTransaction: "2022-05-20",
+          transactionslast30days: "248",
+          category: "Restaurant",
+          partnerLevel: 2,
+          coordinates: { lat: 26.69448, lng: -80.24433 },
+          location: "2001 Crestwood Blvd N, Royal Palm Beach, FL 33411",
+          phone: "(561) 784-5225",
+          website: "",
+          merchantId: "marbargrille",
+        },
+        {
+          merchantName: "Hobo's Gourmet Kitchen",
+          lastTransaction: "2022-05-20",
+          transactionslast30days: "511",
+          category: "Restaurant",
+          partnerLevel: 4,
+          coordinates: { lat: 26.80773, lng: -80.05936 },
+          location: "421 Northlake Blvd, North Palm Beach, FL 33408",
+          phone: "(561) 841-8305",
+          website: "hobosgourmetkitchen.net",
+          merchantId: "hobosgourmetkitchen",
+        },
+        {
+          merchantName: "Cucina Palm Beach Gardens",
+          lastTransaction: "2022-05-20",
+          transactionslast30days: "492",
+          category: "Restaurant",
+          partnerLevel: 1,
+          coordinates: { lat: 26.8359586, lng: -80.131431 },
+          location:
+            "7100 Fairway Dr, FL-786 #61A, Palm Beach Gardens, FL 33418",
+          phone: "(561) 557-9510",
+          website: "cucinapbg.com",
+          merchantId: "cucinapalmbeachgardens",
+        },
+      ];
+
+      // choose merchant data based on merchantId
+      for (let i = 0; i < data.length; i++) {
+        console.log("data[i]: ", data[i], " merchantId: ", merchantId);
+        if (data[i].merchantId === merchantId) {
+          console.log("found match!");
+          data = data[i];
+          break;
+        }
+      }
+      console.log("finished searching data");
+    }
+
     setMerchantData(data);
   };
 
@@ -123,7 +215,7 @@ export default function Merchant() {
     return (
       <div className="Merchant">
         {/* Title */}
-        <h1>Crypto Merchant: {merchantId}</h1>
+        <h1>{merchantId}</h1>
         <br />
 
         {/* link to payment page */}
@@ -168,7 +260,7 @@ export default function Merchant() {
         <div className="qr-code">
           {/* full link text */}
           <div className="qr-code-text">
-            <label className="lb-lg" style={{ fontSize: "24px" }}>
+            <label className="lb-lg" style={{ fontSize: "14px" }}>
               davidhudman.com/merchant/{merchantId}
             </label>
           </div>
@@ -186,7 +278,7 @@ export default function Merchant() {
             **
           </p>
           {/* display QR code */}
-          <QRCode value={"/merchant/" + merchantId} />
+          <QRCode value={"https://davidhudman.com/merchant/" + merchantId} />
         </div>
 
         {/* Instructions */}
@@ -240,7 +332,7 @@ export default function Merchant() {
     return (
       <div className="Merchant">
         {/* Title */}
-        <h1>Pay Merchant: {merchantData.merchantName}</h1>
+        <h1>{merchantData.merchantName}</h1>
         <br />
 
         {/* link to print merchant page */}
@@ -271,7 +363,7 @@ export default function Merchant() {
         </div>
 
         {/* Show / Hide Tip Button */}
-        {getShowHideTipButton()}
+        {/* {getShowHideTipButton()} */}
 
         {/* Tip Button Section */}
         <br />

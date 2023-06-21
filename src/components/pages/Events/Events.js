@@ -515,6 +515,7 @@ const Events = () => {
       title: yup.string().required(),
       password: yup.string().optional(),
       socialEventId: yup.string().required(),
+      host: yup.string().required(),
       cost: yup.number().required(),
       description: yup.string().required(),
       date: yup.string().required(),
@@ -525,12 +526,30 @@ const Events = () => {
       spacesLeft: yup.string().optional(),
     });
 
+    const generateSocialEventId = (title, date) => {
+      return `${title
+        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .replace(/\s+/g, "-")
+        .toLowerCase()}-${
+        date.includes(new Date().getFullYear())
+          ? date
+              .replace(/[^a-zA-Z0-9 ]/g, "")
+              .replace(/\s+/g, "-")
+              .toLowerCase()
+          : `${date
+              .replace(/[^a-zA-Z0-9 ]/g, "")
+              .replace(/\s+/g, "-")
+              .toLowerCase()}-${new Date().getFullYear()}`
+      }`;
+    };
+
     const getInitialValues = () => {
       const searchParams = new URLSearchParams(location.search);
       try {
         const socialEventId = searchParams.get("socialEventId");
         const title = searchParams.get("title");
         const cost = searchParams.get("cost");
+        const host = searchParams.get("host");
         const description = searchParams.get("description");
         const date = searchParams.get("date");
         const time = searchParams.get("time");
@@ -540,8 +559,9 @@ const Events = () => {
         const spacesLeft = searchParams.get("spacesLeft");
 
         return {
-          socialEventId: socialEventId ?? "",
+          socialEventId: generateSocialEventId(title, date),
           title: title ?? "",
+          host: host ?? "",
           cost: cost ?? 0,
           description: description ?? "",
           date: date ?? "",
@@ -555,6 +575,7 @@ const Events = () => {
         console.log("err finding search params", err);
         return {
           title: "",
+          host: "",
           password: "",
           socialEventId: "",
           cost: 0,
@@ -629,7 +650,26 @@ const Events = () => {
                 handleChange,
                 handleBlur,
                 handleSubmit,
+                setFieldValue,
               } = props;
+              // add these two functions
+              const handleTitleChange = (e) => {
+                handleChange(e);
+                const newSocialEventId = generateSocialEventId(
+                  e.target.value,
+                  values.date
+                );
+                setFieldValue("socialEventId", newSocialEventId);
+              };
+
+              const handleDateChange = (e) => {
+                handleChange(e);
+                const newSocialEventId = generateSocialEventId(
+                  values.title,
+                  e.target.value
+                );
+                setFieldValue("socialEventId", newSocialEventId);
+              };
               return (
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
@@ -639,6 +679,7 @@ const Events = () => {
                       id="title"
                       placeholder="Title"
                       type="text"
+                      onChange={handleTitleChange}
                       className={`form-control ${
                         touched.title && errors.title ? "is-invalid" : ""
                       }`}
@@ -673,6 +714,7 @@ const Events = () => {
                       id="date"
                       placeholder="Date"
                       type="text"
+                      onChange={handleDateChange}
                       className={`form-control ${
                         touched.title && errors.title ? "is-invalid" : ""
                       }`}
@@ -700,6 +742,25 @@ const Events = () => {
                       className="input-feedback"
                     />
                   </div>
+                  {/* Add a new field and errormessage for event creator name */}
+                  <div className="form-group">
+                    <label htmlFor="host">Your Name</label>
+                    <Field
+                      name="host"
+                      id="host"
+                      placeholder="Your Name"
+                      type="text"
+                      className={`form-control ${
+                        touched.title && errors.title ? "is-invalid" : ""
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="host"
+                      component="div"
+                      className="input-feedback"
+                    />
+                  </div>
+
                   <div className="form-group">
                     <label htmlFor="cost">Cost</label>
                     <Field
