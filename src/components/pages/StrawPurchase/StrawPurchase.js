@@ -72,6 +72,21 @@ const StrawPurchase = () => {
   // useParams to get the id
   const { id } = useParams();
 
+  // local endpoint
+  const invoiceApi = {
+    local: "http://localhost:3001/invoice",
+    dev: "",
+    test: "",
+    prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+  };
+
+  const callbackApi = {
+    local: "",
+    dev: "",
+    test: "",
+    prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+  };
+
   // let creditCardPaymentStatus = useRef();
   // let cryptoPaymentStatus = useRef();
   let haveSetCryptoPaymentLoading = useRef();
@@ -132,19 +147,16 @@ const StrawPurchase = () => {
     setFormEnabled(false);
     console.log("useEffect() _fullOrderNum: ", _fullOrderNum);
     // fetch the order from the prompt cash get-payment api
-    fetch(
-      `https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2?tx=${_fullOrderNum}`,
-      {
-        method: "GET",
-        // fix cors error
-        // mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-          //   fix cors error
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    )
+    fetch(`${invoiceApi[env]}?tx=${_fullOrderNum}`, {
+      method: "GET",
+      // fix cors error
+      // mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+        //   fix cors error
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
       .then((res) => {
         console.log("useEffect() res: ", res);
         return res.json();
@@ -368,17 +380,11 @@ const StrawPurchase = () => {
     console.log("paymentRequest: ", paymentRequest);
 
     // send the payment request to the server
-    // local endpoint
-    const invoiceApi = {
-      local: "http://localhost:3001/invoice",
-      dev: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
-      prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
-    };
 
     // return null;
 
     fetch(invoiceApi[env], {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*", // this is the important part
@@ -471,13 +477,6 @@ const StrawPurchase = () => {
     setCheckIfOrderExistsButtonEnabled(false);
     setProgressBarValue(0);
 
-    // query API to see if order exists
-    const orderApi = {
-      local: "http://localhost:3001/invoice",
-      dev: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
-      prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
-    };
-
     let tempOrderNumber = orderNumber;
 
     console.log("tempOrderNumber: ", tempOrderNumber);
@@ -501,7 +500,7 @@ const StrawPurchase = () => {
     }
 
     // fetch GET request to check if order exists
-    fetch(orderApi[env] + `/?tx=${tempOrderNumber}`, {
+    fetch(invoiceApi[env] + `/?tx=${tempOrderNumber}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -553,7 +552,7 @@ const StrawPurchase = () => {
             "&desc=" +
             orderNumber.replace(/-/g, "") +
             "&callback=" +
-            "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
+            `${callbackApi[env]}`
           }
         ></iframe>
       </div>
@@ -969,7 +968,7 @@ const StrawPurchase = () => {
                     <input
                       type="hidden"
                       name="callback"
-                      value="https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2"
+                      value={callbackApi[env]}
                     />
                     <br />
                     <p>If barcode to pay doesn't load, click here</p>
