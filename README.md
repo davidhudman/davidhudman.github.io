@@ -21,6 +21,7 @@
 
 Phase 4:
 
+- backend: max wait time for cracker barrel api
 - Big Feature: Auth, user payment pages (BCH, Cashapp), user events, event payments (5Ks too)
 - frontend should process any order that returns the receipt so that it can be printed out and shown to the user (will need backend support)
 - frontend should receive any 200 with body { message: "order not found" } and display that message to the user unless the orderNumber starts with 9999
@@ -36,6 +37,9 @@ Phase 4:
   warning serverless > @serverless/platform-client > querystring@0.2.1: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
   warning serverless > aws-sdk > url > querystring@0.2.0: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
   warning serverless > json-refs > path-loader > superagent@7.1.6: Please downgrade to v7.1.5 if you need IE/ActiveXObject support OR upgrade to v8.0.0 as we no longer support IE and published an incorrect patch version (see https://github.com/visionmedia/superagent/issues/1731)
+
+events: host field should be logged in db
+events: socialEventId should be checked for uniqueness
 
 Phase 3 (Agent):
 

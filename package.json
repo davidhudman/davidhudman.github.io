@@ -20,20 +20,22 @@
     "yup": "^1.0.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv-cli": "^7.2.1",
     "typescript": "3.3.3"
   },
   "scripts": {
-    "start": "export REACT_APP_STAGE=dev && react-scripts start",
-    "local": "export REACT_APP_STAGE=local && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
+    "start:test": "dotenv -e .env.test -- react-scripts start",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "dont-use-this": "first use yarn run deploy and make sure that it deploys correctly to http://paydhudmanbch.s3-website-us-east-1.amazonaws.com/",
     "deploy": "react-scripts build && aws s3 sync build/ s3://paydhudmanbch",
-    "deploy:prod": "export REACT_APP_STAGE=prod && react-scripts build && aws s3 sync build/ s3://davidhudman.com",
+    "deploy:prod": "dotenv -e .env.production -- react-scripts build && aws s3 sync build/ s3://davidhudman.com",
     "deploy:alt": "aws s3 sync build/ http://bchcashregister01.s3-website-us-east-1.amazonaws.com/",
     "demo": "export REACT_APP_STAGE=demo",
-    "prod": "export REACT_APP_STAGE=prod",
+    "prod": "export REACT_APP_STAGE=production",
     "lint": "eslint --max-warnings 0 \"**/*.{js,js}\"",
     "lint:fix": "yarn lint --fix",
     "format": "prettier --list-different \"**/*.{css,html,js,json,jsx,less,md,scss,ts,tsx,vue,yaml,yml}\"",

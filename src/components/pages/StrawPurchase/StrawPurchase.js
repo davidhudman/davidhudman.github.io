@@ -40,7 +40,7 @@ const StrawPurchase = () => {
   const [orderNumber, setOrderNumber] = useState("");
   const [customOrderId, setCustomOrderId] = useState(null);
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
-  const [env, setEnv] = useState(process.env.REACT_APP_STAGE);
+  const [env, setEnv] = useState(process.env.REACT_APP_MY_CUSTOM_ENV_NAME);
   const [invoiceError, setInvoiceError] = useState(null);
   const [invoiceErrorDetails, setInvoiceErrorDetails] = useState(null);
   const [progressBarValue, setProgressBarValue] = useState(0);
@@ -62,6 +62,8 @@ const StrawPurchase = () => {
   const [bucketImageKey, setBucketImageKey] = useState(null);
   const [formErrors, setFormErrors] = useState(null);
   const [showCameraPrompt, setShowCameraPrompt] = useState(true);
+  const [finalStepFirstTime, setFinalStepFirstTime] = useState(true);
+  const [host, setHost] = useState(null);
   const [isCameraPermissionGranted, setIsCameraPermissionGranted] =
     useState(false);
   // const [haveSetCryptoPaymentLoading, setHaveSetCryptoPaymentLoading] =
@@ -72,19 +74,13 @@ const StrawPurchase = () => {
   // useParams to get the id
   const { id } = useParams();
 
-  // local endpoint
-  const invoiceApi = {
-    local: "http://localhost:3001/invoice",
-    dev: "",
-    test: "",
-    prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
-  };
-
-  const callbackApi = {
-    local: "",
-    dev: "",
-    test: "",
-    prod: "https://43o1h1vh40.execute-api.us-east-1.amazonaws.com/default/bchInvoice2",
+  const setHostname = () => {
+    // set host name
+    if (process.env.REACT_APP_STAGE_URL) {
+      setHost(process.env.REACT_APP_STAGE_URL);
+    } else {
+      setHost("http://localhost:3000");
+    }
   };
 
   // let creditCardPaymentStatus = useRef();
@@ -147,7 +143,7 @@ const StrawPurchase = () => {
     setFormEnabled(false);
     console.log("useEffect() _fullOrderNum: ", _fullOrderNum);
     // fetch the order from the prompt cash get-payment api
-    fetch(`${invoiceApi[env]}?tx=${_fullOrderNum}`, {
+    fetch(`${process.env.REACT_APP_STAGE_INVOICE_API}?tx=${_fullOrderNum}`, {
       method: "GET",
       // fix cors error
       // mode: "no-cors",
@@ -208,6 +204,7 @@ const StrawPurchase = () => {
 
   // useEffect for id
   useEffect(() => {
+    setHostname();
     if (id && id.length > 0) {
       checkPaymentStatus(id);
     }
@@ -216,15 +213,22 @@ const StrawPurchase = () => {
   // useEffect for step is 3, formEnabled is true, showPromptCashPayButton is true, customOrderId is not empty, and orderNumber is not empty
   let myIntervalRef = useRef();
   useEffect(() => {
+    // if (step === steps[3]) {
+    //   if (finalStepFirstTime) {
+    //     setFinalStepFirstTime(false);
+    //     setProgressBarValue(1);
+    //   }
+    // }
     if (step === steps[3] && customOrderId && paymentStatusChecked === false) {
       setPaymentStatusChecked(true);
       console.log("check payment status for order: ", orderNumber);
       // check payment status every 5 seconds
       checkPaymentStatus(customOrderId, orderNumber);
       if (creditCardPaymentStatus != "PAID") {
-        setCryptoPaymentStatus("loading");
+        // TODO: change this right back after testing
+        // setCryptoPaymentStatus("loading");
         setPaymentStatus("loading");
-        setCreditCardPaymentStatus("loading");
+        // setCreditCardPaymentStatus("loading");
         myIntervalRef.current = setInterval(
           (customOrderId, orderNumber) => {
             checkPaymentStatus(customOrderId, orderNumber);
@@ -240,8 +244,6 @@ const StrawPurchase = () => {
       setTimeout(() => {
         if (myIntervalRef) {
           clearInterval(myIntervalRef.current);
-          // TODO: update 40 seconds to longer period for user to pay
-
           // TODO: when timer ends, show a button to ask the user if they want us to keep checking for payment
         }
       }, 180000);
@@ -383,7 +385,7 @@ const StrawPurchase = () => {
 
     // return null;
 
-    fetch(invoiceApi[env], {
+    fetch(process.env.REACT_APP_STAGE_INVOICE_API, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -449,7 +451,6 @@ const StrawPurchase = () => {
         {showCustomTip ? (
           <div className="form-group">
             <label htmlFor="tip-amount">Tip Amount (in USD dollars)</label>
-            <br />
             {/* add error text for formErrors.tipCustomAmount */}
             {formErrors && formErrors.tipCustomAmount ? (
               <span className="text-danger">
@@ -461,7 +462,7 @@ const StrawPurchase = () => {
               type="number"
               className="form-control"
               id="tip-amount"
-              placeholder="Enter Tip Amount"
+              placeholder="6.50"
               value={tipCustomAmount}
               onChange={(e) => setTipCustomAmount(e.target.value)}
             />
@@ -500,7 +501,7 @@ const StrawPurchase = () => {
     }
 
     // fetch GET request to check if order exists
-    fetch(invoiceApi[env] + `/?tx=${tempOrderNumber}`, {
+    fetch(process.env.REACT_APP_STAGE_INVOICE_API + `/?tx=${tempOrderNumber}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -514,12 +515,8 @@ const StrawPurchase = () => {
           setCheckIfOrderExistsButtonEnabled(true);
           if (data.cryptoPaymentReceived === "PAID") {
             // if order exists, redirect user to /agent/${tempOrderNumber}
-            if (env === "prod") {
-              window.location.href = `https://davidhudman.com/agent/${tempOrderNumber}`;
-            } else {
-              window.location.href = `http://localhost:3000/agent/${tempOrderNumber}`;
-              // TODO: try going to step 3
-            }
+            window.location.href = `${process.env.REACT_APP_STAGE_URL}/agent/${tempOrderNumber}`;
+            // TODO: try going to step 3
           } else {
             // if order doesn't exist, set step to 2
             setStep(steps[1]);
@@ -530,11 +527,18 @@ const StrawPurchase = () => {
 
   const getPaymentIframe = () => {
     return (
-      <div hidden={!paymentIframeEnabled}>
-        <p>
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+        hidden={!paymentIframeEnabled}
+      >
+        {/* <p>
           Click the "Pay in Wallet" button to open your wallet or copy the
           address below the QR code and paste it into your wallet.
-        </p>
+        </p> */}
         <br />
         <iframe
           id="prompt-frame"
@@ -552,8 +556,9 @@ const StrawPurchase = () => {
             "&desc=" +
             orderNumber.replace(/-/g, "") +
             "&callback=" +
-            `${callbackApi[env]}`
+            `${process.env.REACT_APP_STAGE_CALLBACK_API}`
           }
+          R
         ></iframe>
       </div>
     );
@@ -566,10 +571,6 @@ const StrawPurchase = () => {
         <>
           {step === steps[0] ? (
             <>
-              <h1>Pay in BCH</h1>
-              <strong>
-                Send a QR-enabled receipt & crypto. We pay the restaurant.
-              </strong>
               {isSafariOniOS() ? (
                 <>
                   {/* warning text for all users: safari browser on iphone is not supported - use chrome */}
@@ -592,29 +593,31 @@ const StrawPurchase = () => {
               {step === steps[0] ? (
                 <>
                   {/* restaurant select dropdown */}
-                  <div className="form-group">
-                    <label htmlFor="restaurant">Restaurant</label>
-                    <small
-                      id="restaurant-help"
-                      className="form-text text-muted"
-                    >
-                      Select who you want to purchase from, more coming soon!
-                    </small>
-                    <select
-                      className="form-control"
-                      id="restaurant"
-                      onChange={(e) => setMerchant(e.target.value)}
-                    >
-                      <option value="cracker barrel">Cracker Barrel</option>
-                    </select>
-                  </div>
-                  <br />
+                  {false && (
+                    <>
+                      <div className="form-group">
+                        <label htmlFor="restaurant">Restaurant</label>
+                        <small
+                          id="restaurant-help"
+                          className="form-text text-muted"
+                        >
+                          Select who you want to purchase from, more coming
+                          soon!
+                        </small>
+                        <select
+                          className="form-control"
+                          id="restaurant"
+                          onChange={(e) => setMerchant(e.target.value)}
+                        >
+                          <option value="cracker barrel">Cracker Barrel</option>
+                        </select>
+                      </div>
+                      <br />
+                    </>
+                  )}
 
                   {/* order number */}
                   <div className="form-group">
-                    <label htmlFor="order-number">
-                      Scan QR Code on Receipt
-                    </label>
                     {showCameraPrompt && (
                       <div>
                         <p>
@@ -622,44 +625,83 @@ const StrawPurchase = () => {
                             href="#"
                             className="btn btn-lg btn-block btn-primary"
                             onClick={requestCameraPermission}
+                            style={{ fontSize: "1.5em" }}
                           >
-                            Grant camera permission
+                            Scan QR Code on Receipt
                           </a>
                         </p>
                       </div>
                     )}
-                    {isCameraPermissionGranted && (
+                    {isCameraPermissionGranted ? (
                       <QRCodeScanner
                         width="300px"
                         height="200px"
                         onScan={checkIfOrderExists}
                       />
+                    ) : (
+                      <>
+                        {/* <div
+                        hidden={true}
+                        style={{
+                          width: "300px",
+                          height: "200px",
+                          backgroundColor: "#000", // Optional: change to any color you prefer
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          margin: "auto",
+                        }}
+                      >
+                        <p></p>
+                      </div> */}
+                      </>
                     )}
-                    <br />
-                    Or enter order number manually
+                  </div>
+                  {/* create next button */}
+                  <br />
+                  <label htmlFor="order-number">
+                    Or enter order number manually{" "}
+                    {env != "production" ? `- ${env} env` : ""}
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <input
                       type="text"
                       className="form-control"
                       id="order-number"
-                      placeholder="Enter Order Number"
+                      placeholder="ex: 0123-AB789"
                       value={orderNumber}
                       onChange={(e) => setOrderNumber(e.target.value)}
+                      style={{
+                        fontSize: "1.25em",
+                        height: "2em",
+                        width: "15em",
+                      }}
                     />
+                    <div style={{ width: "1em" }}></div>
+                    <button
+                      type="button"
+                      id="checkIfOrderExistsButton"
+                      disabled={
+                        !checkIfOrderExistsButtonEnabled ||
+                        orderNumber.length < 9
+                      }
+                      className="btn btn-primary btn-sm"
+                      onClick={() => checkIfOrderExists()}
+                      style={{
+                        fontSize: "1.25em",
+                        height: "2em",
+                        width: "7em",
+                      }}
+                    >
+                      Next
+                    </button>
                   </div>
-                  {/* create next button */}
-                  <br />
-                  <br />
-                  <button
-                    type="button"
-                    id="checkIfOrderExistsButton"
-                    disabled={
-                      !checkIfOrderExistsButtonEnabled || orderNumber.length < 9
-                    }
-                    className="btn btn-primary btn-lg btn-block"
-                    onClick={() => checkIfOrderExists()}
-                  >
-                    Next
-                  </button>
                   {/* progress bar */}
                   <div hidden={checkIfOrderExistsButtonEnabled}>
                     <ProgressBar now={progressBarValue} animated />
@@ -668,9 +710,8 @@ const StrawPurchase = () => {
               ) : null}
               {step === steps[1] ? (
                 <>
-                  <label>Order Number</label>
-                  <br />
                   <p style={{ fontSize: "24px" }}>
+                    Order:{" "}
                     {String(orderNumber.slice(0, 4)) +
                       "-" +
                       String(orderNumber.slice(4))}
@@ -715,15 +756,18 @@ const StrawPurchase = () => {
                   {/* email */}
                   <div className="form-group">
                     <label htmlFor="email">Email</label>
-                    <br />
                     <small id="email-help" className="form-text text-muted">
-                      To send you payment confirmation that we receive from the
-                      restaurant. If your email has a period in the username,
-                      you may not receive the email.
+                      to send the payment confirmation
                       {/* View the confirmation email before leaving just in
                   case payment fails for some reason. Or just put your order
                   number into the restaurant{"'"}s website to see if it still
-                  exists. */}
+                  exists. 
+
+                   To send you payment confirmation that we receive from the
+                      restaurant. If your email has a period in the username,
+                      you may not receive the email.
+                  
+                  */}
                     </small>
                     {/* add a "read more" link to read another paragraph */}
                     <br />
@@ -738,7 +782,7 @@ const StrawPurchase = () => {
                       type="email"
                       className="form-control"
                       id="email"
-                      placeholder="Enter Email"
+                      placeholder="user@gmail.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -758,15 +802,13 @@ const StrawPurchase = () => {
                   ) : null}
                   {/* refund address */}
                   <div className="form-group">
-                    <label htmlFor="refund-address">Refund Address</label>
-                    <br />
+                    <label htmlFor="refund-address">Refund BCH Address</label>
                     {/* small italic text */}
                     <small
                       id="refund-address-help"
                       className="form-text text-muted"
                     >
-                      If there's a problem with your payment, we'll refund this
-                      bitcoin cash address
+                      If payment fails, we'll refund this BCH address
                     </small>
                     <br />
                     {/* add error text for formErrors.refundAddress */}
@@ -779,7 +821,7 @@ const StrawPurchase = () => {
                       type="text"
                       className="form-control"
                       id="refund-address"
-                      placeholder="Enter Refund Address"
+                      placeholder="bitcoincash:qz0..."
                       value={refundAddress}
                       onChange={(e) => setRefundAddress(e.target.value)}
                     />
@@ -938,7 +980,7 @@ const StrawPurchase = () => {
                       name="desc"
                       value={orderNumber.replace(/-/g, "")}
                     />
-                    {env === "prod" ? (
+                    {env === "production" ? (
                       <>
                         <input
                           type="hidden"
@@ -968,21 +1010,17 @@ const StrawPurchase = () => {
                     <input
                       type="hidden"
                       name="callback"
-                      value={callbackApi[env]}
+                      value={process.env.REACT_APP_STAGE_CALLBACK_API}
                     />
-                    <br />
+                    {/* <br />
                     <p>If barcode to pay doesn't load, click here</p>
                     <button type="submit" className="btn btn-primary">
                       Pay ${totalAmount.toFixed(2)} BitcoinCash
-                    </button>
+                    </button> */}
                   </form>
                 </div>
               ) : (
-                !invoiceError && (
-                  <>
-                    <h3>Loading Payment Button</h3>
-                  </>
-                )
+                !invoiceError && <></>
               )}
             </>
           ) : null}
@@ -1040,50 +1078,146 @@ const StrawPurchase = () => {
     // setTotalAmount(total_amount);
   };
 
+  const formatOrderNumber = (str) => {
+    if (str && str.length >= 4 && str.charAt(4) !== "-") {
+      return str.slice(0, 4) + "-" + str.slice(4);
+    }
+    return str;
+  };
+
   const getPaymentStatusDiv = () => {
+    if (finalStepFirstTime) {
+      setFinalStepFirstTime(false);
+
+      // set progressbarvalue to 15 when cryptopaymentstatus changes - 15 just so it's visible to user
+      setProgressBarValue(15);
+    }
     return (
       <div className="outer-home-container">
         <div className="home">
           {/* orderID */}
           <h3>
-            Order ID:{" "}
-            {id ? id.slice(-9) : orderNumber ? orderNumber : "unknown"}
+            Order:{" "}
+            {id
+              ? formatOrderNumber(id.slice(-9))
+              : orderNumber
+              ? formatOrderNumber(orderNumber)
+              : "unknown"}
           </h3>
-
-          {/* crypto payment status */}
-          <h4 style={{ marginBottom: "-5px" }}>Crypto Payment Status:</h4>
-          {/* small text */}
-          <small className="form-text text-muted">(from you to us)</small>
-          <br />
-          <span style={{ fontSize: "24px" }}>
-            {cryptoPaymentStatus == "PAID" && (
-              <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
-            )}
-            {cryptoPaymentStatus == "UNPAID" && (
-              <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
-            )}
-            {cryptoPaymentStatus != "PAID" &&
-              cryptoPaymentStatus != "UNPAID" && (
-                <span style={{ color: "grey", fontWeight: "bold" }}>
-                  PENDING
-                </span>
-              )}
-          </span>
-          <br />
-          {/* text to float left */}
-          <h4 style={{ marginBottom: "-5px" }}>Credit Card Payment Status:</h4>
-          {/* small text */}
-          <small className="form-text text-muted">(from us to merchant)</small>
-          {/* credit card payment status */}
-          <br />
-          <span style={{ fontSize: "24px" }}>
-            {creditCardPaymentStatus == "PAID" && (
-              <>
-                <span style={{ color: "green", fontWeight: "bold" }}>PAID</span>
-                {bucketImageKey && (
+          <hr />
+          <h4>Payment Status</h4>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {/* crypto payment status */}
+            <div>
+              <h4 style={{ marginBottom: "-0.4em" }}>Crypto</h4>
+              {/* small text */}
+              <small className="form-text text-muted">from you to us</small>
+              <br />
+              <span style={{ fontSize: "1.25em" }}>
+                {cryptoPaymentStatus == "PAID" && (
+                  <span style={{ color: "green", fontWeight: "bold" }}>
+                    PAID
+                  </span>
+                )}
+                {cryptoPaymentStatus == "UNPAID" && (
+                  <span style={{ color: "red", fontWeight: "bold" }}>
+                    UNPAID
+                  </span>
+                )}
+                {cryptoPaymentStatus != "PAID" &&
+                  cryptoPaymentStatus != "UNPAID" && (
+                    <span style={{ color: "grey", fontWeight: "bold" }}>
+                      PENDING
+                    </span>
+                  )}
+              </span>
+            </div>
+            {/* text to float left */}
+            <div>
+              <h4 style={{ marginBottom: "-0.4em" }}>Credit Card</h4>
+              {/* small text */}
+              <small className="form-text text-muted">
+                from us to merchant
+              </small>
+              {/* credit card payment status */}
+              <br />
+              <span>
+                {creditCardPaymentStatus == "PAID" && (
                   <>
-                    <br />
-                    <hr />
+                    <span
+                      style={{
+                        color: "green",
+                        fontWeight: "bold",
+                        fontSize: "1.25em",
+                      }}
+                    >
+                      PAID
+                    </span>
+                  </>
+                )}
+                {creditCardPaymentStatus == "UNPAID" &&
+                  progressBarValue >= 99 && (
+                    <span
+                      style={{
+                        color: "red",
+                        fontWeight: "bold",
+                        fontSize: "1.25em",
+                      }}
+                    >
+                      UNPAID
+                    </span>
+                  )}
+                {creditCardPaymentStatus == "loading" ||
+                  (creditCardPaymentStatus != "PAID" ? (
+                    progressBarValue < 99 ? (
+                      <span
+                        style={{
+                          color: "grey",
+                          fontWeight: "bold",
+                          fontSize: "1.25em",
+                        }}
+                      >
+                        PENDING
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          color: "grey",
+                          fontWeight: "bold",
+                          fontSize: "1.25em",
+                        }}
+                      >
+                        FAILED.{" "}
+                        <a href={host + "/agent/" + orderNumber}>Retry?</a>
+                      </span>
+                    )
+                  ) : null)}
+              </span>
+            </div>
+          </div>
+
+          {/* receipt image */}
+          {creditCardPaymentStatus == "PAID" && (
+            <>
+              {bucketImageKey && (
+                <>
+                  <hr />
+                  <label htmlFor="receipt-image">Click Image to Download</label>
+                  <div
+                    id="receipt-image"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      overflow: "hidden",
+                    }}
+                  >
                     <a
                       href={
                         "https://s3.amazonaws.com/bch-invoice-public/" +
@@ -1096,26 +1230,20 @@ const StrawPurchase = () => {
                           "https://s3.amazonaws.com/bch-invoice-public/" +
                           bucketImageKey
                         }
-                        width="100%"
-                        height="auto"
-                        alt="My Image"
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          objectFit: "cover",
+                          objectPosition: "center",
+                        }}
                       />
-                      <br />
-                      Click to Download Confirmation Image
                     </a>
-                    <hr />
-                  </>
-                )}
-              </>
-            )}
-            {creditCardPaymentStatus == "UNPAID" && progressBarValue >= 99 && (
-              <span style={{ color: "red", fontWeight: "bold" }}>UNPAID</span>
-            )}
-            {(creditCardPaymentStatus == "loading" ||
-              (creditCardPaymentStatus != "PAID" && progressBarValue < 99)) && (
-              <span style={{ color: "grey", fontWeight: "bold" }}>PENDING</span>
-            )}
-          </span>
+                  </div>
+                  <hr />
+                </>
+              )}
+            </>
+          )}
 
           {/* div that is below the float left and float right text */}
           <div style={{ clear: "both" }}>&nbsp;</div>
@@ -1126,32 +1254,32 @@ const StrawPurchase = () => {
             creditCardPaymentStatus == "PENDING" ||
             creditCardPaymentStatus == "UNPAID") && (
             <div>
-              <h3>Loading Payment Status</h3>
               <div>
-                <ProgressBar
-                  now={progressBarValue}
-                  label={`${progressBarValue}%`}
-                />
+                {progressBarValue < 100 && (
+                  <>
+                    <label>Loading Payment Status</label>
+                    <ProgressBar
+                      now={progressBarValue}
+                      label={`${progressBarValue}%`}
+                    />
+                  </>
+                )}
               </div>
             </div>
           )}
-
-          <br />
-          <br />
           <button
             type="button"
             className="btn btn-xs btn-block btn-secondary"
-            style={{ fontSize: "18px" }}
+            style={{ fontSize: "1.25em" }}
             onClick={() =>
               setShowEmailConfirmInfoText(!showEmailConfirmInfoText)
             }
           >
-            &#9660;&nbsp;No email confirmation?&nbsp;&#9660;
+            No email confirmation?
           </button>
-          <br />
-          <br />
           {showEmailConfirmInfoText && (
             <>
+              <br />
               <p>
                 If you don't receive an email confirmation after you pay us,
                 just ask the cashier to check your order number on your check to
@@ -1162,20 +1290,21 @@ const StrawPurchase = () => {
             </>
           )}
 
-          <button
+          <br />
+
+          {/* <button
             type="button"
             className="btn btn-xs btn-block btn-secondary"
-            style={{ fontSize: "18px" }}
+            style={{ fontSize: "1.25em" }}
             onClick={() =>
               setShowRefreshOrderStatusInfoText(!showRefreshOrderStatusInfoText)
             }
           >
-            &#9660;&nbsp;Recheck order status?&nbsp;&#9660;
-          </button>
-          <br />
-          <br />
+            Recheck order status?
+          </button> */}
           {showRefreshOrderStatusInfoText && (
             <>
+              <br />
               <p>
                 If your order status doesn't load and you want to check again,
                 you can refresh the page and enter your order number again to
@@ -1190,9 +1319,18 @@ const StrawPurchase = () => {
             <button
               className="btn btn-lg btn-block btn-secondary"
               type="button"
-              style={{ color: "black", fontSize: "18px" }}
+              style={{
+                color: "#333",
+                fontSize: "1.25em",
+                position: "fixed",
+                bottom: "0",
+                left: "0",
+                right: "0",
+                width: "80%",
+                margin: "1em auto",
+              }}
             >
-              Donate to development
+              Donate
             </button>
           </a>
         </div>
@@ -1212,17 +1350,48 @@ const StrawPurchase = () => {
             <Link to="/bitcoin">Bitcoin Cash</Link>
           </li>
           <li className="breadcrumb-item active" aria-current="page">
-            Pay in BCH
+            {env != "production"
+              ? `BCH for CB - ${env.slice(0, 4)} env`
+              : "BCH for Cracker Barrel"}
           </li>
         </ol>
       </nav>
+      {/* add image from wiki commons for bch logo */}
+      {step !== steps[0] && (
+        <img
+          width="64"
+          alt="Bitcoin Cash"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Bitcoin_Cash.png/64px-Bitcoin_Cash.png"
+        />
+      )}
+
+      {step === steps[0] && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flowDirection: "row",
+          }}
+        >
+          <div>
+            <img
+              width="64"
+              alt="Bitcoin Cash"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Bitcoin_Cash.png/64px-Bitcoin_Cash.png"
+            />
+          </div>
+          <h1 style={{ fontSize: "24px" }}>&nbsp; for Cracker Barrel</h1>
+        </div>
+      )}
+
       <div className="home">
         <div>
           {/* Error Message Display Div */}
-          {invoiceError ? (
+          {invoiceError && typeof invoiceError === "string" ? (
             <>
               {/* show order number */}
-              <h3>Order ID: {orderNumber ?? "unknown"}</h3>
+              <h3>Order: {orderNumber ?? "unknown"}</h3>
               <div
                 id="error-message"
                 className="alert alert-danger"
@@ -1250,33 +1419,6 @@ const StrawPurchase = () => {
         {step === steps[0] ? (
           <>
             <hr />
-            <div>
-              <a href="https://youtu.be/euI-3ciQ1_s">
-                <i
-                  className="fa fa-youtube-play"
-                  style={{
-                    fontSize: "48px",
-                    color: "red",
-                  }}
-                ></i>
-                <div
-                  style={{
-                    margin: "-15px -20px",
-                  }}
-                >
-                  &nbsp;
-                </div>
-                <small
-                  className="form-text text-muted"
-                  style={{
-                    fontSize: "14px",
-                  }}
-                >
-                  Video Demo
-                </small>
-              </a>
-            </div>
-            <br />
             {/* "Want to Join?" button - click to expand and see text */}
             <div hidden>
               <button
@@ -1297,18 +1439,43 @@ const StrawPurchase = () => {
                   required for early access
                 </small>
               </button>
+              <br />
             </div>
-            <br />
-            {/* donate button (a tag styled as button) - link to /paybch */}
-            <a href="/paybch">
-              <button
-                className="btn btn-lg btn-block btn-secondary"
-                type="button"
-                style={{ color: "black" }}
-              >
-                Donate
-              </button>
-            </a>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flowDirection: "row",
+              }}
+            >
+              <div>
+                <a href="https://youtu.be/euI-3ciQ1_s">
+                  <i
+                    className="fa fa-youtube-play"
+                    style={{
+                      fontSize: "48px",
+                      color: "grey",
+                    }}
+                  ></i>
+                  <div
+                    style={{
+                      margin: "-15px -20px",
+                    }}
+                  >
+                    &nbsp;
+                  </div>
+                  <small
+                    className="form-text text-muted"
+                    style={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    Video Demo
+                  </small>
+                </a>
+              </div>
+            </div>
             <div class="collapse" id="collapse1">
               <div class="well">
                 If you want to join our beta release as a customer, please fill
@@ -1320,59 +1487,84 @@ const StrawPurchase = () => {
             </div>
             <br />
 
-            {/* suggest restaurant button */}
-            <button
-              class="btn btn-secondary btn-xs btn-block"
-              type="button"
-              data-toggle="collapse"
-              data-target="#collapse2"
-            >
-              Suggest a Restaurant
-            </button>
-            <div class="collapse" id="collapse2">
-              <div class="well">
-                More restaurants coming soon! Suggest restaurants who have QR
-                code payment receipts by{" "}
-                <a href="/new-restaurant-agent">clicking here</a>.
-              </div>
-            </div>
-            <br />
+            {/* donate button (a tag styled as button) - link to /paybch */}
+            <a href="/paybch">
+              <button
+                className="btn btn-lg btn-block btn-secondary"
+                type="button"
+                style={{
+                  color: "black",
+                  fontSize: "1em",
+                  position: "fixed",
+                  bottom: "0",
+                  left: "0",
+                  right: "0",
+                  width: "80%",
+                  margin: "1em auto",
+                }}
+              >
+                Donate
+              </button>
+            </a>
 
-            {/* agent purchases button */}
-            <button
-              class="btn btn-secondary btn-xs btn-block"
-              type="button"
-              data-toggle="collapse"
-              data-target="#collapse3"
-            >
-              What are Agent Purchases?
-            </button>
-            <div class="collapse" id="collapse3">
-              <div class="well">
-                <p>
-                  Agent purchases (or proxy purchases) are a way to pay for your
-                  meal at a restaurant that has QR code payments on their bill.
-                  You can pay for your meal by asking for your bill and scanning
-                  it with your phone. Then you can send the order number to us,
-                  and we will request the equivalent amount of crypto from you.
-                  Once we receive right amount of crypto from you, we will pay
-                  the restaurant bill on your behalf.
-                </p>
+            {/* suggest restaurant button */}
+            {false && (
+              <>
+                <button
+                  class="btn btn-secondary btn-xs btn-block"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#collapse2"
+                >
+                  Suggest a Restaurant
+                </button>
+                <div class="collapse" id="collapse2">
+                  <div class="well">
+                    More restaurants coming soon! Suggest restaurants who have
+                    QR code payment receipts by{" "}
+                    <a href="/new-restaurant-agent">clicking here</a>.
+                  </div>
+                </div>
                 <br />
-                <p onClick={unlockParagraphClickHandler}>
-                  The restaurant will not know that you paid with crypto, and
-                  you will not have to give them your credit card or cash. If
-                  they ask, just say that you paid through the QR code on the
-                  receipt.
-                </p>
-                <p>
-                  If you have suggestions for restaurants that we should add to
-                  our list who accept QR code payment receipts, let us know by{" "}
-                  <a href="/new-restaurant-agent">clicking here</a>.
-                </p>
-              </div>
-            </div>
-            <br />
+
+                {/* agent purchases button */}
+                <button
+                  class="btn btn-secondary btn-xs btn-block"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#collapse3"
+                >
+                  What are Agent Purchases?
+                </button>
+                <div class="collapse" id="collapse3">
+                  <div class="well">
+                    <p>
+                      Agent purchases (or proxy purchases) are a way to pay for
+                      your meal at a restaurant that has QR code payments on
+                      their bill. You can pay for your meal by asking for your
+                      bill and scanning it with your phone. Then you can send
+                      the order number to us, and we will request the equivalent
+                      amount of crypto from you. Once we receive right amount of
+                      crypto from you, we will pay the restaurant bill on your
+                      behalf.
+                    </p>
+                    <br />
+                    <p onClick={unlockParagraphClickHandler}>
+                      The restaurant will not know that you paid with crypto,
+                      and you will not have to give them your credit card or
+                      cash. If they ask, just say that you paid through the QR
+                      code on the receipt.
+                    </p>
+                    <p>
+                      If you have suggestions for restaurants that we should add
+                      to our list who accept QR code payment receipts, let us
+                      know by <a href="/new-restaurant-agent">clicking here</a>.
+                    </p>
+                  </div>
+                </div>
+                <br />
+              </>
+            )}
           </>
         ) : null}
 
