@@ -235,7 +235,7 @@ const StrawPurchase = () => {
 
             // TODO - if we can figure out how to pass in parameters to setInterval, we can clearInterval when the paymentStatus is PAID
           },
-          5000,
+          1500,
           customOrderId,
           orderNumber
         );
