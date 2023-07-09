@@ -88,6 +88,16 @@ const StrawPurchase = () => {
   let haveSetCryptoPaymentLoading = useRef();
   let haveSetCreditCardPaymentLoading = useRef();
 
+  const isiOS = () => {
+    const userAgent = navigator.userAgent;
+    return (
+      userAgent.includes("iPhone") ||
+      userAgent.includes("iPad") ||
+      userAgent.includes("iPod") ||
+      (userAgent.includes("Safari") && !userAgent.includes("Chrome"))
+    );
+  };
+
   const isSafariOniOS = () => {
     const userAgent = navigator.userAgent;
     return (
@@ -586,6 +596,18 @@ const StrawPurchase = () => {
       ); // end of fetch()
   };
 
+  const setIsFinalStep = (value) => {
+    if (value === true) {
+      setCryptoPaymentStatus("UNPAID");
+      setCreditCardPaymentStatus("UNPAID");
+      setPaymentIframeEnabled(false);
+    } else {
+      setCryptoPaymentStatus(null);
+      setCreditCardPaymentStatus(null);
+      setPaymentIframeEnabled(true);
+    }
+  };
+
   const getPaymentIframe = () => {
     return (
       <div
@@ -596,6 +618,41 @@ const StrawPurchase = () => {
         }}
         hidden={!paymentIframeEnabled}
       >
+        <br />
+        {/* message that iphone users must copy the address because "pay in wallet" will not work in safari */}
+        {/* create div with light blue background */}
+
+        <div className="alert alert-info" role="alert">
+          <h3>Step 1</h3>
+          {isiOS() ? (
+            <p>
+              Tap the copy icon (do not press and hold) below the QR code to
+              copy the address and paste it into your wallet.
+            </p>
+          ) : (
+            <p>
+              Click the "Pay in Wallet" button to open your wallet or tap the
+              copy icon (do not press and hold) to copy the address below the QR
+              code and paste it into your wallet.
+            </p>
+          )}
+          {/* The "Pay
+            in Wallet" button may not work in some iPhone web browsers. */}
+          <h3>Step 2</h3>
+          <p>Return to this page.</p>
+          <h3>Step 3</h3>
+          <p>
+            <a
+              href="#"
+              onClick={() => setIsFinalStep(true)}
+              // style underline
+              style={{ textDecoration: "underline" }}
+            >
+              Check Payment Status
+            </a>
+          </p>
+        </div>
+
         {/* <p>
           Click the "Pay in Wallet" button to open your wallet or copy the
           address below the QR code and paste it into your wallet.
@@ -619,7 +676,6 @@ const StrawPurchase = () => {
             "&callback=" +
             `${process.env.REACT_APP_STAGE_CALLBACK_API}`
           }
-          R
         ></iframe>
       </div>
     );
@@ -632,19 +688,6 @@ const StrawPurchase = () => {
         <>
           {step === steps[0] ? (
             <>
-              {isSafariOniOS() ? (
-                <>
-                  {/* warning text for all users: safari browser on iphone is not supported - use chrome */}
-                  <br />
-                  <div className="alert alert-warning" role="alert">
-                    <p>
-                      Warning: Safari browser on iPhone is not supported. Please
-                      use Chrome, Firefox, or Brave browser.
-                    </p>
-                  </div>
-                </>
-              ) : null}
-
               <hr />
             </>
           ) : null}
@@ -1025,8 +1068,8 @@ const StrawPurchase = () => {
                   <form
                     name="prompt-cash-form"
                     action="https://prompt.cash/pay"
-                    method="get"
                     hidden={!paymentIframeEnabled}
+                    method="POST"
                   >
                     <input type="hidden" name="token" value="608-eiDIZuKh" />
                     <input
@@ -1191,6 +1234,10 @@ const StrawPurchase = () => {
                 {cryptoPaymentStatus == "UNPAID" && (
                   <span style={{ color: "red", fontWeight: "bold" }}>
                     UNPAID
+                    <br />
+                    <a href="#" onClick={() => setIsFinalStep(false)}>
+                      Return to pay?
+                    </a>
                   </span>
                 )}
                 {cryptoPaymentStatus != "PAID" &&
