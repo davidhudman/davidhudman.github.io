@@ -623,7 +623,7 @@ const StrawPurchase = () => {
         {/* create div with light blue background */}
 
         <div className="alert alert-info" role="alert">
-          <h3>Step 1</h3>
+          <label>Step 1</label>
           {isiOS() ? (
             <p>
               Tap the copy icon (do not press and hold) below the QR code to
@@ -638,9 +638,9 @@ const StrawPurchase = () => {
           )}
           {/* The "Pay
             in Wallet" button may not work in some iPhone web browsers. */}
-          <h3>Step 2</h3>
+          <label style={{ marginTop: "1em" }}>Step 2</label>
           <p>Return to this page.</p>
-          <h3>Step 3</h3>
+          <label style={{ marginTop: "1em" }}>Step 3</label>
           <p>
             <a
               href="#"
@@ -651,6 +651,21 @@ const StrawPurchase = () => {
               Check Payment Status
             </a>
           </p>
+          <label style={{ marginTop: "1em" }}>Any Issues?</label>
+          <a
+            href="#"
+            onClick={() => {
+              setIsFinalStep(true);
+              setTimeout(() => {
+                setIsFinalStep(false);
+              }, 500);
+            }}
+            // style underline
+            style={{ textDecoration: "underline" }}
+          >
+            Reload payment prompt
+          </a>{" "}
+          or refresh to start over.
         </div>
 
         {/* <p>
