@@ -28,6 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "start:test": "dotenv -e .env.test -- react-scripts start",
+    "start:local": "dotenv -e .env.local -- react-scripts start",
+    "start:dev": "dotenv -e .env.development -- react-scripts start",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "dont-use-this": "first use yarn run deploy and make sure that it deploys correctly to http://paydhudmanbch.s3-website-us-east-1.amazonaws.com/",

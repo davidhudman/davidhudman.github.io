@@ -88,6 +88,16 @@ const StrawPurchase = () => {
   let haveSetCryptoPaymentLoading = useRef();
   let haveSetCreditCardPaymentLoading = useRef();
 
+  const isiOS = () => {
+    const userAgent = navigator.userAgent;
+    return (
+      userAgent.includes("iPhone") ||
+      userAgent.includes("iPad") ||
+      userAgent.includes("iPod") ||
+      (userAgent.includes("Safari") && !userAgent.includes("Chrome"))
+    );
+  };
+
   const isSafariOniOS = () => {
     const userAgent = navigator.userAgent;
     return (
@@ -235,7 +245,7 @@ const StrawPurchase = () => {
 
             // TODO - if we can figure out how to pass in parameters to setInterval, we can clearInterval when the paymentStatus is PAID
           },
-          5000,
+          1500,
           customOrderId,
           orderNumber
         );
@@ -476,7 +486,18 @@ const StrawPurchase = () => {
   const checkIfOrderExists = (qrData) => {
     // disable checkIfOrderExistsButton to prevent multiple clicks
     setCheckIfOrderExistsButtonEnabled(false);
-    setProgressBarValue(0);
+
+    // set timer to increase progress bar value every 500ms
+    const timer = setInterval(() => {
+      setProgressBarValue((progressBarValue) => {
+        const newValue = progressBarValue + 5;
+        if (newValue >= 100) {
+          clearInterval(timer);
+          return 100;
+        }
+        return newValue;
+      });
+    }, 500);
 
     let tempOrderNumber = orderNumber;
 
@@ -501,28 +522,90 @@ const StrawPurchase = () => {
     }
 
     // fetch GET request to check if order exists
-    fetch(process.env.REACT_APP_STAGE_INVOICE_API + `/?tx=${tempOrderNumber}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "access-control-allow-origin": "*",
-      },
-    })
+    fetch(
+      process.env.REACT_APP_GET_WARMUP_URL +
+        `/?tx=${tempOrderNumber}&isWarmup=1`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "access-control-allow-origin": "*",
+        },
+      }
+    )
       .then((res) => res.json())
       .then(
         (data) => {
           console.log("data", data);
           setCheckIfOrderExistsButtonEnabled(true);
-          if (data.cryptoPaymentReceived === "PAID") {
+          if (
+            data &&
+            data.cryptoPaymentReceived &&
+            data.cryptoPaymentReceived === "PAID"
+          ) {
             // if order exists, redirect user to /agent/${tempOrderNumber}
             window.location.href = `${process.env.REACT_APP_STAGE_URL}/agent/${tempOrderNumber}`;
             // TODO: try going to step 3
+          } else if (data && data.error) {
+            switch (data.error) {
+              case "Order number not found":
+                setInvoiceError(
+                  "Your order number was not found. If it was paid already, this is normal. If it was not paid, please check with the staff at the merchant to see if it has been paid."
+                );
+                setInvoiceErrorDetails(
+                  "Please check the order number above to ensure it matches the order number on the receipt. Only dine-in receipts are valid. You must have the receipt already to use this. View the video demo below for help."
+                );
+                break;
+              case "Order number not found - bad_api":
+                setInvoiceError("Something is wrong with your order number.");
+                setInvoiceErrorDetails(
+                  "Please check the order number above to ensure it matches the order number on the receipt. Only dine-in receipts are valid. You must have the receipt already to use this. View the video demo below for help."
+                );
+                break;
+              case "no_email":
+                setInvoiceError("Please enter an email.");
+                break;
+              case "no_refund_address":
+                setInvoiceError("Please enter a refund address.");
+                break;
+              case "no_tip_percentage":
+                setInvoiceError("Please enter a tip percentage.");
+                break;
+              case "no_tip_amount":
+                setInvoiceError("Please enter a tip amount.");
+                break;
+              default:
+                if (data?.error?.details?.[0]?.message) {
+                  setInvoiceError(data.error.details[0].message);
+                  setInvoiceErrorDetails(
+                    "Please check the order number above to ensure it matches the order number on the receipt. Only dine-in receipts are valid. You must have the receipt already to use this. View the video demo below for help."
+                  );
+                } else {
+                  setInvoiceError(data.error);
+                  setInvoiceErrorDetails(
+                    "Please check the order number above to ensure it matches the order number on the receipt. Only dine-in receipts are valid. You must have the receipt already to use this. View the video demo below for help."
+                  );
+                }
+                break;
+            }
           } else {
             // if order doesn't exist, set step to 2
             setStep(steps[1]);
           }
         } // end of .then()
       ); // end of fetch()
+  };
+
+  const setIsFinalStep = (value) => {
+    if (value === true) {
+      setCryptoPaymentStatus("UNPAID");
+      setCreditCardPaymentStatus("UNPAID");
+      setPaymentIframeEnabled(false);
+    } else {
+      setCryptoPaymentStatus(null);
+      setCreditCardPaymentStatus(null);
+      setPaymentIframeEnabled(true);
+    }
   };
 
   const getPaymentIframe = () => {
@@ -535,6 +618,56 @@ const StrawPurchase = () => {
         }}
         hidden={!paymentIframeEnabled}
       >
+        <br />
+        {/* message that iphone users must copy the address because "pay in wallet" will not work in safari */}
+        {/* create div with light blue background */}
+
+        <div className="alert alert-info" role="alert">
+          <label>Step 1</label>
+          {isiOS() ? (
+            <p>
+              Tap the copy icon (do not press and hold) below the QR code to
+              copy the address and paste it into your wallet.
+            </p>
+          ) : (
+            <p>
+              Click the "Pay in Wallet" button to open your wallet or tap the
+              copy icon (do not press and hold) to copy the address below the QR
+              code and paste it into your wallet.
+            </p>
+          )}
+          {/* The "Pay
+            in Wallet" button may not work in some iPhone web browsers. */}
+          <label style={{ marginTop: "1em" }}>Step 2</label>
+          <p>Return to this page.</p>
+          <label style={{ marginTop: "1em" }}>Step 3</label>
+          <p>
+            <a
+              href="#"
+              onClick={() => setIsFinalStep(true)}
+              // style underline
+              style={{ textDecoration: "underline" }}
+            >
+              Check Payment Status
+            </a>
+          </p>
+          <label style={{ marginTop: "1em" }}>Any Issues?</label>
+          <a
+            href="#"
+            onClick={() => {
+              setIsFinalStep(true);
+              setTimeout(() => {
+                setIsFinalStep(false);
+              }, 500);
+            }}
+            // style underline
+            style={{ textDecoration: "underline" }}
+          >
+            Reload payment prompt
+          </a>{" "}
+          or refresh to start over.
+        </div>
+
         {/* <p>
           Click the "Pay in Wallet" button to open your wallet or copy the
           address below the QR code and paste it into your wallet.
@@ -558,7 +691,6 @@ const StrawPurchase = () => {
             "&callback=" +
             `${process.env.REACT_APP_STAGE_CALLBACK_API}`
           }
-          R
         ></iframe>
       </div>
     );
@@ -571,19 +703,6 @@ const StrawPurchase = () => {
         <>
           {step === steps[0] ? (
             <>
-              {isSafariOniOS() ? (
-                <>
-                  {/* warning text for all users: safari browser on iphone is not supported - use chrome */}
-                  <br />
-                  <div className="alert alert-warning" role="alert">
-                    <p>
-                      Warning: Safari browser on iPhone is not supported. Please
-                      use Chrome, Firefox, or Brave browser.
-                    </p>
-                  </div>
-                </>
-              ) : null}
-
               <hr />
             </>
           ) : null}
@@ -660,8 +779,7 @@ const StrawPurchase = () => {
                   {/* create next button */}
                   <br />
                   <label htmlFor="order-number">
-                    Or enter order number manually{" "}
-                    {env != "production" ? `- ${env} env` : ""}
+                    Or enter order number manually
                   </label>
                   <div
                     style={{
@@ -680,10 +798,10 @@ const StrawPurchase = () => {
                       style={{
                         fontSize: "1.25em",
                         height: "2em",
-                        width: "15em",
+                        width: "60%",
                       }}
                     />
-                    <div style={{ width: "1em" }}></div>
+                    <div style={{ width: "10%" }}></div>
                     <button
                       type="button"
                       id="checkIfOrderExistsButton"
@@ -696,14 +814,17 @@ const StrawPurchase = () => {
                       style={{
                         fontSize: "1.25em",
                         height: "2em",
-                        width: "7em",
+                        width: "30%",
                       }}
                     >
                       Next
                     </button>
                   </div>
                   {/* progress bar */}
-                  <div hidden={checkIfOrderExistsButtonEnabled}>
+                  <div
+                    hidden={checkIfOrderExistsButtonEnabled}
+                    style={{ marginTop: "1em" }}
+                  >
                     <ProgressBar now={progressBarValue} animated />
                   </div>
                 </>
@@ -962,8 +1083,8 @@ const StrawPurchase = () => {
                   <form
                     name="prompt-cash-form"
                     action="https://prompt.cash/pay"
-                    method="get"
                     hidden={!paymentIframeEnabled}
+                    method="POST"
                   >
                     <input type="hidden" name="token" value="608-eiDIZuKh" />
                     <input
@@ -1128,6 +1249,10 @@ const StrawPurchase = () => {
                 {cryptoPaymentStatus == "UNPAID" && (
                   <span style={{ color: "red", fontWeight: "bold" }}>
                     UNPAID
+                    <br />
+                    <a href="#" onClick={() => setIsFinalStep(false)}>
+                      Return to pay?
+                    </a>
                   </span>
                 )}
                 {cryptoPaymentStatus != "PAID" &&
@@ -1327,6 +1452,7 @@ const StrawPurchase = () => {
                 left: "0",
                 right: "0",
                 width: "80%",
+                maxWidth: "400px",
                 margin: "1em auto",
               }}
             >
@@ -1449,7 +1575,11 @@ const StrawPurchase = () => {
                 flowDirection: "row",
               }}
             >
-              <div>
+              <div
+                style={{
+                  marginBottom: "100px",
+                }}
+              >
                 <a href="https://youtu.be/euI-3ciQ1_s">
                   <i
                     className="fa fa-youtube-play"
@@ -1499,11 +1629,11 @@ const StrawPurchase = () => {
                   bottom: "0",
                   left: "0",
                   right: "0",
-                  width: "80%",
-                  margin: "1em auto",
+                  width: "100%",
+                  margin: "0 auto",
                 }}
               >
-                Donate
+                Donate &#9829;
               </button>
             </a>
 
