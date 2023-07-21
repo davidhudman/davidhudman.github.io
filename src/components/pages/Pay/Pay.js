@@ -22,9 +22,13 @@ const Pay = () => {
         </ol>
       </nav>
       <h1>Payment Methods</h1>
-      <button className="btn btn-lg btn-block btn-default">
-        <Link to="/paybch">Crypto</Link>
-      </button>
+      <a
+        className="btn btn-lg btn-block btn-default"
+        style={{ fontSize: "18px" }}
+        href="/pay"
+      >
+        Crypto
+      </a>
       <br />
       <a
         href="https://www.venmo.com/davidhudman/"

@@ -29,6 +29,7 @@ import FormWaitingList from "./components/pages/FormWaitingListAgentPurchases/Fo
 import FormNewRestaurantAgentPurchase from "./components/pages/FormNewRestaurantAgentPurchase/FormNewRestaurantAgentPurchase";
 import Events from "./components/pages/Events/Events";
 import Coach from "./components/pages/Coach/Coach";
+import Flylert from "./components/pages/Flylert/Flylert";
 
 const App = () => (
   <Router>
@@ -38,6 +39,9 @@ const App = () => (
         {/* fix react router for when user navigates to a specific link */}
         <Route exact path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
+
+        <Route path="/flylert" element={<Flylert />} />
+        <Route path="/fly" element={<Flylert />} />
 
         <Route path="/pay" element={<Pay />} />
 

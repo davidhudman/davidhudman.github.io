@@ -83,8 +83,7 @@ const Home = () => {
           </a>
           <br />
           <a
-            href="https://www.flylert.com"
-            target="_blank"
+            href="/fly"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-warning"
             style={{ fontSize: "18px" }}
