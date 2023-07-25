@@ -23,11 +23,11 @@ const Pay = () => {
       </nav>
       <h1>Payment Methods</h1>
       <a
+        href="/paybch"
         className="btn btn-lg btn-block btn-default"
         style={{ fontSize: "18px" }}
-        href="/pay"
       >
-        Crypto
+        Bitcoin Cash (BCH)
       </a>
       <br />
       <a
