@@ -515,11 +515,13 @@ const StrawPurchase = () => {
 
       tempOrderNumber =
         String(extractedStoreNumber) + String(extractedOrderNumber);
-
-      console.log("tempOrderNumber before setOrderNumber: ", tempOrderNumber);
-
-      setOrderNumber(tempOrderNumber);
+    } else {
+      // extract any non-alphanumeric characters from the order number
+      tempOrderNumber = tempOrderNumber.replace(/[^a-zA-Z0-9]/g, "");
     }
+
+    console.log("tempOrderNumber before setOrderNumber: ", tempOrderNumber);
+    setOrderNumber(tempOrderNumber);
 
     // fetch GET request to check if order exists
     fetch(
