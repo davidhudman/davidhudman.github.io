@@ -396,7 +396,7 @@ const Events = () => {
         <>
           <div className="home">
             <h1>{event.title}</h1>
-            <div>{event.cost > 0 ? "$" + event.cost : "Free to attend"}</div>
+            <div>{event.cost > 0 ? "$" + event.cost : null}</div>
             <div>{event.date}</div>
             <div>
               {event.time} ({event.length})
@@ -410,7 +410,60 @@ const Events = () => {
               ) : null}
             </div>
             <hr />
-            <p>{event.description}</p>
+            <>
+              {event.imgKey && (
+                <>
+                  <div
+                    id="receipt-image"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <a
+                      href={
+                        "https://s3.amazonaws.com/social-images-public/" +
+                        event.imgKey
+                      }
+                      target="_blank"
+                    >
+                      <img
+                        src={
+                          "https://s3.amazonaws.com/social-images-public/" +
+                          event.imgKey
+                        }
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          objectFit: "cover",
+                          objectPosition: "center",
+                        }}
+                      />
+                    </a>
+                  </div>
+                  <hr />
+                </>
+              )}
+            </>
+            <p>
+              {
+                <>
+                  {/* show event.description but replace "\n" with line breaks */}
+                  {event.description.split("\n").map((item, key) => {
+                    return (
+                      <span key={key}>
+                        {/*  "\n" should not be shown */}
+                        {item.replace("\\n", "")}
+                        {/* add a line break */}
+                        <br />
+                      </span>
+                    );
+                  })}
+                </>
+              }
+            </p>
             <br />
             <div>
               {event.spacesLeft > 0 && event.cost > 0 ? (
@@ -931,7 +984,7 @@ const Events = () => {
               <a href="/">Home</a>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
-              Events
+              <a href="/events">Events</a>
             </li>
           </ol>
         </nav>
