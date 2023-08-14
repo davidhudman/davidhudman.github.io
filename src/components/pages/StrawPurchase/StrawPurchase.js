@@ -66,6 +66,9 @@ const StrawPurchase = () => {
   const [host, setHost] = useState(null);
   const [isCameraPermissionGranted, setIsCameraPermissionGranted] =
     useState(false);
+  const [preCheck, setPreCheck] = useState(null);
+  const [showFullReceipt, setShowFullReceipt] = useState(false);
+  const [totalToPay, setTotalToPay] = useState(0);
   // const [haveSetCryptoPaymentLoading, setHaveSetCryptoPaymentLoading] =
   //   useState(false);
   // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
@@ -593,6 +596,12 @@ const StrawPurchase = () => {
           } else {
             // if order doesn't exist, set step to 2
             setStep(steps[1]);
+            if (data && data.PreCheck) {
+              setPreCheck(data.PreCheck);
+            }
+            if (data && data.TotalToPay) {
+              setTotalToPay(data.TotalToPay);
+            }
           }
         } // end of .then()
       ); // end of fetch()
@@ -876,6 +885,13 @@ const StrawPurchase = () => {
                     />
                   </div>
 
+                  {/* totalToPay from Cracker Barrel */}
+                  <div className="form-group">
+                    <label htmlFor="preCheck">Cost Before Tip</label>
+                    {/* display totalToPay */}
+                    <p style={{ fontSize: "36px" }}>${totalToPay.toFixed(2)}</p>
+                  </div>
+
                   {/* email */}
                   <div className="form-group">
                     <label htmlFor="email">Email</label>
@@ -973,6 +989,42 @@ const StrawPurchase = () => {
                   >
                     Go Back
                   </button>
+
+                  {/* "see full receipt" button to see receipt down below */}
+                  <br />
+                  <br />
+                  {preCheck ? (
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-lg btn-block"
+                      onClick={() => setShowFullReceipt(!showFullReceipt)}
+                      style={{
+                        backgroundColor: "#551505",
+                        color: "#F9A812",
+                      }}
+                    >
+                      {showFullReceipt ? "Hide" : "See"} Full Receipt
+                    </button>
+                  ) : null}
+                  {showFullReceipt ? (
+                    <>
+                      <br />
+                      {/* preCheck print out of receipt */}
+                      <div className="form-group">
+                        <label htmlFor="preCheck">
+                          Check From Cracker Barrel
+                        </label>
+                        <br />
+                        <textarea
+                          className="form-control"
+                          id="preCheck"
+                          rows="35"
+                          value={preCheck}
+                          readOnly
+                        ></textarea>
+                      </div>
+                    </>
+                  ) : null}
                 </>
               ) : null}
 
