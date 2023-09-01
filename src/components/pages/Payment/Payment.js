@@ -8,6 +8,7 @@ import {
 
 import "./payment.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 const Payment = () => {
   return (
@@ -96,10 +97,7 @@ const Payment = () => {
           <br />
         </div>
 
-        {/* footer */}
-        <div className="footer">
-          <p>&copy; {new Date().getFullYear()} David Hudman</p>
-        </div>
+        <Footer />
       </div>
     </div>
   );

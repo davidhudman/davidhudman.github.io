@@ -10,6 +10,7 @@ import * as yup from "yup";
 
 import "./formwaitinglist.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 const FormWaitingList = () => {
   const [formEnabled, setFormEnabled] = useState(true);
@@ -275,10 +276,7 @@ const FormWaitingList = () => {
         </div>
       </div>
 
-      {/* footer */}
-      <div className="footer">
-        <p>&copy; {new Date().getFullYear()} David Hudman</p>
-      </div>
+      <Footer />
     </div>
   );
 };

@@ -7,7 +7,8 @@ import {
 } from "react-router-dom";
 
 import "./home.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.css";
+import Footer from "../../other/Footer/Footer";
 
 const Home = () => {
   return (
@@ -19,59 +20,25 @@ const Home = () => {
         <br />
 
         <div className="home-links">
-          <a
-            className="btn btn-lg btn-block btn-default"
-            style={{ fontSize: "18px" }}
-            href="/pay"
-          >
-            Donate / Pay Me
-          </a>
+          <Link to="/pay">
+            <button
+              className="btn btn-lg btn-block btn-default"
+              style={{ fontSize: "18px" }}
+            >
+              Donate / Pay Me
+            </button>
+          </Link>
           <br />
 
+          {/* Professional */}
           <a
-            href="https://drive.google.com/file/d/1QX5Ka-XCbo2vj6GCbFPjERbGCKjlD89a/view"
-            target="_blank"
+            href="/professional"
             rel="noopener noreferrer"
             className="btn btn-lg btn-block btn-primary"
             style={{ fontSize: "18px" }}
           >
-            Download Resume PDF
+            Resume & Portfolio
           </a>
-          <br />
-          <a
-            href="https://www.linkedin.com/in/davidhudman/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-default"
-            style={{ fontSize: "18px" }}
-          >
-            LinkedIn
-          </a>
-          <br />
-          <a
-            href="https://www.github.com/davidhudman/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-primary"
-            style={{ fontSize: "18px" }}
-          >
-            Github
-          </a>
-          <br />
-          <a
-            href="https://www.github.com/davidhudman/personal-resume-site"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-lg btn-block btn-default"
-            style={{ fontSize: "18px" }}
-          >
-            View Site Code
-          </a>
-          <br />
-
-          {/* Buffer */}
-
-          <h2>Projects</h2>
           <br />
           <a
             href="/bitcoin"
@@ -125,10 +92,7 @@ const Home = () => {
           <br />
         </div>
 
-        {/* footer */}
-        <div className="footer">
-          <p>&copy; {new Date().getFullYear()} David Hudman</p>
-        </div>
+        <Footer />
       </div>
     </div>
   );

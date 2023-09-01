@@ -10,6 +10,7 @@ import QRCode from "react-qr-code";
 
 import "./addmerchant.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 const AddMerchant = () => {
   const [showQrCode, setShowQrCode] = useState(false);
@@ -288,9 +289,7 @@ const AddMerchant = () => {
         </div>
 
         {/* footer */}
-        <div className="footer">
-          <p>&copy; {new Date().getFullYear()} David Hudman</p>
-        </div>
+        <Footer />
       </div>
     </div>
   );

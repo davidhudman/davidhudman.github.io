@@ -10,6 +10,7 @@ import QRCode from "react-qr-code";
 
 import "./printMerchantQr.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 export default function PrintMerchantQr() {
   const { merchantName } = useParams();
@@ -52,10 +53,7 @@ export default function PrintMerchantQr() {
         </p>
       </div>
 
-      {/* footer */}
-      <div className="footer">
-        <p>&copy; {new Date().getFullYear()} David Hudman</p>
-      </div>
+      <Footer />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import * as yup from "yup";
 
 import "./formnewrestaurantagentpurchase.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 const FormNewRestaurantAgentPurchase = () => {
   const [formEnabled, setFormEnabled] = useState(true);
@@ -273,10 +274,7 @@ const FormNewRestaurantAgentPurchase = () => {
         </div>
       </div>
 
-      {/* footer */}
-      <div className="footer">
-        <p>&copy; {new Date().getFullYear()} David Hudman</p>
-      </div>
+      <Footer />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import {
 
 import "./wallet.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 const Wallet = () => {
   return (
@@ -110,10 +111,7 @@ const Wallet = () => {
 
         <hr />
 
-        {/* footer */}
-        <div className="footer">
-          <p>&copy; {new Date().getFullYear()} David Hudman</p>
-        </div>
+        <Footer />
 
         <br />
         <br />

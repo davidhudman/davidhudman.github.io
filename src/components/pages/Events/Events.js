@@ -13,8 +13,11 @@ import * as yup from "yup";
 import { Formik, Field, ErrorMessage } from "formik";
 import axios from "axios";
 
+import SocialLinks from "../../other/SocialLinks/SocialLinks";
+
 import "./events.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 const EVENT_API_URL = `https://4cljs7mcdi.execute-api.us-east-1.amazonaws.com/default/socialevents`;
 
@@ -28,6 +31,8 @@ const Events = () => {
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState(false);
   const [failedToFindEvent, setFailedToFindEvent] = useState(false);
+  const [isCreateAndJoinListHidden, setIsCreateAndJoinListHidden] =
+    useState(true);
 
   const { eventId } = useParams();
 
@@ -219,98 +224,138 @@ const Events = () => {
         <div className="home">
           {/* event link is href={`/events/${event.socialEventId}`} */}
           {/* display each element in events array in a clean bootstrap card */}
-          {events.map((eventItem) => {
-            // if date is before yesterday, don't show it
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const eventDate = new Date(eventItem.date);
-            if (eventDate < yesterday) {
-              return null;
-            }
-            return (
-              <div
-                className="card"
-                style={{
-                  width: "100%",
-                  border: "1px solid black",
-                  borderRadius: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                <a href={`/events/${eventItem.socialEventId}`}>
-                  <div className="card-body">
-                    <div className="card-title" style={{ fontSize: "18px" }}>
-                      {eventItem.title}
+          {events.length > 0 ? (
+            events.map((eventItem) => {
+              // if date is before yesterday, don't show it
+              const yesterday = new Date();
+              yesterday.setDate(yesterday.getDate() - 1);
+              const eventDate = new Date(eventItem.date);
+              if (eventDate < yesterday) {
+                return null;
+              }
+              return (
+                <div
+                  className="card"
+                  style={{
+                    width: "100%",
+                    border: "1px solid black",
+                    borderRadius: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <a href={`/events/${eventItem.socialEventId}`}>
+                    <div className="card-body">
+                      <div className="card-title" style={{ fontSize: "18px" }}>
+                        {eventItem.title}
+                      </div>
+                      <div className="card-footer text-muted">
+                        {convertDate(eventItem.date)} {eventItem.time}
+                      </div>
+                      <div className="card-footer text-muted">
+                        @ {eventItem.location}
+                      </div>
                     </div>
-                    <div className="card-footer text-muted">
-                      {convertDate(eventItem.date)} {eventItem.time}
-                    </div>
-                    <div className="card-footer text-muted">
-                      @ {eventItem.location}
-                    </div>
-                  </div>
-                </a>
-              </div>
-            );
-          })}
+                  </a>
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-center">
+              <i className="fa fa-spinner fa-spin fa-3x"></i>
+            </div>
+          )}
 
-          {/* button to navigate to create event page */}
+          <br />
+
+          <h4>
+            <a href="http://www.beachsocialgroup.com">
+              Beach Social Group 20s 30s
+            </a>
+          </h4>
+          <br />
+
+          {SocialLinks()}
+
           <hr />
-          <div className="create-event-button">
-            <Link to="/events/create">
-              <button
-                type="button"
-                className="btn btn-lg btn-block btn-primary"
-                style={{ fontSize: "18px" }}
-              >
-                Create Your Own Event
-              </button>
-            </Link>
+
+          {/* see more button that toggles setIsCreateAndJoinListHidden */}
+          <div className="text-center">
+            <button
+              type="button"
+              className="btn btn-lg btn-block btn-secondary"
+              style={{ fontSize: "18px" }}
+              onClick={() =>
+                setIsCreateAndJoinListHidden(!isCreateAndJoinListHidden)
+              }
+            >
+              {isCreateAndJoinListHidden ? "See More" : "See Less"}
+            </button>
           </div>
 
-          <hr />
-          <strong>Join the email list for events</strong>
-
-          <hr />
-
-          {/* Error Message Display Div */}
-          {formError ? (
-            <div id="error-message" className="alert alert-danger" role="alert">
-              <strong>Error!</strong> {formError}
+          {/* button to navigate to create event page */}
+          <div hidden={isCreateAndJoinListHidden}>
+            <hr />
+            <div className="create-event-button">
+              <Link to="/events/create">
+                <button
+                  type="button"
+                  className="btn btn-lg btn-block btn-primary"
+                  style={{ fontSize: "18px" }}
+                >
+                  Create Your Own Event
+                </button>
+              </Link>
             </div>
-          ) : null}
 
-          {/* Success Message Display Div */}
-          {formSuccess ? (
-            <div
-              id="success-message"
-              className="alert alert-success"
-              role="alert"
-            >
-              <strong>Success!</strong> You have been added to the event mailing
-              list.
-            </div>
-          ) : null}
+            <hr />
+            <strong>Join the email list for events</strong>
 
-          {/* Loading Message Display Div */}
-          {!formEnabled && !formError && progressBarValue != 100 ? (
-            <>
+            <hr />
+
+            {/* Error Message Display Div */}
+            {formError ? (
               <div
-                id="loading-message"
-                className="alert alert-info"
+                id="error-message"
+                className="alert alert-danger"
                 role="alert"
               >
-                <strong>
-                  If you are not shown a success message within 10 seconds,
-                  please refresh the page and try again.
-                </strong>
+                <strong>Error!</strong> {formError}
               </div>
-              {/* create a loading spinner with inline css */}
-              <ProgressBar now={progressBarValue} animated />
-            </>
-          ) : null}
+            ) : null}
+
+            {/* Success Message Display Div */}
+            {formSuccess ? (
+              <div
+                id="success-message"
+                className="alert alert-success"
+                role="alert"
+              >
+                <strong>Success!</strong> You have been added to the event
+                mailing list.
+              </div>
+            ) : null}
+
+            {/* Loading Message Display Div */}
+            {!formEnabled && !formError && progressBarValue != 100 ? (
+              <>
+                <div
+                  id="loading-message"
+                  className="alert alert-info"
+                  role="alert"
+                >
+                  <strong>
+                    If you are not shown a success message within 10 seconds,
+                    please refresh the page and try again.
+                  </strong>
+                </div>
+                {/* create a loading spinner with inline css */}
+                <ProgressBar now={progressBarValue} animated />
+              </>
+            ) : null}
+
+            {getWaitingListForm()}
+          </div>
         </div>
-        {getWaitingListForm()}
       </>
     );
   };
@@ -395,11 +440,11 @@ const Events = () => {
       return (
         <>
           <div className="home">
-            <h1>{event.title}</h1>
+            <h4 style={{ fontWeight: "bold" }}>{event.title}</h4>
+            <hr />
             <div>{event.cost > 0 ? "$" + event.cost : null}</div>
-            <div>{event.date}</div>
             <div>
-              {event.time} ({event.length})
+              {event.date} @ {event.time} ({event.length})
             </div>
             <div>{event.location}</div>
             <div>
@@ -544,6 +589,9 @@ const Events = () => {
       return (
         <>
           <div className="home">
+            <div className="text-center">
+              <i className="fa fa-spinner fa-spin fa-3x"></i>
+            </div>
             <h1>Event Loading</h1>
             {/* in small text, show "try refreshing page" */}
             <div className="text-muted">
@@ -965,7 +1013,12 @@ const Events = () => {
               Event not found for this URL: /{eventId}
             </div>
           ) : (
-            <h1>Event Loading...</h1>
+            <>
+              <div className="text-center">
+                <i className="fa fa-spinner fa-spin fa-3x"></i>
+              </div>
+              <h1>Event Loading...</h1>
+            </>
           )}
         </div>
       </>
@@ -1017,9 +1070,7 @@ const Events = () => {
       <hr />
 
       {/* footer */}
-      <div className="footer">
-        <p>&copy; {new Date().getFullYear()} David Hudman</p>
-      </div>
+      <Footer />
     </div>
   );
 };

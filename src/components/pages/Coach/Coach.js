@@ -10,6 +10,7 @@ import * as yup from "yup";
 
 import "./coach.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Footer from "../../other/Footer/Footer";
 
 const Coach = () => {
   const [formEnabled, setFormEnabled] = useState(true);
@@ -256,9 +257,7 @@ const Coach = () => {
       <hr />
 
       {/* footer */}
-      <div className="footer">
-        <p>&copy; {new Date().getFullYear()} David Hudman</p>
-      </div>
+      <Footer />
     </div>
   );
 };

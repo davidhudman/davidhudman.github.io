@@ -2,7 +2,8 @@
 import React, { Fragment } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.css";
+
 import "./styles.css";
 
 // import Navbar from "./components/layout/Navbar";
@@ -11,8 +12,6 @@ import NavbarCustom from "./components/NavbarCustom/NavbarCustom";
 import Home from "./components/pages/Home/Home";
 import App1 from "./components/pages/App1/App1";
 // eslint-disable-next-line import/no-named-as-default
-import App2 from "./components/pages/App2/App2";
-import App3 from "./components/pages/App3/App3";
 import Pay from "./components/pages/Pay/Pay";
 import Payment from "./components/pages/Payment/Payment";
 import AddMerchant from "./components/pages/AddMerchant/AddMerchant";
@@ -30,6 +29,7 @@ import FormNewRestaurantAgentPurchase from "./components/pages/FormNewRestaurant
 import Events from "./components/pages/Events/Events";
 import Coach from "./components/pages/Coach/Coach";
 import Flylert from "./components/pages/Flylert/Flylert";
+import Professional from "./components/pages/Professional/Professional";
 
 const App = () => (
   <Router>
@@ -42,6 +42,8 @@ const App = () => (
 
         <Route path="/flylert" element={<Flylert />} />
         <Route path="/fly" element={<Flylert />} />
+
+        <Route path="/professional" element={<Professional />} />
 
         <Route path="/pay" element={<Pay />} />
 
@@ -92,8 +94,6 @@ const App = () => (
         <Route path="/tos" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/1" element={<App1 />} />
-        <Route path="/2" element={<App2 />} />
-        <Route path="/3" element={<App3 />} />
       </Routes>
     </Fragment>
   </Router>

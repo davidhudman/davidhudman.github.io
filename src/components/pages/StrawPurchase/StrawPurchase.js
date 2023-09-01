@@ -1636,7 +1636,7 @@ const StrawPurchase = () => {
               >
                 <a href="https://youtu.be/euI-3ciQ1_s">
                   <i
-                    className="fa fa-youtube-play"
+                    className="fa-brands fa-youtube"
                     style={{
                       fontSize: "48px",
                       color: "grey",
@@ -1752,10 +1752,7 @@ const StrawPurchase = () => {
           </>
         ) : null}
 
-        {/* footer */}
-        {/* <div className="footer">
-          <p>&copy; {new Date().getFullYear()} David Hudman</p>
-        </div> */}
+        {/* <Footer /> */}
       </div>
     </div>
   );
