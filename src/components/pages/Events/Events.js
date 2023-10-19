@@ -224,6 +224,8 @@ const Events = () => {
         <div className="home">
           {/* event link is href={`/events/${event.socialEventId}`} */}
           {/* display each element in events array in a clean bootstrap card */}
+          <h3>Active Beaches</h3>
+          <h4>Upcoming Events</h4>
           {events.length > 0 ? (
             events.map((eventItem) => {
               // if date is before yesterday, don't show it
@@ -268,8 +270,13 @@ const Events = () => {
           <br />
 
           <h4>
-            <a href="http://www.beachsocialgroup.com">
-              Beach Social Group 20s 30s
+            <a
+              href="http://www.activebeaches.com"
+              style={{
+                textDecoration: "underline",
+              }}
+            >
+              Go to Active Beaches 20s 30s
             </a>
           </h4>
           <br />
@@ -489,6 +496,43 @@ const Events = () => {
                     </a>
                   </div>
                   <hr />
+                </>
+              )}
+            </>
+            {/* if event.meetupLink or event.facebookLink then show RSVP buttons to those links */}
+            <>
+              {event.meetupLink && (
+                <>
+                  <a
+                    className="btn btn-lg btn-block"
+                    href={event.meetupLink}
+                    style={{
+                      fontSize: "18px",
+                      backgroundColor: "#ED1C40",
+                      color: "white",
+                      marginBottom: "10px",
+                    }}
+                    target="_blank"
+                  >
+                    RSVP on Meetup
+                  </a>
+                </>
+              )}
+              {event.facebookLink && (
+                <>
+                  <a
+                    className="btn btn-lg btn-block"
+                    href={event.facebookLink}
+                    style={{
+                      fontSize: "18px",
+                      backgroundColor: "#4267B2",
+                      color: "white",
+                      marginBottom: "20px",
+                    }}
+                    target="_blank"
+                  >
+                    RSVP on Facebook
+                  </a>
                 </>
               )}
             </>

@@ -15,7 +15,7 @@ const SocialLinks = () => {
     <div className="social-links">
       <div className="link-container">
         <a
-          href="https://www.meetup.com/beachsocialgroup"
+          href="https://www.meetup.com/activebeaches"
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-lg btn-block social-link"
@@ -34,7 +34,7 @@ const SocialLinks = () => {
 
       <div className="link-container">
         <a
-          href="https://www.facebook.com/profile.php?id=100095526403968"
+          href="https://www.facebook.com/activebeaches"
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-lg btn-block social-link"
@@ -53,7 +53,7 @@ const SocialLinks = () => {
 
       <div className="link-container">
         <a
-          href="https://www.instagram.com/beachsocialgroup/"
+          href="https://www.instagram.com/activebeaches/"
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-lg btn-block social-link"

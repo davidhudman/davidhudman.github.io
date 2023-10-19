@@ -25,30 +25,37 @@ const Pay = () => {
       <a
         href="/paybch"
         className="btn btn-lg btn-block btn-default"
-        style={{ fontSize: "18px" }}
+        style={{ fontSize: "24px" }}
       >
         Bitcoin Cash (BCH)
       </a>
-      <br />
-      <a
-        href="https://www.venmo.com/davidhudman/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn btn-lg btn-block btn-primary"
+      <button
+        onClick={() =>
+          window.open(`https://www.venmo.com/davidhudman/`, "_blank")
+        }
+        className="btn btn-lg btn-block social-link"
+        style={{
+          fontSize: "24px",
+          backgroundColor: "#008CFF",
+          color: "white",
+          marginTop: "15px",
+        }}
       >
-        Venmo
-      </a>
-      <br />
+        Venmo - @davidhudman
+      </button>
       {/* cash app */}
-      <a
-        href="https://cash.app/$payhudman"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn btn-lg btn-block btn-default"
+      <button
+        onClick={() => window.open(`https://cash.app/$payhudman`, "_blank")}
+        className="btn btn-lg btn-block social-link"
+        style={{
+          fontSize: "24px",
+          backgroundColor: "#048c2c",
+          color: "white",
+          marginTop: "15px",
+        }}
       >
-        Cash App
-      </a>
-      <br />
+        CashApp - $payhudman
+      </button>
     </div>
   );
 };
