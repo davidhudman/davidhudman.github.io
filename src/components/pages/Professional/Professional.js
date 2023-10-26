@@ -4,6 +4,7 @@ import {
   // Route,
   // Routes,
   Link,
+  useNavigate,
 } from "react-router-dom";
 
 import "./professional.css";
@@ -11,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "../../other/Footer/Footer";
 
 const Professional = () => {
+  const navigate = useNavigate();
   return (
     <div className="outer-page-container">
       {/* breadcrumb links to higher pages */}
@@ -33,45 +35,51 @@ const Professional = () => {
         <br />
 
         <div className="page-content">
-          <a
-            href="https://drive.google.com/file/d/1QX5Ka-XCbo2vj6GCbFPjERbGCKjlD89a/view"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() =>
+              window.open(
+                "https://drive.google.com/file/d/1QX5Ka-XCbo2vj6GCbFPjERbGCKjlD89a/view",
+                "_blank"
+              )
+            }
             className="btn btn-lg btn-block btn-primary"
             style={{ fontSize: "18px" }}
           >
             Download Resume PDF
-          </a>
+          </button>
           <br />
-          <a
-            href="https://www.linkedin.com/in/davidhudman/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() =>
+              window.open("https://www.linkedin.com/in/davidhudman/", "_blank")
+            }
             className="btn btn-lg btn-block btn-default"
             style={{ fontSize: "18px" }}
           >
             LinkedIn
-          </a>
+          </button>
           <br />
-          <a
-            href="https://www.github.com/davidhudman/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() =>
+              window.open("https://www.github.com/davidhudman/", "_blank")
+            }
             className="btn btn-lg btn-block btn-primary"
             style={{ fontSize: "18px" }}
           >
             Github
-          </a>
+          </button>
           <br />
-          <a
-            href="https://www.github.com/davidhudman/personal-resume-site"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() =>
+              window.open(
+                "https://www.github.com/davidhudman/personal-resume-site",
+                "_blank"
+              )
+            }
             className="btn btn-lg btn-block btn-default"
             style={{ fontSize: "18px" }}
           >
             View Site Code
-          </a>
+          </button>
           <br />
         </div>
 

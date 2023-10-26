@@ -1,10 +1,11 @@
 import React from "react"; // Fragment
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "./pay.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Pay = () => {
+  const navigate = useNavigate();
   return (
     <div className="pay">
       {/* breadcrumb links to higher pages */}
@@ -22,18 +23,23 @@ const Pay = () => {
         </ol>
       </nav>
       <h1>Payment Methods</h1>
-      <a
-        href="/paybch"
+      <button
+        onClick={() => navigate("/paybch")}
         className="btn btn-lg btn-block btn-default"
-        style={{ fontSize: "24px" }}
+        style={{
+          fontSize: "24px",
+          backgroundColor: "#048c2c",
+          color: "white",
+          marginTop: "15px",
+        }}
       >
         Bitcoin Cash (BCH)
-      </a>
+      </button>
       <button
         onClick={() =>
           window.open(`https://www.venmo.com/davidhudman/`, "_blank")
         }
-        className="btn btn-lg btn-block social-link"
+        className="btn btn-lg btn-block"
         style={{
           fontSize: "24px",
           backgroundColor: "#008CFF",
@@ -46,7 +52,7 @@ const Pay = () => {
       {/* cash app */}
       <button
         onClick={() => window.open(`https://cash.app/$payhudman`, "_blank")}
-        className="btn btn-lg btn-block social-link"
+        className="btn btn-lg btn-block"
         style={{
           fontSize: "24px",
           backgroundColor: "#048c2c",

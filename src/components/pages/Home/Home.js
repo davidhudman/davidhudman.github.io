@@ -4,6 +4,7 @@ import {
   // Route,
   // Routes,
   Link,
+  useNavigate,
 } from "react-router-dom";
 
 import "./home.css";
@@ -11,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Footer from "../../other/Footer/Footer";
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className="outer-home-container">
       <div className="home">
@@ -20,66 +22,60 @@ const Home = () => {
         <br />
 
         <div className="home-links">
-          <Link to="/pay">
-            <button
-              className="btn btn-lg btn-block btn-default"
-              style={{ fontSize: "18px" }}
-            >
-              Donate / Pay Me
-            </button>
-          </Link>
+          <button
+            onClick={() => navigate("/pay")}
+            className="btn btn-lg btn-block btn-default"
+            style={{ fontSize: "18px" }}
+          >
+            Donate / Pay Me
+          </button>
           <br />
 
           {/* Professional */}
-          <a
-            href="/professional"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => navigate("/professional")}
             className="btn btn-lg btn-block btn-primary"
             style={{ fontSize: "18px" }}
           >
             Resume & Portfolio
-          </a>
+          </button>
           <br />
-          <a
-            href="/bitcoin"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => navigate("/bitcoin")}
             className="btn btn-lg btn-block btn-success"
             style={{ fontSize: "18px" }}
           >
             Bitcoin Cash
-          </a>
+          </button>
           <br />
-          <a
-            href="/fly"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => navigate("/fly")}
             className="btn btn-lg btn-block btn-warning"
             style={{ fontSize: "18px" }}
           >
             Flylert: cheap flight emails
-          </a>
+          </button>
           <br />
-          <a
-            href="https://www.lightspeedpacing.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() =>
+              window.open("https://www.lightspeedpacing.com", "_blank")
+            }
             className="btn btn-lg btn-block btn-info"
             style={{ fontSize: "18px" }}
           >
             Light Speed Pacing: track lights
-          </a>
+          </button>
           <br />
-          <a
-            href="/events"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => navigate("/events")}
             className="btn btn-lg btn-block btn-danger"
             style={{ fontSize: "18px" }}
           >
             Events
-          </a>
+          </button>
           <br />
-          <a
-            href="/coach"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => navigate("/coach")}
             className="btn btn-lg btn-block"
             style={{
               fontSize: "18px",
@@ -88,7 +84,7 @@ const Home = () => {
             }}
           >
             Personal Coaching
-          </a>
+          </button>
           <br />
         </div>
 

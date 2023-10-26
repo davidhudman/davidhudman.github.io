@@ -5,6 +5,11 @@
     margin: 0 auto;
     text-align: center;
   }
+  .runimage {
+    height: "200px"; /* auto adjust the height */
+    margin-left: "auto";
+    margin-right: "auto";
+  }
   .footer {
     font-family: sans-serif;
     max-width: 450px;
