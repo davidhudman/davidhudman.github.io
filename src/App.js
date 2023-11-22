@@ -17,6 +17,7 @@ import Payment from "./components/pages/Payment/Payment";
 import AddMerchant from "./components/pages/AddMerchant/AddMerchant";
 import Merchant from "./components/pages/Merchant/Merchant";
 import PrintMerchantQr from "./components/pages/PrintMerchantQr/PrintMerchantQr";
+import Hoover from "./components/pages/Hoover/Hoover";
 
 import Map from "./components/pages/Map/Map";
 import Terms from "./components/pages/Terms/Terms";
@@ -81,6 +82,7 @@ const App = () => (
         <Route path="/coach" element={<Coach />} />
         <Route path="/train" element={<Coach />} />
         <Route path="/trainer" element={<Coach />} />
+        <Route path="/hoover" element={<Hoover />} />
 
         <Route path="/new" element={<FormNewRestaurantAgentPurchase />} />
         <Route path="/add-merchant" element={<AddMerchant />} />
