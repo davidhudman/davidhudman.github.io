@@ -278,8 +278,17 @@ const Hoover = () => {
       </div>
       <div className="home">
         <h3>Xmas Eve Mile Race Signup</h3>
-        <h5>Hoover HS track, 10am Dec 24, 2023</h5>
-        <p>Check back here for ongoing race updates.</p>
+        <p>
+          Hoover HS track, Dec 24, 2023
+          <br />
+          <br />
+          9:30am: meet at track
+          <br />
+          10:00am: race start
+          <br />
+          <br />
+          Check back here for ongoing race updates.
+        </p>
         <div
           style={{
             // text align justified and centered
@@ -302,12 +311,27 @@ const Hoover = () => {
           </div>
           <h3 style={{ textAlign: "center" }}>Signup Here!</h3>
           <hr />
-          <h4 style={{ textAlign: "center" }}>Who?</h4>
+          <h3 style={{ textAlign: "center" }}>Updates</h3>
+          <p
+            style={{
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "24px",
+            }}
+          >
+            30 signups so far!
+            <p style={{ lineHeight: 0 }}>&nbsp;</p>
+            Race starts at 10am
+            <br />
+            <br />
+          </p>
+
+          <h3 style={{ textAlign: "center" }}>Who?</h3>
           <p>
             Invite your fellow Hoover alumni, former competitors from rival
             schools, spouses, family, and friends.
           </p>
-          <h4 style={{ textAlign: "center" }}>Current RSVPs</h4>
+          <h3 style={{ textAlign: "center" }}>Current RSVPs</h3>
           <p>
             <ul
               style={{
@@ -320,10 +344,14 @@ const Hoover = () => {
               <li>(2008) Kimberly and Nicole Muldowney</li>
               <li>(2008) Justin Rogers</li>
               <li>(2010) David Hudman</li>
+              <li>(2013) Coach Ieden Leckenby</li>
+              <li>(2015) Carson Tullo</li>
+              <li>(2016) Evan Franklin</li>
               <li>(2018) Joe Leventree</li>
+              <li>30 total signups</li>
             </ul>
           </p>
-          <h4 style={{ textAlign: "center" }}>When/Where?</h4>
+          <h3 style={{ textAlign: "center" }}>When/Where?</h3>
           <p>
             The race will take place Dec 24th, 2023 at 10am at the Hoover High
             School track. If the track is in use, we'll meet at the gate outside
@@ -331,7 +359,7 @@ const Hoover = () => {
             the second annual race. We're expecting this year to be bigger than
             last year.
           </p>
-          <h4 style={{ textAlign: "center" }}>What?</h4>
+          <h3 style={{ textAlign: "center" }}>What?</h3>
           <p>
             This is a one mile race at the Hoover High School track with
             friends.
@@ -350,7 +378,7 @@ const Hoover = () => {
             Several people have told me that they plan to come just to watch and
             hang out. That's great too!
           </p>
-          <h4 style={{ textAlign: "center" }}>Cost?</h4>
+          <h3 style={{ textAlign: "center" }}>Cost?</h3>
           <p>
             Free! If you'd like to donate, I'll put the money towards coffee or
             snacks or something.

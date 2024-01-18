@@ -86,19 +86,6 @@ const Home = () => {
             Personal Coaching
           </button>
           <br />
-          {/* button for /hoover */}
-          <button
-            onClick={() => navigate("/hoover")}
-            className="btn btn-lg btn-block btn-default"
-            style={{
-              fontSize: "18px",
-              backgroundColor: "black",
-              color: "orange",
-            }}
-          >
-            Hoover Xmas Eve Mile Race
-          </button>
-          <br />
         </div>
 
         <Footer />
