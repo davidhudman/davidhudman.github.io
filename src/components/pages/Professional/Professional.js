@@ -38,7 +38,7 @@ const Professional = () => {
           <button
             onClick={() =>
               window.open(
-                "https://drive.google.com/file/d/1QX5Ka-XCbo2vj6GCbFPjERbGCKjlD89a/view",
+                "https://drive.google.com/file/d/1d8cA7XNG2A7q6ABedUyLDejInjhJetwI/view",
                 "_blank"
               )
             }

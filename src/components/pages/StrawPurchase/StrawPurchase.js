@@ -69,6 +69,7 @@ const StrawPurchase = () => {
   const [preCheck, setPreCheck] = useState(null);
   const [showFullReceipt, setShowFullReceipt] = useState(false);
   const [totalToPay, setTotalToPay] = useState(0);
+  const [messageClickCount, setMessageClickCount] = useState(0);
   // const [haveSetCryptoPaymentLoading, setHaveSetCryptoPaymentLoading] =
   //   useState(false);
   // const [haveSetCreditCardPaymentLoading, setHaveSetCreditCardPaymentLoading] =
@@ -90,6 +91,10 @@ const StrawPurchase = () => {
   // let cryptoPaymentStatus = useRef();
   let haveSetCryptoPaymentLoading = useRef();
   let haveSetCreditCardPaymentLoading = useRef();
+
+  const isShowServiceDownMessageTest = () => {
+    return !(messageClickCount > 7);
+  };
 
   const isiOS = () => {
     const userAgent = navigator.userAgent;
@@ -747,30 +752,53 @@ const StrawPurchase = () => {
                   )}
 
                   {/* order number */}
-                  <div className="form-group">
-                    {showCameraPrompt && (
-                      <div>
-                        <p>
-                          <a
-                            href="#"
-                            className="btn btn-lg btn-block btn-primary"
-                            onClick={requestCameraPermission}
-                            style={{ fontSize: "1.5em" }}
-                          >
-                            Scan QR Code on Receipt
-                          </a>
-                        </p>
-                      </div>
-                    )}
-                    {isCameraPermissionGranted ? (
-                      <QRCodeScanner
-                        width="300px"
-                        height="200px"
-                        onScan={checkIfOrderExists}
-                      />
-                    ) : (
-                      <>
-                        {/* <div
+                  <div hidden={!isShowServiceDownMessageTest()}>
+                    <h1
+                      onClick={() => {
+                        setMessageClickCount(messageClickCount + 1);
+                      }}
+                    >
+                      Currently Down for Repairs
+                    </h1>
+                    <p>
+                      Some changes to the restaurant's webpage have required
+                      some effort on our end to maintain compatibility so the
+                      service is down until we can update.
+                    </p>
+                    <p>
+                      We expect this to be resolved quickly within a week or
+                      two. This issue was first discovered on July 19th, 2024.
+                    </p>
+                    <p>Please check back for updates</p>
+                  </div>
+                  <div hidden={isShowServiceDownMessageTest()}>
+                    <h2 style={{ color: "red" }}>
+                      Service is down...Only for Testing!!!
+                    </h2>
+                    <div className="form-group">
+                      {showCameraPrompt && (
+                        <div>
+                          <p>
+                            <a
+                              href="#"
+                              className="btn btn-lg btn-block btn-primary"
+                              onClick={requestCameraPermission}
+                              style={{ fontSize: "1.5em" }}
+                            >
+                              Scan QR Code on Receipt
+                            </a>
+                          </p>
+                        </div>
+                      )}
+                      {isCameraPermissionGranted ? (
+                        <QRCodeScanner
+                          width="300px"
+                          height="200px"
+                          onScan={checkIfOrderExists}
+                        />
+                      ) : (
+                        <>
+                          {/* <div
                         hidden={true}
                         style={{
                           width: "300px",
@@ -784,52 +812,53 @@ const StrawPurchase = () => {
                       >
                         <p></p>
                       </div> */}
-                      </>
-                    )}
-                  </div>
-                  {/* create next button */}
-                  <br />
-                  <label htmlFor="order-number">
-                    Or enter order number manually
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="order-number"
-                      placeholder="ex: 0123-AB789"
-                      value={orderNumber}
-                      onChange={(e) => setOrderNumber(e.target.value)}
+                        </>
+                      )}
+                    </div>
+                    {/* create next button */}
+                    <br />
+                    <label htmlFor="order-number">
+                      Or enter order number manually
+                    </label>
+                    <div
                       style={{
-                        fontSize: "1.25em",
-                        height: "2em",
-                        width: "60%",
-                      }}
-                    />
-                    <div style={{ width: "10%" }}></div>
-                    <button
-                      type="button"
-                      id="checkIfOrderExistsButton"
-                      disabled={
-                        !checkIfOrderExistsButtonEnabled ||
-                        orderNumber.length < 9
-                      }
-                      className="btn btn-primary btn-sm"
-                      onClick={() => checkIfOrderExists()}
-                      style={{
-                        fontSize: "1.25em",
-                        height: "2em",
-                        width: "30%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
                       }}
                     >
-                      Next
-                    </button>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="order-number"
+                        placeholder="ex: 0123-AB789"
+                        value={orderNumber}
+                        onChange={(e) => setOrderNumber(e.target.value)}
+                        style={{
+                          fontSize: "1.25em",
+                          height: "2em",
+                          width: "60%",
+                        }}
+                      />
+                      <div style={{ width: "10%" }}></div>
+                      <button
+                        type="button"
+                        id="checkIfOrderExistsButton"
+                        disabled={
+                          !checkIfOrderExistsButtonEnabled ||
+                          orderNumber.length < 9
+                        }
+                        className="btn btn-primary btn-sm"
+                        onClick={() => checkIfOrderExists()}
+                        style={{
+                          fontSize: "1.25em",
+                          height: "2em",
+                          width: "30%",
+                        }}
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
                   {/* progress bar */}
                   <div
