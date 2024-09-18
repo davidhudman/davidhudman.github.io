@@ -25,7 +25,7 @@ const Hoover = () => {
   const [formType, setFormType] = useState("hooverxmasrace2023");
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState(false);
-  const [isFormHidden, setIsFormHidden] = useState(false);
+  const [isFormHidden, setIsFormHidden] = useState(true);
 
   const [unlockParagraphClickCount, setUnlockParagraphClickCount] = useState(0);
   const [env, setEnv] = useState("production");
@@ -277,9 +277,12 @@ const Hoover = () => {
         </nav>
       </div>
       <div className="home">
-        <h3>Xmas Eve Mile Race Signup</h3>
+        <h3>Reunion Mile Race Signup</h3>
+        <h4>Two Race Dates:</h4>
         <p>
-          Hoover HS track, Dec 24, 2023
+          Thanksgiving Day <br />
+          Xmas Eve <br /> <br />
+          Hoover HS track
           <br />
           <br />
           9:30am: meet at track
@@ -310,7 +313,21 @@ const Hoover = () => {
             />
           </div>
           <h3 style={{ textAlign: "center" }}>Signup Here!</h3>
-          <hr />
+          <div className="text-center">
+            {/* nice looking button linking to google form */}
+            <button
+              className="btn btn-lg btn-block btn-success"
+              style={{
+                fontSize: "18px",
+                marginTop: "15px",
+                marginBottom: "15px",
+              }}
+              onClick={() => navigate("https://forms.gle/5i4H3GmzVf7fHL7J7")}
+              type="button"
+            >
+              Signup
+            </button>
+          </div>
           <h3 style={{ textAlign: "center" }}>Updates</h3>
           <p
             style={{
@@ -319,11 +336,7 @@ const Hoover = () => {
               fontSize: "24px",
             }}
           >
-            30 signups so far!
-            <p style={{ lineHeight: 0 }}>&nbsp;</p>
-            Race starts at 10am
-            <br />
-            <br />
+            {/* updates */}
           </p>
 
           <h3 style={{ textAlign: "center" }}>Who?</h3>
@@ -340,24 +353,22 @@ const Hoover = () => {
               }}
             >
               <li>Coach Hind</li>
-              <li>(2003) Phillip Moore</li>
-              <li>(2008) Kimberly and Nicole Muldowney</li>
-              <li>(2008) Justin Rogers</li>
-              <li>(2010) David Hudman</li>
-              <li>(2013) Coach Ieden Leckenby</li>
-              <li>(2015) Carson Tullo</li>
-              <li>(2016) Evan Franklin</li>
-              <li>(2018) Joe Leventree</li>
-              <li>30 total signups</li>
+              <li>David Hudman (2010)</li>
             </ul>
           </p>
           <h3 style={{ textAlign: "center" }}>When/Where?</h3>
           <p>
-            The race will take place Dec 24th, 2023 at 10am at the Hoover High
-            School track. If the track is in use, we'll meet at the gate outside
-            the track and run the one mile road loop around the school. This is
-            the second annual race. We're expecting this year to be bigger than
-            last year.
+            There will be two races. One will be Thanksgiving Day. The other
+            will be Xmas Eve. Both races will take place at 10am at the Hoover
+            High School track.
+          </p>
+          <p>
+            If the track is in use, we'll meet at the gate outside the track and
+            run the one mile road loop around the school.
+          </p>
+          <p>
+            This is the second annual race. We're expecting this year to be
+            bigger than last year where 40 runners showed up.
           </p>
           <h3 style={{ textAlign: "center" }}>What?</h3>
           <p>
@@ -379,22 +390,25 @@ const Hoover = () => {
             hang out. That's great too!
           </p>
           <h3 style={{ textAlign: "center" }}>Cost?</h3>
-          <p>
-            Free! If you'd like to donate, I'll put the money towards coffee or
-            snacks or something.
-          </p>
-          <button
-            onClick={() => navigate("/pay")}
-            className="btn btn-lg btn-block btn-default"
-            style={{
-              fontSize: "18px",
-              backgroundColor: "black",
-              color: "orange",
-              fontWeight: "bold",
-            }}
-          >
-            Donate Here
-          </button>
+          <p style={{ textAlign: "center" }}>Free!</p>
+          <div className="text-center" hidden={true}>
+            <p>
+              If you'd like to donate, I'll put the money towards coffee or
+              snacks or something.
+            </p>
+            <button
+              onClick={() => navigate("/pay")}
+              className="btn btn-lg btn-block btn-default"
+              style={{
+                fontSize: "18px",
+                backgroundColor: "black",
+                color: "orange",
+                fontWeight: "bold",
+              }}
+            >
+              Donate Here
+            </button>
+          </div>
           <hr />
         </div>
         {/* see more button that toggles setIsFormHidden */}
@@ -410,6 +424,22 @@ const Hoover = () => {
             onClick={() => setIsFormHidden(!isFormHidden)}
           >
             {isFormHidden ? "Signup" : "See Less"}
+          </button>
+        </div>
+        {/* nice looking button linking to google form */}
+        <div className="text-center">
+          {/* nice looking button linking to google form */}
+          <button
+            className="btn btn-lg btn-block btn-success"
+            style={{
+              fontSize: "18px",
+              marginTop: "15px",
+              marginBottom: "15px",
+            }}
+            onClick={() => navigate("https://forms.gle/5i4H3GmzVf7fHL7J7")}
+            type="button"
+          >
+            Signup
           </button>
         </div>
         <div hidden={isFormHidden}>
