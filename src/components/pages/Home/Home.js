@@ -86,6 +86,19 @@ const Home = () => {
             Personal Coaching
           </button>
           <br />
+          <button
+            onClick={() => navigate("/hoover")}
+            className="btn btn-lg btn-block btn-default"
+            style={{
+              fontSize: "18px",
+              backgroundColor: "black",
+              color: "orange",
+              fontWeight: "bold",
+            }}
+          >
+            Hoover Alumni Race
+          </button>
+          <br />
         </div>
 
         <Footer />

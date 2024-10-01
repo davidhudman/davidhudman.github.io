@@ -262,10 +262,7 @@ const Hoover = () => {
   return (
     <div className="outer-home-container">
       <div className="breadcrumbDiv">
-        <nav
-          aria-label="breadcrumb"
-          style={{ width: "100%", textAlign: "left" }}
-        >
+        <nav aria-label="breadcrumb" className="breadcrumb-nav">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
               <a href="/">Home</a>
@@ -277,17 +274,25 @@ const Hoover = () => {
         </nav>
       </div>
       <div className="home">
-        <h3>Reunion Mile Race Signup</h3>
-        <h4>Two Race Dates:</h4>
-        <p>
-          Thanksgiving Day <br />
-          Xmas Eve <br /> <br />
+        <h2 className="text-center">Reunion Mile Race Signup</h2>
+        <hr />
+        <h3 className="text-center">Thanksgiving Day</h3>
+        <span className="text-center">(Thu Nov 28, 2024)</span>
+        <hr />
+        <h5 className="text-center">AND</h5>
+        <hr />
+        <h3>Christmas Eve</h3>
+        <span className="text-center">(Tue Dec 24, 2024)</span>
+        <hr />
+        <p className="text-center">
           Hoover HS track
           <br />
           <br />
           9:30am: meet at track
           <br />
-          10:00am: race start
+          10:00am: first race start
+          <br />
+          *more races starting after if needed*
           <br />
           <br />
           Check back here for ongoing race updates.
@@ -303,7 +308,7 @@ const Hoover = () => {
             style={{ marginBottom: "20px" }} // 20px space between images
           >
             <img
-              src={`https://s3.amazonaws.com/social-images-public/main/hoover_run_0002.jpg`}
+              src={`https://s3.amazonaws.com/social-images-public/main/hoover_run_2023_002.jpg`}
               style={{
                 maxWidth: "100%", // make image responsive
                 display: "block", // center the image
@@ -311,6 +316,10 @@ const Hoover = () => {
                 marginRight: "auto",
               }}
             />
+            {/* label below photo in italic text */}
+            <p style={{ fontStyle: "italic", textAlign: "center" }}>
+              2023 Christmas Eve Mile Race
+            </p>
           </div>
           <h3 style={{ textAlign: "center" }}>Signup Here!</h3>
           <div className="text-center">
@@ -322,7 +331,9 @@ const Hoover = () => {
                 marginTop: "15px",
                 marginBottom: "15px",
               }}
-              onClick={() => navigate("https://forms.gle/5i4H3GmzVf7fHL7J7")}
+              onClick={() =>
+                window.open("https://forms.gle/5i4H3GmzVf7fHL7J7", "_blank")
+              }
               type="button"
             >
               Signup
@@ -332,12 +343,35 @@ const Hoover = () => {
           <p
             style={{
               textAlign: "center",
-              fontWeight: "bold",
-              fontSize: "24px",
             }}
           >
-            {/* updates */}
+            None yet. Continue checking back.
           </p>
+
+          <h3 style={{ textAlign: "center" }}>Photos / Group Chat</h3>
+          <p>
+            We will post photos in the GroupMe Chat after the race that you can
+            join here. You can also discuss the race here.
+          </p>
+          {/* button to gropume share link (external) with GroupMe Colors */}
+          <button
+            className="btn btn-lg btn-block btn-success"
+            style={{
+              fontSize: "18px",
+              marginTop: "15px",
+              marginBottom: "15px",
+              backgroundColor: "#00aae4",
+              color: "white",
+            }}
+            onClick={() =>
+              window.open(
+                "https://groupme.com/join_group/103443666/UVdfgUPP",
+                "_blank"
+              )
+            }
+          >
+            Join GroupMe Chat
+          </button>
 
           <h3 style={{ textAlign: "center" }}>Who?</h3>
           <p>
@@ -345,22 +379,21 @@ const Hoover = () => {
             schools, spouses, family, and friends.
           </p>
           <h3 style={{ textAlign: "center" }}>Current RSVPs</h3>
-          <p>
-            <ul
-              style={{
-                // no bullets
-                listStyleType: "none",
-              }}
-            >
-              <li>Coach Hind</li>
-              <li>David Hudman (2010)</li>
-            </ul>
-          </p>
+
+          <ul
+            style={{
+              // no bullets
+              listStyleType: "none",
+            }}
+          >
+            <li>Coach Hind</li>
+            <li>David Hudman (2010)</li>
+          </ul>
           <h3 style={{ textAlign: "center" }}>When/Where?</h3>
           <p>
-            There will be two races. One will be Thanksgiving Day. The other
-            will be Xmas Eve. Both races will take place at 10am at the Hoover
-            High School track.
+            There will be two races. One will be Thanksgiving Day (Thu Nov 28,
+            2024) and the other will be Xmas Eve (Tue Dec 24, 2024). Both races
+            will take place at 10am at the Hoover High School track.
           </p>
           <p>
             If the track is in use, we'll meet at the gate outside the track and
@@ -436,7 +469,9 @@ const Hoover = () => {
               marginTop: "15px",
               marginBottom: "15px",
             }}
-            onClick={() => navigate("https://forms.gle/5i4H3GmzVf7fHL7J7")}
+            onClick={() =>
+              window.open("https://forms.gle/5i4H3GmzVf7fHL7J7", "_blank")
+            }
             type="button"
           >
             Signup
